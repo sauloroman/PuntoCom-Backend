@@ -1,9 +1,9 @@
-import { Money, Stock } from '../value-objects';
+import { Money, Quantity } from '../value-objects';
 
 interface PurchaseDetailProps {
   id: string;
-  purchaseQuantity: Stock; // usamos Stock para validar cantidad entera y no negativa
-  purchaseUnitPrice: Money; // Money para precio unitario positivo con decimales
+  purchaseQuantity: Quantity;
+  purchaseUnitPrice: Money; 
   productId: string;
   purchaseId: string;
   createdAt?: Date;
@@ -12,7 +12,7 @@ interface PurchaseDetailProps {
 
 export class PurchaseDetail {
   private readonly _id: string;
-  private _purchaseQuantity: Stock;
+  private _purchaseQuantity: Quantity;
   private _purchaseUnitPrice: Money;
   private _productId: string;
   private _purchaseId: string;
@@ -46,7 +46,7 @@ export class PurchaseDetail {
     this.validatePurchaseId(this._purchaseId);
   }
 
-  private validateQuantity(quantity: Stock) {
+  private validateQuantity(quantity: Quantity) {
     if (!quantity) {
       throw new Error('La cantidad de compra es obligatoria');
     }
@@ -74,7 +74,7 @@ export class PurchaseDetail {
     return this._id;
   }
 
-  get purchaseQuantity(): Stock {
+  get purchaseQuantity(): Quantity {
     return this._purchaseQuantity;
   }
 
@@ -99,7 +99,7 @@ export class PurchaseDetail {
   }
 
   public update(params: {
-    purchaseQuantity?: Stock;
+    purchaseQuantity?: Quantity;
     purchaseUnitPrice?: Money;
     productId?: string;
     purchaseId?: string;

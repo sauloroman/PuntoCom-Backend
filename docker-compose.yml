@@ -2,7 +2,7 @@ version: '3.9'
 services:
   postgres-db:
     image: postgres:latest
-    container_name: classconnect
+    container_name: puntocom
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRESDB_USER}

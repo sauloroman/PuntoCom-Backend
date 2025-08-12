@@ -1,4 +1,17 @@
-import { Email, Password, Role } from '../value-objects';
+import { Email, Password, Role } from '../value-objects'
+
+interface UserProps {
+  id: string,
+  name: string,
+  lastname: string,
+  email: Email,
+  password: Password,
+  role: Role,
+  isActive: boolean,
+  image?: string,
+  createdAt?: Date,
+  updatedAt?: Date
+}
 
 export class User {
   private readonly _id: string;
@@ -12,18 +25,22 @@ export class User {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  constructor(
-    id: string,
-    name: string,
-    lastname: string,
-    email: Email,
-    password: Password,
-    role: Role,
-    image: string = 'Usuario sin imagen',
-    isActive: boolean = true,
-    createdAt: Date = new Date(),
-    updatedAt: Date = new Date()
-  ) {
+  private static MAX_NAME_LENGTH = 60;
+  private static MAX_LASTNAME_LENGTH = 60;
+  private static MAX_IMAGE_LENGTH = 200;
+
+  constructor({
+    id,
+    name,
+    lastname,
+    email,
+    password,
+    role,
+    isActive = true,
+    image = 'Usuario sin imagen',
+    createdAt = new Date(),
+    updatedAt = new Date()
+  }: UserProps) {
     this._id = id;
     this._name = name;
     this._lastname = lastname;
@@ -39,11 +56,32 @@ export class User {
   }
 
   private validate() {
-    if (!this._name || this._name.trim().length === 0) {
+    this.validateName(this._name);
+    this.validateLastname(this._lastname);
+    this.validateImage(this._image);
+  }
+
+  private validateName(name: string) {
+    if (!name || name.trim().length === 0) {
       throw new Error('El nombre es obligatorio');
     }
-    if (!this._lastname || this._lastname.trim().length === 0) {
+    if (name.length > User.MAX_NAME_LENGTH) {
+      throw new Error(`El nombre no puede exceder ${User.MAX_NAME_LENGTH} caracteres`);
+    }
+  }
+
+  private validateLastname(lastname: string) {
+    if (!lastname || lastname.trim().length === 0) {
       throw new Error('El apellido es obligatorio');
+    }
+    if (lastname.length > User.MAX_LASTNAME_LENGTH) {
+      throw new Error(`El apellido no puede exceder ${User.MAX_LASTNAME_LENGTH} caracteres`);
+    }
+  }
+
+  private validateImage(image: string) {
+    if (image.length > User.MAX_IMAGE_LENGTH) {
+      throw new Error(`La imagen no puede exceder ${User.MAX_IMAGE_LENGTH} caracteres`);
     }
   }
 
@@ -107,11 +145,11 @@ export class User {
     isActive?: boolean;
   }) {
     if (params.name !== undefined) {
-      if (!params.name.trim()) throw new Error('El nombre es obligatorio');
+      this.validateName(params.name);
       this._name = params.name;
     }
     if (params.lastname !== undefined) {
-      if (!params.lastname.trim()) throw new Error('El apellido es obligatorio');
+      this.validateLastname(params.lastname);
       this._lastname = params.lastname;
     }
     if (params.email !== undefined) {
@@ -124,6 +162,7 @@ export class User {
       this._role = params.role;
     }
     if (params.image !== undefined) {
+      this.validateImage(params.image);
       this._image = params.image;
     }
     if (params.isActive !== undefined) {

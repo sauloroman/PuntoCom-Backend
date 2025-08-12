@@ -1,3 +1,13 @@
+interface CategoryProps {
+  id: string;
+  name: string;
+  description?: string; // opcional con default
+  icon?: string;        // opcional con default
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export class Category {
   private readonly _id: string;
   private _name: string;
@@ -7,15 +17,19 @@ export class Category {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  constructor(
-    id: string,
-    name: string,
-    description: string = 'Categoría sin descripción',
-    icon: string = 'Categoría sin ícono',
-    isActive: boolean = true,
-    createdAt: Date = new Date(),
-    updatedAt: Date = new Date()
-  ) {
+  private static MAX_NAME_LENGTH = 100;
+  private static MAX_DESCRIPTION_LENGTH = 220;
+  private static MAX_ICON_LENGTH = 100;
+
+  constructor({
+    id,
+    name,
+    description = 'Categoría sin descripción',
+    icon = 'Categoría sin ícono',
+    isActive = true,
+    createdAt = new Date(),
+    updatedAt = new Date(),
+  }: CategoryProps) {
     this._id = id;
     this._name = name;
     this._description = description;
@@ -28,8 +42,29 @@ export class Category {
   }
 
   private validate() {
-    if (!this._name || this._name.trim().length === 0) {
+    this.validateName(this._name);
+    this.validateDescription(this._description);
+    this.validateIcon(this._icon);
+  }
+
+  private validateName(name: string) {
+    if (!name || name.trim().length === 0) {
       throw new Error('El nombre de la categoría es obligatorio');
+    }
+    if (name.length > Category.MAX_NAME_LENGTH) {
+      throw new Error(`El nombre de la categoría no puede exceder ${Category.MAX_NAME_LENGTH} caracteres`);
+    }
+  }
+
+  private validateDescription(description: string) {
+    if (description.length > Category.MAX_DESCRIPTION_LENGTH) {
+      throw new Error(`La descripción no puede exceder ${Category.MAX_DESCRIPTION_LENGTH} caracteres`);
+    }
+  }
+
+  private validateIcon(icon: string) {
+    if (icon.length > Category.MAX_ICON_LENGTH) {
+      throw new Error(`El icono no puede exceder ${Category.MAX_ICON_LENGTH} caracteres`);
     }
   }
 
@@ -78,13 +113,15 @@ export class Category {
     isActive?: boolean;
   }) {
     if (params.name !== undefined) {
-      if (!params.name.trim()) throw new Error('El nombre de la categoría es obligatorio');
+      this.validateName(params.name);
       this._name = params.name;
     }
     if (params.description !== undefined) {
+      this.validateDescription(params.description);
       this._description = params.description;
     }
     if (params.icon !== undefined) {
+      this.validateIcon(params.icon);
       this._icon = params.icon;
     }
     if (params.isActive !== undefined) {

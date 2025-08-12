@@ -1,16 +1,13 @@
 export class Email {
+  
+  private readonly _emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   private readonly _value: string
 
   constructor(email: string) {
-    if ( !this.validate(email) ) {
+    if ( !this._emailRegex.test(email) ) {
       throw new Error('Email inválido')
     }
     this._value = email.toLowerCase()
-  }
-
-  private validate(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test( email )
   }
 
   public get value(): string {

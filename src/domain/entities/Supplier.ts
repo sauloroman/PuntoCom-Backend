@@ -1,30 +1,47 @@
-import { Email } from '../value-objects/Email';
-import { CompanyName } from '../value-objects';
+import { Email, Phone } from '../value-objects';
+
+interface SupplierProps {
+  id: string;
+  name: string;
+  lastname: string;
+  company: string;
+  isActive?: boolean;
+  phone: Phone;
+  email: Email;
+  address?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 export class Supplier {
   private readonly _id: string;
   private _name: string;
   private _lastname: string;
-  private _company: CompanyName;
-  private _phone: string;
+  private _company: string;
+  private _phone: Phone;
   private _email: Email;
   private _address: string;
   private _isActive: boolean;
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  constructor(
-    id: string,
-    name: string,
-    lastname: string,
-    company: CompanyName,
-    phone: string = 'Proveedor sin teléfono',
-    email: Email,
-    address: string = 'Proveedor sin dirección',
-    isActive: boolean = true,
-    createdAt: Date = new Date(),
-    updatedAt: Date = new Date()
-  ) {
+  private static MAX_NAME_LENGTH = 100;
+  private static MAX_LASTNAME_LENGTH = 100;
+  private static MAX_COMPANY_LENGTH = 100;
+  private static MAX_ADDRESS_LENGTH = 200;
+
+  constructor({
+    id,
+    name,
+    lastname,
+    company,
+    email,
+    phone,
+    address = 'Proveedor sin dirección',
+    isActive = true,
+    createdAt = new Date(),
+    updatedAt = new Date(),
+  }: SupplierProps) {
     this._id = id;
     this._name = name;
     this._lastname = lastname;
@@ -40,11 +57,42 @@ export class Supplier {
   }
 
   private validate() {
-    if (!this._name || this._name.trim().length === 0) {
+    this.validateName(this._name);
+    this.validateLastname(this._lastname);
+    this.validateCompany(this._company);
+    this.validateAddress(this._address);
+  }
+
+  private validateName(name: string) {
+    if (!name || name.trim().length === 0) {
       throw new Error('El nombre es obligatorio');
     }
-    if (!this._lastname || this._lastname.trim().length === 0) {
+    if (name.length > Supplier.MAX_NAME_LENGTH) {
+      throw new Error(`El nombre no puede exceder ${Supplier.MAX_NAME_LENGTH} caracteres`);
+    }
+  }
+
+  private validateLastname(lastname: string) {
+    if (!lastname || lastname.trim().length === 0) {
       throw new Error('El apellido es obligatorio');
+    }
+    if (lastname.length > Supplier.MAX_LASTNAME_LENGTH) {
+      throw new Error(`El apellido no puede exceder ${Supplier.MAX_LASTNAME_LENGTH} caracteres`);
+    }
+  }
+
+  private validateCompany(company: string) {
+    if (!company || company.trim().length === 0) {
+      throw new Error('La compañía es obligatoria');
+    }
+    if (company.length > Supplier.MAX_COMPANY_LENGTH) {
+      throw new Error(`La compañía no puede exceder ${Supplier.MAX_COMPANY_LENGTH} caracteres`);
+    }
+  }
+
+  private validateAddress(address: string) {
+    if (address.length > Supplier.MAX_ADDRESS_LENGTH) {
+      throw new Error(`La dirección no puede exceder ${Supplier.MAX_ADDRESS_LENGTH} caracteres`);
     }
   }
 
@@ -60,11 +108,11 @@ export class Supplier {
     return this._lastname;
   }
 
-  get company(): CompanyName {
+  get company(): string {
     return this._company;
   }
 
-  get phone(): string {
+  get phone(): Phone {
     return this._phone;
   }
 
@@ -101,21 +149,22 @@ export class Supplier {
   public update(params: {
     name?: string;
     lastname?: string;
-    company?: CompanyName;
-    phone?: string;
+    company?: string;
+    phone?: Phone;
     email?: Email;
     address?: string;
     isActive?: boolean;
   }) {
     if (params.name !== undefined) {
-      if (!params.name.trim()) throw new Error('El nombre es obligatorio');
+      this.validateName(params.name);
       this._name = params.name;
     }
     if (params.lastname !== undefined) {
-      if (!params.lastname.trim()) throw new Error('El apellido es obligatorio');
+      this.validateLastname(params.lastname);
       this._lastname = params.lastname;
     }
     if (params.company !== undefined) {
+      this.validateCompany(params.company);
       this._company = params.company;
     }
     if (params.phone !== undefined) {
@@ -125,6 +174,7 @@ export class Supplier {
       this._email = params.email;
     }
     if (params.address !== undefined) {
+      this.validateAddress(params.address);
       this._address = params.address;
     }
     if (params.isActive !== undefined) {

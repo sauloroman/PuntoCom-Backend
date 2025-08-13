@@ -19,14 +19,13 @@ export class UserController {
     try {
 
       const [ createUserDto, errorMessage ] = CreateUserValidator.validate(req.body) 
-
       if ( errorMessage ) throw new BadRequestError( errorMessage )
 
       const result = await this.createUserUseCase.execute( createUserDto! )
 
       res.status(201).json({ 
         ok: true, 
-        message: 'El usuario ha sido creado exitosamente',
+        message: '🚀 El usuario ha sido creado exitosamente',
         user: result 
       })
 

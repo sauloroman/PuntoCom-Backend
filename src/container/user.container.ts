@@ -1,10 +1,11 @@
 import { UserRoutes } from '../presentation/routes/user.routes';
-import { PrismaUserRepository } from '../infrastructure/repositories/prisma/prisma-user-repository';
-import { PrismaSingleton } from '../infrastructure/database/prisma/prisma-client';
+import { PrismaDatasource } from '../infrastructure/datasource/prisma/prisma-client';
 import { CreateUserUseCase } from '../application/usecases/user/create-user.use-case';
 import { UserController } from '../presentation/controllers/user.controller';
+import { UserRepositoryImpl } from '../infrastructure/repositories/user-repository.impl';
+import { PrismaUserDatasource } from '../infrastructure/datasource/prisma/prisma-user.datasource';
 
-const prisma = PrismaSingleton.getInstance()
+const prisma = PrismaDatasource.getInstance()
 
 export class UserContainer {
 
@@ -12,7 +13,9 @@ export class UserContainer {
 
   constructor() {
 
-    const userRepository = new PrismaUserRepository( prisma );
+    const userRepository = new UserRepositoryImpl( 
+      new PrismaUserDatasource( prisma ) 
+    )
 
     // Casos de uso
     const createUserUseCase = new CreateUserUseCase( userRepository )

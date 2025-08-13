@@ -1,17 +1,17 @@
-import { UserRepository } from '../../../domain/repositories/user-repository';
+import { HashAdapter, DatesAdapter, IDAdapter } from '../../../config/plugins';
+
+import { UserRepository } from '../../../domain/repositories/user.repository';
 import { Email, Password, Role } from '../../../domain/value-objects';
 import { User } from '../../../domain/entities';
 
-import { CreateUserRequestDtoI, CreateUserResponseDtoI } from '../../dtos/user/create-user.dto';
-
-import { BcryptAdapter } from '../../../config/plugins/crypt.plugin';
-import { IDAdapter } from '../../../config/plugins/id.plugin';
 import { HttpError } from '../../../presentation/error/http.error';
 import { BadRequestError, InternalServerError } from '../../../presentation/error';
 
+import { CreateUserRequestDtoI, CreateUserResponseDtoI } from '../../dtos/user/create-user.dto';
+
 export class CreateUserUseCase {
 
-  constructor(private readonly userRepository: UserRepository){}
+  constructor( private readonly userRepository: UserRepository ){}
 
   public async execute( data: CreateUserRequestDtoI ): Promise<CreateUserResponseDtoI> {
     
@@ -20,7 +20,7 @@ export class CreateUserUseCase {
       const existingUser = await this.userRepository.findByEmail(new Email(data.email))
       if ( existingUser ) throw new BadRequestError(`El email ${data.email} ya está registrado`) 
       
-      const hashedPassword = BcryptAdapter.hash(data.password)
+      const hashedPassword = HashAdapter.hash(data.password)
 
       const user = new User({
         id: IDAdapter.generate(),
@@ -31,8 +31,8 @@ export class CreateUserUseCase {
         role: new Role(data.role),
         image: undefined,
         isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: DatesAdapter.now(),
+        updatedAt: DatesAdapter.now()
       })
       
       await this.userRepository.create( user )

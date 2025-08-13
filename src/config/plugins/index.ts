@@ -1,3 +1,4 @@
-export { BcryptAdapter } from './crypt.plugin'
+export { HashAdapter } from './crypt.plugin'
 export { IDAdapter } from './id.plugin'
 export { EnvAdapter } from './env-var.plugin'
+export { DatesAdapter } from './dates.plugin'

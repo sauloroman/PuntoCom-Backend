@@ -1,15 +1,19 @@
 import { User } from '../../../domain/entities';
 import { Email, Password, Role } from '../../../domain/value-objects';
-import { UserRepository } from '../../../domain/repositories/user-repository';
 import { RoleEnum } from '../../../domain/value-objects/Role';
 
 import { InfrastructureError } from '../../errors/infrastructure-error';
 
 import { PrismaClient, User as PrismaUser } from '../../../../generated/prisma';
+import { UserDatasource } from '../../../domain/datasources/user.datasource';
 
-export class PrismaUserRepository implements UserRepository {
+export class PrismaUserDatasource implements UserDatasource {
 
-  constructor(private readonly prisma: PrismaClient ){}
+  private readonly prisma: PrismaClient;
+
+  constructor( prismaClient: PrismaClient ) {
+    this.prisma = prismaClient
+  }
 
   async findById(userId: string): Promise<User | null> {
     try {

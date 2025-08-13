@@ -1,17 +1,17 @@
 import { PrismaClient } from '../../../../generated/prisma';
 
-export class PrismaSingleton {
+export class PrismaDatasource {
   
   private static instance: PrismaClient;
 
   private constructor() {}
 
   public static getInstance(): PrismaClient {
-    if ( !PrismaSingleton.instance ) {
-      PrismaSingleton.instance = new PrismaClient()
+    if ( !PrismaDatasource.instance ) {
+      PrismaDatasource.instance = new PrismaClient()
     }
 
-    return PrismaSingleton.instance
+    return PrismaDatasource.instance
   }
 
 }

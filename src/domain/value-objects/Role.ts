@@ -1,7 +1,7 @@
 export enum RoleEnum {
-  ADMINISTRADOR = "Administrador",
-  SUPERVISOR = "Supervisor",
-  VENDEDOR = "Vendedor"
+  Administrador = "Administrador",
+  Supervisor = "Supervisor",
+  Vendedor = "Vendedor"
 }
 
 export class Role {

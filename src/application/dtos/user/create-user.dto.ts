@@ -5,8 +5,7 @@ export interface CreateUserRequestDto {
   lastname: string,
   email: string,
   password: string,
-  role: RoleEnum,
-  image?: string
+  role: RoleEnum
 }
 
 export interface CreateUserResponseDto {
@@ -15,6 +14,6 @@ export interface CreateUserResponseDto {
   lastname: string,
   email: string,
   role: RoleEnum,
-  image?: string,
+  image: string,
   createdAt: Date,
 }

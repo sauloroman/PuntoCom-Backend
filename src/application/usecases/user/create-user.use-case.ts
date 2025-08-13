@@ -25,7 +25,7 @@ export class CreateUserUseCase {
       email: new Email(data.email),
       password: new Password(hashedPassword),
       role: new Role(data.role),
-      image: data.image,
+      image: undefined,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()

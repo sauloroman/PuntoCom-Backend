@@ -1,6 +1,8 @@
+import { RegularExp } from "../../config/shared";
+
 export class Phone {
 
-  private readonly _phoneRegex: RegExp =  /^[0-9\s\-()+]*$/
+  private readonly _phoneRegex: RegExp =  RegularExp.PHONE_REGEX
   private readonly _phone: string;
 
   private static MAX_PHONE_LENGTH = 12

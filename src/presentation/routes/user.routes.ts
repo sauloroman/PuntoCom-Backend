@@ -18,9 +18,7 @@ export class UserRoutes {
   private initRoutes(): Router {
     const router = Router()
     
-    router.post('/', () => {
-      console.log('Posting')
-    })
+    router.post('/', this.controller.createUser )
 
     return router
   }

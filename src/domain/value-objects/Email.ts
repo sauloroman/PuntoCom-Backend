@@ -1,6 +1,8 @@
+import { RegularExp } from "../../config/shared";
+
 export class Email {
   
-  private readonly _emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  private readonly _emailRegex: RegExp = RegularExp.EMAIL_REGEX;
   private readonly _value: string
 
   constructor(email: string) {

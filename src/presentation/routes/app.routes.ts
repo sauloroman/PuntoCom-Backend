@@ -19,7 +19,7 @@ export class AppRoutes {
     const router = Router()
 
     router.use('/api/user', this.userRoutes.routes) 
-
+    
     return  router
   }
 

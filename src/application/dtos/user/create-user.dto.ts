@@ -1,6 +1,6 @@
 import { RoleEnum } from '../../../domain/value-objects/Role';
 
-export interface CreateUserRequestDto {
+export interface CreateUserRequestDtoI {
   name: string,
   lastname: string,
   email: string,
@@ -8,12 +8,14 @@ export interface CreateUserRequestDto {
   role: RoleEnum
 }
 
-export interface CreateUserResponseDto {
+export interface CreateUserResponseDtoI {
   id: string,
   name: string,
   lastname: string,
   email: string,
   role: RoleEnum,
   image: string,
+  isActive: boolean,
   createdAt: Date,
+  updatedAt: Date,
 }

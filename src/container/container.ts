@@ -1,4 +1,4 @@
-import { AppRoutes } from '../presentation/routes/app-routes';
+import { AppRoutes } from '../presentation/routes/app.routes';
 import { UserContainer } from './user.container';
 
 export class Container {

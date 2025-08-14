@@ -23,7 +23,7 @@ export class UserRepositoryImpl implements UserRepository {
     return await this.userDatasource.findAllInactive()
   }
 
-  async create(user: User): Promise<void> {
+  async create(user: User): Promise<User> {
     return await this.userDatasource.create( user )
   }
 

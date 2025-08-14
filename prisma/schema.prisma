@@ -113,11 +113,23 @@ model User {
   user_is_active  Boolean  @default(true)
   user_createdAt  DateTime @default(now())
   user_updatedAt  DateTime @updatedAt
+  user_is_validated Boolean @default(false)
   role            RoleEnum
 
   Purchases       Purchase[]
   Sales           Sale[]
   InventoryAdjustments Inventory_Adjustment[]
+  VerificationCodes     VerificationCode[]
+}
+
+model VerificationCode {
+  verification_id String   @id @default(uuid())
+  code            String @unique
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+
+  user_id String
+  user    User     @relation(fields: [user_id], references: [user_id])
 }
 
 enum RoleEnum {

@@ -10,5 +10,12 @@ export class EnvAdapter {
   public static POSTGRESDB_NAME: string = env.get('POSTGRESDB_NAME').required().asString()
   public static POSTGRES_URL: string = env.get('POSTGRES_URL').required().asUrlString()
 
+  public static JWT_SEED: string = env.get('JWT_SEED').required().asString()
+
   public static FRONTEND_URL: string = env.get('FRONTEND_URL').required().asString()
+
+  public static MAILER_SERVICE: string = env.get('MAILER_SERVICE').required().asString()
+  public static MAILER_EMAIL: string = env.get('MAILER_EMAIL').required().asEmailString()
+  public static SEND_EMAIL: boolean = env.get('SEND_EMAIL').required().asBool()
+  public static MAILER_SECRET_KEY: string = env.get('MAILER_SECRET_KEY').required().asString()
 }

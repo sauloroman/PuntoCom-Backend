@@ -15,5 +15,10 @@ export class DatesAdapter {
   public static formatLocal(date: Date, pattern = 'yyyy-MM-dd HH:mm:ss'): string {
     return format(this.toLocal(date), pattern, { timeZone: this.timeZone });
   }
+  
+  public static addMinutes(date: Date, minutes: number): Date {
+    const localDate = this.toLocal(date);
+    return new Date(localDate.getTime() + minutes * 60000); // 60000 ms = 1 minuto
+  }
 
 }

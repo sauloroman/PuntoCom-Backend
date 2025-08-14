@@ -3,4 +3,5 @@ dist/
 postgres/
 
 .env
+generated/
 /generated/prisma

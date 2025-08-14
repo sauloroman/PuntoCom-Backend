@@ -6,12 +6,13 @@ import { User } from '../../../domain/entities';
 
 import { ApplicationError } from '../../errors/application.error';
 import { CreateUserRequestDtoI, CreateUserResponseDtoI } from '../../dtos/user/create-user.dto';
+import { EmailService } from '../../services/email.service';
 
 export class CreateUserUseCase {
 
   private readonly MESSAGE_ERROR: string = "CREATE_USER_ERROR"
 
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor( private readonly userRepository: UserRepository ) { }
 
   public async execute(data: CreateUserRequestDtoI): Promise<CreateUserResponseDtoI> {
 
@@ -21,7 +22,6 @@ export class CreateUserUseCase {
     const hashedPassword = HashAdapter.hash(data.password)
 
     const user = new User({
-      id: IDAdapter.generate(),
       name: data.name,
       lastname: data.lastname,
       email: new Email(data.email),
@@ -29,24 +29,26 @@ export class CreateUserUseCase {
       role: new Role(data.role),
       image: undefined,
       isActive: true,
+      isValidated: false,
       createdAt: DatesAdapter.now(),
       updatedAt: DatesAdapter.now()
     })
 
-    await this.userRepository.create(user)
+    const createdUser = await this.userRepository.create(user)
 
+    console.log(user.id)
     return {
-      id: user.id,
+      id: createdUser.id,
       name: user.name,
       lastname: user.lastname,
       email: user.email.value,
       role: user.role.value,
       image: user.image,
       isActive: user.isActive,
+      isValited: user.isValidated,
       createdAt: DatesAdapter.formatLocal(DatesAdapter.toLocal(user.createdAt)),
       updatedAt: DatesAdapter.formatLocal(DatesAdapter.toLocal(user.createdAt))
     }
-
 
   }
 

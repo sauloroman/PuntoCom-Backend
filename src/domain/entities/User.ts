@@ -2,20 +2,21 @@ import { Email, Password, Role } from '../value-objects'
 import { DomainError } from '../errors/domain.error';
 
 interface UserProps {
-  id: string,
+  id?: string,
   name: string,
   lastname: string,
   email: Email,
   password: Password,
   role: Role,
   isActive: boolean,
+  isValidated: boolean,
   image?: string,
   createdAt?: Date,
   updatedAt?: Date
 }
 
 export class User {
-  private readonly _id: string;
+  private readonly _id?: string;
   private _name: string;
   private _lastname: string;
   private _email: Email;
@@ -23,6 +24,7 @@ export class User {
   private _role: Role;
   private _image: string;
   private _isActive: boolean;
+  private _isValidated: boolean;
   private _createdAt: Date;
   private _updatedAt: Date;
 
@@ -33,13 +35,14 @@ export class User {
 
 
   constructor({
-    id,
+    id = '',
     name,
     lastname,
     email,
     password,
     role,
     isActive = true,
+    isValidated = false,
     image = 'Usuario sin imagen',
     createdAt = new Date(),
     updatedAt = new Date()
@@ -52,6 +55,7 @@ export class User {
     this._role = role;
     this._image = image;
     this._isActive = isActive;
+    this._isValidated = isValidated
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
 
@@ -89,7 +93,7 @@ export class User {
   }
 
   get id(): string {
-    return this._id;
+    return this._id ?? '';
   }
 
   get name(): string {
@@ -118,6 +122,10 @@ export class User {
 
   get isActive(): boolean {
     return this._isActive;
+  }
+
+  get isValidated(): boolean {
+    return this._isValidated
   }
 
   get createdAt(): Date {

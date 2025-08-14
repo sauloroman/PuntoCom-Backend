@@ -69,9 +69,10 @@ export class PrismaUserDatasource implements UserDatasource {
     }
   }
 
-  async create(user: User): Promise<void> {
+  async create(user: User): Promise<User> {
     try {
-      await this.prisma.user.create({ data: this.toPrisma(user) });
+      const createdUser = await this.prisma.user.create({ data: this.toPrisma(user) });
+      return this.toDomain( createdUser )
     } catch (error) {
       throw new InfrastructureError(
         '[Prisma]: Error al crear el usuario',
@@ -136,6 +137,7 @@ export class PrismaUserDatasource implements UserDatasource {
       password: new Password(userData.user_password),
       role: new Role(userData.role as RoleEnum),
       isActive: userData.user_is_active,
+      isValidated: userData.user_is_validated,
       createdAt: userData.user_createdAt,
       updatedAt: userData.user_updatedAt
     });
@@ -149,7 +151,8 @@ export class PrismaUserDatasource implements UserDatasource {
       user_password: user.password.value,
       role: user.role.value,
       user_is_active: user.isActive,
-      user_image: user.image
+      user_is_validated: user.isValidated,
+      user_image: user.image,
     };
   }
 }

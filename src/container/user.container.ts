@@ -11,6 +11,7 @@ import { NodeMailerService } from '../infrastructure/services/email/nodemailer.s
 import { UserController } from '../presentation/controllers/user.controller';
 import { EnvAdapter } from '../config/plugins';
 import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
+import { UserService } from '../application/services';
 
 const prisma = PrismaDatasource.getInstance()
 
@@ -20,6 +21,7 @@ export class UserContainer {
 
   constructor() {
 
+    // Repositorios
     const userRepository = new UserRepositoryImpl( 
       new PrismaUserDatasource( prisma ) 
     )
@@ -48,17 +50,21 @@ export class UserContainer {
     const sendVerificationCodeEmailUseCase = new SendVerificationCodeEmailUseCase( emailService )
     const sendDeactivationAccountUserUseCase = new SendDeactivationAccountEmailUseCase( emailService )
 
-    const userController = new UserController({
-      loginUserUseCase: loginUserUseCase,
-      changeStatusUseCase: changeStatusUserUseCase,
-      createUserUseCase: createUserUseCase,
-      createVerificationCodeUseCase: createVerificationCodeUseCase,
-      getUserUseCase: getUserUseCase,
-      getVerificationCodeUseCase: getVerificationCodeUseCase,
-      sendDeactivationAccountEmailUseCase: sendDeactivationAccountUserUseCase,
-      sendVerificationCodeEmailUseCase: sendVerificationCodeEmailUseCase,
-      validateUserUseCase: validateUserUseCase,
-    })
+    // Servicios
+    const userService = new UserService(
+      createUserUseCase,
+      getUserUseCase,
+      changeStatusUserUseCase,
+      validateUserUseCase,
+      loginUserUseCase,
+      createVerificationCodeUseCase,
+      getVerificationCodeUseCase,
+      sendDeactivationAccountUserUseCase,
+      sendVerificationCodeEmailUseCase
+    )
+
+    // Controlador
+    const userController = new UserController(userService)
 
     this.userRoutes = new UserRoutes({ controller: userController })
 

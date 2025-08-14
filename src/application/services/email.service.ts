@@ -6,6 +6,7 @@ export interface IAttachment {
 export interface SendEmailI {
   to: string | string[];
   subject: string;
+  from?: string,
   htmlBody?: string;
   attachments?: IAttachment[];
 }
@@ -17,9 +18,15 @@ export interface SendVerificationCodeI {
   verificationCode: string
 }
 
+export interface SendDeactivationAccountI {
+  meta: SendEmailI,
+  username: string,
+}
+
 export abstract class EmailService {
   
   abstract sendEmail( sendEmail: SendEmailI ): Promise<boolean>
-  abstract sendValidateAccountEmail( data: SendVerificationCodeI ): Promise<boolean>
+  abstract sendValidateAccountEmail( data: SendVerificationCodeI ): Promise<void>
+  abstract sendDeactivationAccountEmail( data: SendDeactivationAccountI ): Promise<void>
 
 }

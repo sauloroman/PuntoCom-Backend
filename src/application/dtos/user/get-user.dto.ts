@@ -10,6 +10,7 @@ export interface GetUserByIdResponseDtoI {
   role: string,
   image: string,
   isActive: boolean,
+  isValidated: boolean
   createdAt: string,
   updatedAt: string
 }

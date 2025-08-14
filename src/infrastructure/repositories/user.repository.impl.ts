@@ -27,16 +27,12 @@ export class UserRepositoryImpl implements UserRepository {
     return await this.userDatasource.create( user )
   }
 
-  async update(user: User): Promise<void> {
+  async update(user: User): Promise<User> {
     return await this.userDatasource.update( user )
   }
 
-  async deactivate(user: User): Promise<void> {
-    return await this.userDatasource.deactivate(user)
-  }
-
-  async activate(user: User): Promise<void> {
-    return await this.userDatasource.activate(user)
+  async changeStatus(userId: string, status: boolean): Promise<User> {
+    return await this.userDatasource.changeStatus(userId, status)
   }
 
 }

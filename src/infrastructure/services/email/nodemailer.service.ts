@@ -1,7 +1,7 @@
+import { EmailService, SendDeactivationAccountI, SendEmailI, SendVerificationCodeI } from '../../../application/services/email.service';
+import { welcomeEmailTemplate, accountDeactivatedEmailTemplate } from './templates';
 import { Transporter } from 'nodemailer';
-import { EmailService, SendEmailI, SendVerificationCodeI } from '../../../application/services/email.service';
 import nodemailer from 'nodemailer';
-import { welcomeEmailTemplate } from './templates/welcome.template';
 
 interface NodemailerServiceOptions {
   mailerService: string,
@@ -27,24 +27,42 @@ export class NodeMailerService implements EmailService {
   }
 
   async sendEmail(sendEmail: SendEmailI): Promise<boolean> {
-    return true
-  }
-
-  async sendValidateAccountEmail({ meta, token, username, verificationCode }: SendVerificationCodeI): Promise<boolean> {
-
-    const { subject, to } = meta
-    const html = welcomeEmailTemplate( username, token, verificationCode )
-
     const sentInformation = await this.transporter.sendMail({
-      from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
-      to,
-      subject,
-      html
+      from: sendEmail.from,
+      to: sendEmail.to,
+      subject: sendEmail.subject,
+      html: sendEmail.htmlBody,
     })
 
     if (!sentInformation) return false
-
     return true
+  }
+
+  async sendDeactivationAccountEmail({ meta, username }: SendDeactivationAccountI ): Promise<void> {
+    const { subject, to } = meta
+    const htmlBody = accountDeactivatedEmailTemplate(username)
+
+    await this.sendEmail({
+      from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
+      to,
+      subject,
+      htmlBody: htmlBody,
+      attachments: [],
+    })
+  }
+
+  async sendValidateAccountEmail({ meta, token, username, verificationCode }: SendVerificationCodeI): Promise<void> {
+    const { subject, to } = meta
+    const htmBody = welcomeEmailTemplate( username, token, verificationCode )
+
+    await this.sendEmail({
+      from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
+      to,
+      subject,
+      htmlBody: htmBody,
+      attachments: [],
+    })
+
   }
 
 }

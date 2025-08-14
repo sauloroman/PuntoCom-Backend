@@ -22,6 +22,7 @@ export class GetUserUseCase {
       email: user.email.value,
       image: user.image,
       isActive: user.isActive,
+      isValidated: user.isValidated,
       role: user.role.value,
       createdAt: DatesAdapter.formatLocal(DatesAdapter.toLocal(user.createdAt)),
       updatedAt: DatesAdapter.formatLocal(DatesAdapter.toLocal(user.updatedAt))

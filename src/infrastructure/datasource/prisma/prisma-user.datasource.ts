@@ -82,12 +82,13 @@ export class PrismaUserDatasource implements UserDatasource {
     }
   }
 
-  async update(user: User): Promise<void> {
+  async update(user: User): Promise<User> {
     try {
-      await this.prisma.user.update({ 
+      const updatedUser = await this.prisma.user.update({ 
         where: { user_id: user.id }, 
         data: this.toPrisma(user)
       });
+      return this.toDomain( updatedUser )
     } catch (error) {
       throw new InfrastructureError(
         '[Prisma]: Error al actualizar el usuario',
@@ -97,31 +98,17 @@ export class PrismaUserDatasource implements UserDatasource {
     }
   }
 
-  async deactivate(user: User): Promise<void> {
+  async changeStatus(userId: string, status: boolean): Promise<User> {
     try {
-      await this.prisma.user.update({
-        where: { user_id: user.id },
-        data: { user_is_active: false }
+      const updatedUser = await this.prisma.user.update({
+        where: { user_id: userId },
+        data: { user_is_active: status }
       });
+      return this.toDomain( updatedUser )
     } catch (error) {
       throw new InfrastructureError(
-        '[Prisma]: Error al desactivar el usuario',
+        '[Prisma]: Error al cambiar el estado del usuario',
         'PRISMA_DEACTIVATE_ERROR',
-        error
-      );
-    }
-  }
-
-  async activate(user: User): Promise<void> {
-    try {
-      await this.prisma.user.update({
-        where: { user_id: user.id },
-        data: { user_is_active: true }
-      });
-    } catch (error) {
-      throw new InfrastructureError(
-        '[Prisma]: Error al activar el usuario',
-        'PRISMA_ACTIVATE_ERROR',
         error
       );
     }

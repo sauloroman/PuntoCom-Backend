@@ -6,7 +6,6 @@ import { User } from '../../../domain/entities';
 
 import { ApplicationError } from '../../errors/application.error';
 import { CreateUserRequestDtoI, CreateUserResponseDtoI } from '../../dtos/user/create-user.dto';
-import { EmailService } from '../../services/email.service';
 
 export class CreateUserUseCase {
 
@@ -36,7 +35,6 @@ export class CreateUserUseCase {
 
     const createdUser = await this.userRepository.create(user)
 
-    console.log(user.id)
     return {
       id: createdUser.id,
       name: user.name,

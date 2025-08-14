@@ -7,7 +7,6 @@ export abstract class UserRepository {
   abstract findAllActive(): Promise<User[]>
   abstract findAllInactive(): Promise<User[]>
   abstract create( user: User ): Promise<User>
-  abstract update( user: User ): Promise<void>
-  abstract deactivate( user: User ): Promise<void>
-  abstract activate( user: User ): Promise<void>
+  abstract update( user: User ): Promise<User>
+  abstract changeStatus( userId: string, status: boolean ): Promise<User>
 }

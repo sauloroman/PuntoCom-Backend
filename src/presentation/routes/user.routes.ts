@@ -21,7 +21,17 @@ export class UserRoutes {
     
     router.post('/', this.controller.createUser )
 
-    router.get('/:id', [ParamsHandlerMiddleware.hasIDItem()], this.controller.getUserById )
+    router.get('/:id', [
+      ParamsHandlerMiddleware.hasIDItem()
+    ], this.controller.getUserById )
+    
+    router.patch('/deactivate/:id', [
+      ParamsHandlerMiddleware.hasIDItem()
+    ], this.controller.deactivateUser )
+
+    router.patch('/activate/:id', [
+      ParamsHandlerMiddleware.hasIDItem()
+    ], this.controller.activateUser )
 
     return router
   }

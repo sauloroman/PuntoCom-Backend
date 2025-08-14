@@ -18,8 +18,19 @@ export class UserRoutes {
 
   private initRoutes(): Router {
     const router = Router()
-    
+
+    // Public routes
+
     router.post('/', this.controller.createUser )
+
+    router.post('/login', this.controller.login )
+
+    router.patch('/validate/:id', [
+      ParamsHandlerMiddleware.hasIDItem()
+    ], this.controller.validateUser )
+
+    // Private routes 
+    // TODO: Implement Auth Middleware
 
     router.get('/:id', [
       ParamsHandlerMiddleware.hasIDItem()
@@ -33,9 +44,7 @@ export class UserRoutes {
       ParamsHandlerMiddleware.hasIDItem()
     ], this.controller.activateUser )
 
-    router.patch('/validate/:id', [
-      ParamsHandlerMiddleware.hasIDItem()
-    ], this.controller.validateUser )
+
 
     return router
   }

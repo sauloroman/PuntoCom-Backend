@@ -1,13 +1,11 @@
-import { JwtAdapter } from '../../config/plugins/jwt.plugin';
-import { CreateUserUseCase, GetUserUseCase, ChangeStatusUserUseCase } from '../../application/usecases/user';
-import { ValidationError } from '../../application/errors/validation.error';
+import { DatesAdapter, JwtAdapter } from '../../config/plugins';
+import { CreateUserUseCase, GetUserUseCase, ChangeStatusUserUseCase, ValidateUserUseCase, LoginUserUseCase } from '../../application/usecases/user';
 import { SendDeactivationAccountEmailUseCase, SendVerificationCodeEmailUseCase } from '../../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../../application/usecases/verification-code';
-import { CreateUserValidator } from '../validators/user/create-user.validator';
+import { ValidationError } from '../../application/errors/validation.error';
+
+import { CreateUserValidator, LoginUserValidator, ValidateUserValidator } from '../validators/user';
 import { Request, Response } from 'express';
-import { ValidateUserValidator } from '../validators/user/validate-user.validator';
-import { DatesAdapter } from '../../config/plugins';
-import { ValidateUserUseCase } from '../../application/usecases/user/validate-user.use-case';
 
 interface UserControllerI {
   createUserUseCase: CreateUserUseCase
@@ -18,20 +16,24 @@ interface UserControllerI {
   getVerificationCodeUseCase: GetVerificationCodeUseCase
   sendDeactivationAccountEmailUseCase: SendDeactivationAccountEmailUseCase
   sendVerificationCodeEmailUseCase: SendVerificationCodeEmailUseCase
+  loginUserUseCase: LoginUserUseCase
 }
 
 export class UserController {
 
+  
   private readonly createUserUseCase: CreateUserUseCase;
   private readonly getUserUseCase: GetUserUseCase;
   private readonly changeStatusUseCase: ChangeStatusUserUseCase;
   private readonly validateUserUseCase: ValidateUserUseCase;
+  private readonly loginUserUseCase: LoginUserUseCase
   private readonly createVerificationCodeUseCase: CreateVerificationCodeUseCase;
   private readonly getVerificationCodeUseCase: GetVerificationCodeUseCase
   private readonly sendDeactivationAccountEmailUseCase: SendDeactivationAccountEmailUseCase;
   private readonly sendVerificationCodeEmailUseCase: SendVerificationCodeEmailUseCase;
 
   constructor({
+    loginUserUseCase,
     changeStatusUseCase,
     createUserUseCase,
     validateUserUseCase,
@@ -41,6 +43,7 @@ export class UserController {
     sendDeactivationAccountEmailUseCase,
     sendVerificationCodeEmailUseCase
    }: UserControllerI) {
+    this.loginUserUseCase = loginUserUseCase
     this.changeStatusUseCase = changeStatusUseCase
     this.createUserUseCase = createUserUseCase
     this.validateUserUseCase = validateUserUseCase
@@ -96,6 +99,26 @@ export class UserController {
       ok: true,
       message: '✅ Usuario validado y activado correctamente',
       user
+    })
+
+  }
+
+  public login = async ( req: Request, res: Response ) => {
+
+    const [ loginValidationDto, errorMessage ] = LoginUserValidator.validate(req.body)
+    if ( errorMessage ) throw new ValidationError(errorMessage, 'LOGIN_USER_VALIDATION_ERROR')
+    
+    const user = await this.loginUserUseCase.execute({
+      email: loginValidationDto!.email,
+      password: loginValidationDto!.password,
+    })
+    const token = await JwtAdapter.generateJWT({ id: user.id })
+
+    res.status(200).json({
+      ok: true,
+      message: `👋 Bienvenido de vuelta ${user.name} ${user.lastname}`,
+      user: user,
+      token: token
     })
 
   }

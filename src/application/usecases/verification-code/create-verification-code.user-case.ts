@@ -1,4 +1,4 @@
-import { CreateVerificationCodeRequest, CreateVerificationCodeResponse } from '../../dtos/verification-code/create-verification-code.dto'
+import { CreateVerificationCodeRequest, VerificationCodeResponseI } from '../../dtos/verification-code.dto'
 import { DatesAdapter, IDAdapter, CodeGeneratorAdapter } from '../../../config/plugins';
 
 import { VerificationCodeRepository } from '../../../domain/repositories/verification-code.repository';
@@ -11,7 +11,7 @@ export class CreateVerificationCodeUseCase {
 
   constructor( private readonly verificationCodeRepository: VerificationCodeRepository ){}
 
-  public async execute( data: CreateVerificationCodeRequest ): Promise<CreateVerificationCodeResponse> {
+  public async execute( data: CreateVerificationCodeRequest ): Promise<VerificationCodeResponseI> {
 
     const { userId } = data
 

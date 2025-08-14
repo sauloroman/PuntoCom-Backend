@@ -1,4 +1,4 @@
-import { CreateUserRequestDtoI } from "../../../application/dtos/user/create-user.dto";
+import { CreateUserRequestDtoI } from "../../../application/dtos/user.dto";
 import { RegularExp } from "../../../config/utils";
 import { RoleEnum } from "../../../domain/value-objects/Role";
 

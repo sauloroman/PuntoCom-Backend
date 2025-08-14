@@ -23,6 +23,8 @@ export class ErrorHandlerMiddleware {
         switch (err.code) {
           case 'USER_NOT_FOUND':
             return res.status(404).json({ ok: false, layer: 'APPLICATION', code: err.code, message: err.message });
+          case 'LOGIN_USER_ERROR':
+            return res.status(401).json({ ok: false, layer: 'APPLICATION', code: err.code, message: err.message });
           case 'CREATE_USER_ERROR':
             return res.status(400).json({ ok: false, layer: 'APPLICATION', code: err.code, message: err.message });
           default:

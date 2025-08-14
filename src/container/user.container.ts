@@ -1,6 +1,6 @@
 import { UserRoutes } from '../presentation/routes/user.routes';
 import { PrismaDatasource } from '../infrastructure/datasource/prisma/prisma-client';
-import { ChangeStatusUserUseCase, CreateUserUseCase, GetUserUseCase } from '../application/usecases/user';
+import { ChangeStatusUserUseCase, CreateUserUseCase, GetUserUseCase, LoginUserUseCase } from '../application/usecases/user';
 import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase } from '../application/usecases/email';
 import { UserRepositoryImpl } from '../infrastructure/repositories/user.repository.impl';
 import { PrismaUserDatasource } from '../infrastructure/datasource/prisma/prisma-user.datasource';
@@ -36,6 +36,7 @@ export class UserContainer {
     })
 
     // Casos de uso
+    const loginUserUseCase = new LoginUserUseCase(userRepository)
     const createUserUseCase = new CreateUserUseCase( userRepository )
     const getUserUseCase = new GetUserUseCase( userRepository )
     const changeStatusUserUseCase = new ChangeStatusUserUseCase( userRepository )
@@ -48,6 +49,7 @@ export class UserContainer {
     const sendDeactivationAccountUserUseCase = new SendDeactivationAccountEmailUseCase( emailService )
 
     const userController = new UserController({
+      loginUserUseCase: loginUserUseCase,
       changeStatusUseCase: changeStatusUserUseCase,
       createUserUseCase: createUserUseCase,
       createVerificationCodeUseCase: createVerificationCodeUseCase,

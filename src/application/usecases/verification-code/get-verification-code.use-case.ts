@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { VerificationCodeRepository } from "../../../domain/repositories/verification-code.repository";
-import { GetVerificationCodeRequestI, GetVerificationCodeResponseI } from "../../dtos/verification-code/get-verification-code.dto";
+import { GetVerificationCodeRequestI, VerificationCodeResponseI } from "../../dtos/verification-code.dto";
 import { ApplicationError } from "../../errors/application.error";
 
 export class GetVerificationCodeUseCase {
@@ -9,7 +9,7 @@ export class GetVerificationCodeUseCase {
 
     constructor( private readonly verificationCodeRepository: VerificationCodeRepository ){}
 
-    public async execute( data: GetVerificationCodeRequestI ): Promise<GetVerificationCodeResponseI> {
+    public async execute( data: GetVerificationCodeRequestI ): Promise<VerificationCodeResponseI> {
 
         const { code } = data
 

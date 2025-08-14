@@ -1,4 +1,4 @@
-import { ValidateUserRequestI } from "../../../application/dtos/user/validate-user.dto";
+import { ValidateUserRequestI } from "../../../application/dtos/user.dto";
 
 export class ValidateUserValidator {
 

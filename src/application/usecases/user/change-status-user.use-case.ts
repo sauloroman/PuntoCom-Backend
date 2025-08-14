@@ -1,6 +1,7 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { UserRepository } from "../../../domain/repositories/user.repository";
-import { ChangeStatusUserRequestI, ChangeStatusUserResponsetI } from "../../dtos/user/change-status-user.dto";
+import { ChangeStatusUserRequestI, UserResponseDtoI } from "../../dtos/user.dto";
+
 import { ApplicationError } from "../../errors/application.error";
 
 export class ChangeStatusUserUseCase {
@@ -8,7 +9,7 @@ export class ChangeStatusUserUseCase {
 
     constructor( private readonly userRepository: UserRepository ){}
 
-    public async execute( data: ChangeStatusUserRequestI, status: boolean ): Promise<ChangeStatusUserResponsetI> {
+    public async execute( data: ChangeStatusUserRequestI, status: boolean ): Promise<UserResponseDtoI> {
         const { userId } = data
 
         const existingUser = await this.userRepository.findById( userId )

@@ -5,7 +5,7 @@ import { Email, Password, Role } from '../../../domain/value-objects';
 import { User } from '../../../domain/entities';
 
 import { ApplicationError } from '../../errors/application.error';
-import { CreateUserRequestDtoI, CreateUserResponseDtoI } from '../../dtos/user/create-user.dto';
+import { CreateUserRequestDtoI, UserResponseDtoI } from '../../dtos/user.dto';
 
 export class CreateUserUseCase {
 
@@ -13,7 +13,7 @@ export class CreateUserUseCase {
 
   constructor( private readonly userRepository: UserRepository ) { }
 
-  public async execute(data: CreateUserRequestDtoI): Promise<CreateUserResponseDtoI> {
+  public async execute(data: CreateUserRequestDtoI): Promise<UserResponseDtoI> {
 
     const existingUser = await this.userRepository.findByEmail(new Email(data.email))
     if (existingUser) throw new ApplicationError(`El email ${data.email} ya está registrado`, this.MESSAGE_ERROR)

@@ -2,7 +2,7 @@ import { DatesAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
 import { UserRepository } from "../../../domain/repositories/user.repository";
 import { Email, Password, Role } from "../../../domain/value-objects";
-import { ValidateUserI, ValidateUserResponseI } from "../../dtos/user/validate-user.dto";
+import { UserResponseDtoI, ValidateUserI } from "../../dtos/user.dto";
 import { ApplicationError } from "../../errors/application.error";
 
 export class ValidateUserUseCase {
@@ -10,7 +10,7 @@ export class ValidateUserUseCase {
 
     constructor(private readonly userRepository: UserRepository) { }
 
-    public async execute( data: ValidateUserI ): Promise<ValidateUserResponseI> {
+    public async execute( data: ValidateUserI ): Promise<UserResponseDtoI> {
         const { userId } = data
 
         const exitingUser = await this.userRepository.findById( userId )

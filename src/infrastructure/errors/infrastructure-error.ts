@@ -1,13 +1,16 @@
 export class InfrastructureError extends Error {
-  public readonly originalError?: unknown;
+  public readonly cause?: unknown;
 
-  constructor(message: string, originalError?: unknown) {
-    super(message);
-    this.name = 'InfrastructureError';
-    this.originalError = originalError;
+  constructor(message: string, code?: string, cause?: unknown) {
+    super(`[INFRASTRUCTURE - ${code ?? 'INFRASTRUCTURE_ERROR'}]: ${message}`);
+    this.name = this.constructor.name;
+    this.code = code;
+    this.cause = cause;
 
-    if (originalError instanceof Error && originalError.stack) {
-      this.stack = originalError.stack;
+    if (cause instanceof Error && cause.stack) {
+      this.stack += '\nCaused by: ' + cause.stack;
     }
   }
+
+  public readonly code?: string;
 }

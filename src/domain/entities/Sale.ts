@@ -1,4 +1,5 @@
 import { Money } from '../value-objects/Money';
+import { DomainError } from '../errors/domain.error';
 
 interface SaleProps {
   id: string;
@@ -16,6 +17,8 @@ export class Sale {
   private _userId: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+
+  private readonly MESSAGE_ERROR: string = "SALE_VALIDATION_ERROR"
 
   constructor({
     id,
@@ -43,19 +46,19 @@ export class Sale {
 
   private validateDate(date: Date) {
     if (!date || !(date instanceof Date)) {
-      throw new Error('La fecha de la venta no es válida');
+      throw new DomainError( this.MESSAGE_ERROR, 'La fecha de la venta no es válida');
     }
   }
 
   private validateTotal(total: Money) {
     if (!total) {
-      throw new Error('El total de la venta es obligatorio');
+      throw new DomainError( this.MESSAGE_ERROR, 'El total de la venta es obligatorio');
     }
   }
 
   private validateUserId(userId: string) {
     if (!userId || userId.trim().length === 0) {
-      throw new Error('El ID del usuario es obligatorio');
+      throw new DomainError( this.MESSAGE_ERROR, 'El ID del usuario es obligatorio');
     }
   }
 

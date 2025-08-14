@@ -1,4 +1,5 @@
 import { Money } from '../value-objects/Money';
+import { DomainError } from '../errors/domain.error';
 
 interface PurchaseProps {
   id: string;
@@ -18,6 +19,8 @@ export class Purchase {
   private _userId: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+
+  private readonly MESSAGE_ERROR: string = "PURCHASE_VALIDATION_ERROR"
 
   constructor({
     id,
@@ -47,19 +50,19 @@ export class Purchase {
 
   private validateTotal(total: Money) {
     if (!total) {
-      throw new Error('El total de la compra es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El total de la compra es obligatorio');
     }
   }
 
   private validateSupplierId(supplierId: string) {
     if (!supplierId || supplierId.trim().length === 0) {
-      throw new Error('El ID del proveedor es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID del proveedor es obligatorio');
     }
   }
 
   private validateUserId(userId: string) {
     if (!userId || userId.trim().length === 0) {
-      throw new Error('El ID del usuario es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID del usuario es obligatorio');
     }
   }
 

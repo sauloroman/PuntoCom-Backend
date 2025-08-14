@@ -1,4 +1,5 @@
 import { ProductCode, Money, Stock } from '../value-objects';
+import { DomainError } from '../errors/domain.error';
 
 interface ProductProps {
   id: string;
@@ -31,9 +32,11 @@ export class Product {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  private static readonly MAX_NAME_LENGTH = 100;
-  private static readonly MAX_DESCRIPTION_LENGTH = 220;
-  private static readonly MAX_IMAGE_LENGTH = 200;
+  private static readonly MAX_NAME_LENGTH: number = 100;
+  private static readonly MAX_DESCRIPTION_LENGTH: number = 220;
+  private static readonly MAX_IMAGE_LENGTH: number = 200;
+  private readonly MESSAGE_ERROR: string = "PRODUCT_VALIDATION_ERROR"
+
 
   constructor({
     id,
@@ -78,34 +81,34 @@ export class Product {
 
   private validateName(name: string) {
     if (!name || name.trim().length === 0) {
-      throw new Error('El nombre del producto es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El nombre del producto es obligatorio');
     }
     if (name.length > Product.MAX_NAME_LENGTH) {
-      throw new Error(`El nombre no puede exceder ${Product.MAX_NAME_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `El nombre no puede exceder ${Product.MAX_NAME_LENGTH} caracteres`);
     }
   }
 
   private validateDescription( description: string ) {
     if (description.trim().length > Product.MAX_DESCRIPTION_LENGTH) {
-      throw new Error(`La descripción no puede exceder ${Product.MAX_DESCRIPTION_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `La descripción no puede exceder ${Product.MAX_DESCRIPTION_LENGTH} caracteres`);
     }
   }
 
   private validateImage( image: string ) {
     if (image.trim().length > Product.MAX_IMAGE_LENGTH) {
-      throw new Error(`La URL de la imagen no puede exceder ${Product.MAX_IMAGE_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `La URL de la imagen no puede exceder ${Product.MAX_IMAGE_LENGTH} caracteres`);
     }
   }
 
   private validateCategoryId( categoryId: string ) {
     if ( !categoryId || categoryId.trim().length === 0 ) {
-      throw new Error('El ID de categoría es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID de categoría es obligatorio');
     }
   }
 
   private validateSupplierId( supplierId: string ) {
     if (!supplierId || supplierId.trim().length === 0 ) {
-      throw new Error('El ID de proveedor es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID de proveedor es obligatorio');
     }
   }
 

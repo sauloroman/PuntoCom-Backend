@@ -1,6 +1,6 @@
 import { UserRoutes } from '../presentation/routes/user.routes';
 import { PrismaDatasource } from '../infrastructure/datasource/prisma/prisma-client';
-import { CreateUserUseCase } from '../application/usecases/user/create-user.use-case';
+import { CreateUserUseCase, GetUserUseCase } from '../application/usecases/user';
 import { UserController } from '../presentation/controllers/user.controller';
 import { UserRepositoryImpl } from '../infrastructure/repositories/user-repository.impl';
 import { PrismaUserDatasource } from '../infrastructure/datasource/prisma/prisma-user.datasource';
@@ -19,10 +19,12 @@ export class UserContainer {
 
     // Casos de uso
     const createUserUseCase = new CreateUserUseCase( userRepository )
+    const getUserUseCase = new GetUserUseCase( userRepository )
 
-    const userController = new UserController({
+    const userController = new UserController(
       createUserUseCase,
-    })
+      getUserUseCase
+    )
 
     this.userRoutes = new UserRoutes({ controller: userController })
 

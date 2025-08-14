@@ -1,4 +1,5 @@
 import { Money, Quantity, Discount } from '../value-objects';
+import { DomainError } from '../errors/domain.error';
 
 interface SaleProductDetailProps {
   id: string;
@@ -20,6 +21,8 @@ export class SaleProductDetail {
   private _saleId: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+
+  private readonly MESSAGE_ERROR: string = "SALE_PRODUCT_DETAIL_VALIDATION_ERROR"
 
   constructor({
     id,
@@ -53,31 +56,31 @@ export class SaleProductDetail {
 
   private validateQuantity(quantity: Quantity) {
     if (!quantity) {
-      throw new Error('La cantidad de venta es obligatoria');
+      throw new DomainError(this.MESSAGE_ERROR, 'La cantidad de venta es obligatoria');
     }
   }
 
   private validateUnitPrice(price: Money) {
     if (!price) {
-      throw new Error('El precio unitario es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El precio unitario es obligatorio');
     }
   }
 
   private validateDiscount(discount?: Discount) {
     if (discount !== undefined && !(discount instanceof Discount)) {
-      throw new Error('Descuento inválido');
+      throw new DomainError(this.MESSAGE_ERROR, 'Descuento inválido');
     }
   }
 
   private validateProductId(productId: string) {
     if (!productId || productId.trim().length === 0) {
-      throw new Error('El ID del producto es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID del producto es obligatorio');
     }
   }
 
   private validateSaleId(saleId: string) {
     if (!saleId || saleId.trim().length === 0) {
-      throw new Error('El ID de la venta es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID de la venta es obligatorio');
     }
   }
 

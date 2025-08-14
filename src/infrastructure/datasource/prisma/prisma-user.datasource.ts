@@ -11,67 +11,103 @@ export class PrismaUserDatasource implements UserDatasource {
 
   private readonly prisma: PrismaClient;
 
-  constructor( prismaClient: PrismaClient ) {
-    this.prisma = prismaClient
+  constructor(prismaClient: PrismaClient) {
+    this.prisma = prismaClient;
   }
 
   async findById(userId: string): Promise<User | null> {
     try {
-      const userData = await this.prisma.user.findUnique({ where: { user_id: userId }})
-      if ( !userData ) return null
-      return this.toDomain(userData)
-    } catch( error ) {
-      throw new InfrastructureError('[Prisma]: Error al obtener el usuario por id', error);    
+      const userData = await this.prisma.user.findUnique({ where: { user_id: userId }});
+      if (!userData) return null;
+      return this.toDomain(userData);
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al obtener el usuario por id',
+        'PRISMA_FIND_BY_ID_ERROR',
+        error
+      );    
     }
   }
 
   async findByEmail(userEmail: Email): Promise<User | null> {
     try {
-      const userData = await this.prisma.user.findUnique({ where: {user_email: userEmail.value}})
-      if ( !userData ) return null
-      return this.toDomain(userData)
-    } catch( error ) {
-      throw new InfrastructureError('[Prisma]: Error al obtener el usuario por email', error);    
+      const userData = await this.prisma.user.findUnique({ where: { user_email: userEmail.value }});
+      if (!userData) return null;
+      return this.toDomain(userData);
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al obtener el usuario por email',
+        'PRISMA_FIND_BY_EMAIL_ERROR',
+        error
+      );    
     }
   }
 
   async findAllActive(): Promise<User[]> {
-    const userData = await this.prisma.user.findMany({ where: { user_is_active: true }})
-    return userData.map( user => this.toDomain(user))
+    try {
+      const userData = await this.prisma.user.findMany({ where: { user_is_active: true }});
+      return userData.map(user => this.toDomain(user));
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al obtener usuarios activos',
+        'PRISMA_FIND_ALL_ACTIVE_ERROR',
+        error
+      );
+    }
   }
 
   async findAllInactive(): Promise<User[]> {
-    const userData = await this.prisma.user.findMany({ where: { user_is_active: false }})
-    return userData.map(user => this.toDomain(user))
+    try {
+      const userData = await this.prisma.user.findMany({ where: { user_is_active: false }});
+      return userData.map(user => this.toDomain(user));
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al obtener usuarios inactivos',
+        'PRISMA_FIND_ALL_INACTIVE_ERROR',
+        error
+      );
+    }
   }
 
   async create(user: User): Promise<void> {
     try {
-      await this.prisma.user.create({ data: this.toPrisma(user) })
-    } catch( error ) {
-      throw new InfrastructureError('[Prisma]: Error al crear el usuario', error);    
+      await this.prisma.user.create({ data: this.toPrisma(user) });
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al crear el usuario',
+        'PRISMA_CREATE_ERROR',
+        error
+      );
     }
   }
-  
+
   async update(user: User): Promise<void> {
     try {
       await this.prisma.user.update({ 
         where: { user_id: user.id }, 
-        data: this.toPrisma(user) 
-      })
-    } catch ( error ) {
-      throw new InfrastructureError('[Prisma]: Error al actualizar el usuario', error);    
+        data: this.toPrisma(user)
+      });
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al actualizar el usuario',
+        'PRISMA_UPDATE_ERROR',
+        error
+      );
     }
   }
-  
+
   async deactivate(user: User): Promise<void> {
     try {
       await this.prisma.user.update({
         where: { user_id: user.id },
         data: { user_is_active: false }
-      })
-    } catch ( error ) {
-      throw new InfrastructureError('[Prisma]: Error al desactivar el usuario', error);    
+      });
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al desactivar el usuario',
+        'PRISMA_DEACTIVATE_ERROR',
+        error
+      );
     }
   }
 
@@ -80,13 +116,17 @@ export class PrismaUserDatasource implements UserDatasource {
       await this.prisma.user.update({
         where: { user_id: user.id },
         data: { user_is_active: true }
-      })
-    } catch ( error ) {
-      throw new InfrastructureError('[Prisma]: Error al activar el usuario', error);    
+      });
+    } catch (error) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al activar el usuario',
+        'PRISMA_ACTIVATE_ERROR',
+        error
+      );
     }
   }
 
-  private toDomain( userData: PrismaUser ): User {
+  private toDomain(userData: PrismaUser): User {
     return new User({
       id: userData.user_id,
       name: userData.user_name,
@@ -94,14 +134,14 @@ export class PrismaUserDatasource implements UserDatasource {
       image: userData.user_image,
       email: new Email(userData.user_email),
       password: new Password(userData.user_password),
-      role: new Role( userData.role as RoleEnum ),
+      role: new Role(userData.role as RoleEnum),
       isActive: userData.user_is_active,
       createdAt: userData.user_createdAt,
       updatedAt: userData.user_updatedAt
-    })
+    });
   }
 
-  private toPrisma( user: User ): Omit<PrismaUser, 'user_id' | 'user_createdAt' | 'user_updatedAt'> {
+  private toPrisma(user: User): Omit<PrismaUser, 'user_id' | 'user_createdAt' | 'user_updatedAt'> {
     return {
       user_name: user.name,
       user_lastname: user.lastname,
@@ -110,7 +150,6 @@ export class PrismaUserDatasource implements UserDatasource {
       role: user.role.value,
       user_is_active: user.isActive,
       user_image: user.image
-    }
+    };
   }
-
 }

@@ -1,3 +1,4 @@
+import { DomainError } from '../errors/domain.error';
 import { Quantity, AdjustmentType } from '../value-objects';
 
 interface InventoryAdjustmentProps {
@@ -23,7 +24,8 @@ export class InventoryAdjustment {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  private static readonly MAX_REASON_LENGTH = 255;
+  private static readonly MAX_REASON_LENGTH: number = 255;
+  private readonly MESSAGE_ERROR: string = "INVENTORY_ADJUSTMENT_VALIDATION_ERROR"
 
   constructor({
     id,
@@ -59,34 +61,34 @@ export class InventoryAdjustment {
 
   private validateProductId(productId: string) {
     if (!productId || productId.trim().length === 0) {
-      throw new Error('El ID del producto es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID del producto es obligatorio');
     }
   }
 
   private validateAdjustmentType(adjustmentType: AdjustmentType) {
     if (!adjustmentType) {
-      throw new Error('El tipo de ajuste es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El tipo de ajuste es obligatorio');
     }
   }
 
   private validateAdjustmentQuantity(quantity: Quantity) {
     if (!quantity) {
-      throw new Error('La cantidad de ajuste es obligatoria');
+      throw new DomainError(this.MESSAGE_ERROR, 'La cantidad de ajuste es obligatoria');
     }
   }
 
   private validateAdjustmentReason(reason: string) {
     if (!reason || reason.trim().length === 0) {
-      throw new Error('La razón del ajuste es obligatoria');
+      throw new DomainError(this.MESSAGE_ERROR, 'La razón del ajuste es obligatoria');
     }
     if (reason.length > InventoryAdjustment.MAX_REASON_LENGTH) {
-      throw new Error(`La razón del ajuste no puede exceder ${InventoryAdjustment.MAX_REASON_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `La razón del ajuste no puede exceder ${InventoryAdjustment.MAX_REASON_LENGTH} caracteres`);
     }
   }
 
   private validateUserId(userId: string) {
     if (!userId || userId.trim().length === 0) {
-      throw new Error('El ID del usuario es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID del usuario es obligatorio');
     }
   }
 

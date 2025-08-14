@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
+import { ParamsHandlerMiddleware } from '../middlewares/params-handler.middleware';
 
 interface UserRoutesOptions {
   controller: UserController
@@ -19,6 +20,8 @@ export class UserRoutes {
     const router = Router()
     
     router.post('/', this.controller.createUser )
+
+    router.get('/:id', [ParamsHandlerMiddleware.hasIDItem()], this.controller.getUserById )
 
     return router
   }

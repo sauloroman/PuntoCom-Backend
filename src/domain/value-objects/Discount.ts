@@ -1,9 +1,12 @@
+import { DomainError } from "../errors/domain.error";
+
 export class Discount {
   private readonly _amount: number;
+  private readonly MESSAGE_ERROR: string = "DISCOUNT_VALIDATION_ERROR"
 
   constructor(amount: number) {
     if (amount < 0) {
-      throw new Error('El descuento no puede ser negativo');
+      throw new DomainError(this.MESSAGE_ERROR, 'El descuento no puede ser negativo');
     }
     this._amount = amount;
   }

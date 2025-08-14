@@ -1,4 +1,5 @@
 import { Email, Phone } from '../value-objects';
+import { DomainError } from '../errors/domain.error';
 
 interface SupplierProps {
   id: string;
@@ -25,10 +26,12 @@ export class Supplier {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  private static MAX_NAME_LENGTH = 100;
-  private static MAX_LASTNAME_LENGTH = 100;
-  private static MAX_COMPANY_LENGTH = 100;
-  private static MAX_ADDRESS_LENGTH = 200;
+  private static MAX_NAME_LENGTH: number = 100;
+  private static MAX_LASTNAME_LENGTH: number = 100;
+  private static MAX_COMPANY_LENGTH: number = 100;
+  private static MAX_ADDRESS_LENGTH: number = 200;
+  private readonly MESSAGE_ERROR: string = "SUPPLIER_VALIDATION_ERROR"
+
 
   constructor({
     id,
@@ -65,34 +68,34 @@ export class Supplier {
 
   private validateName(name: string) {
     if (!name || name.trim().length === 0) {
-      throw new Error('El nombre es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El nombre es obligatorio');
     }
     if (name.length > Supplier.MAX_NAME_LENGTH) {
-      throw new Error(`El nombre no puede exceder ${Supplier.MAX_NAME_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `El nombre no puede exceder ${Supplier.MAX_NAME_LENGTH} caracteres`);
     }
   }
 
   private validateLastname(lastname: string) {
     if (!lastname || lastname.trim().length === 0) {
-      throw new Error('El apellido es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El apellido es obligatorio');
     }
     if (lastname.length > Supplier.MAX_LASTNAME_LENGTH) {
-      throw new Error(`El apellido no puede exceder ${Supplier.MAX_LASTNAME_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `El apellido no puede exceder ${Supplier.MAX_LASTNAME_LENGTH} caracteres`);
     }
   }
 
   private validateCompany(company: string) {
     if (!company || company.trim().length === 0) {
-      throw new Error('La compañía es obligatoria');
+      throw new DomainError(this.MESSAGE_ERROR, 'La compañía es obligatoria');
     }
     if (company.length > Supplier.MAX_COMPANY_LENGTH) {
-      throw new Error(`La compañía no puede exceder ${Supplier.MAX_COMPANY_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `La compañía no puede exceder ${Supplier.MAX_COMPANY_LENGTH} caracteres`);
     }
   }
 
   private validateAddress(address: string) {
     if (address.length > Supplier.MAX_ADDRESS_LENGTH) {
-      throw new Error(`La dirección no puede exceder ${Supplier.MAX_ADDRESS_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `La dirección no puede exceder ${Supplier.MAX_ADDRESS_LENGTH} caracteres`);
     }
   }
 

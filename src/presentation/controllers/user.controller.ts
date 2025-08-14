@@ -1,37 +1,37 @@
-import { NextFunction, Request, Response } from 'express';
-import { CreateUserUseCase } from '../../application/usecases/user/create-user.use-case';
+import { Request, Response } from 'express';
 import { CreateUserValidator } from '../validators/user/create-user.validator';
-import { BadRequestError } from '../error';
-
-interface UserControllerOptions {
-  createUserUseCase: CreateUserUseCase
-}
+import { CreateUserUseCase, GetUserUseCase } from '../../application/usecases/user';
+import { ValidationError } from '../../application/errors/validation.error';
 
 export class UserController {
 
-  private createUserUseCase: CreateUserUseCase
-
-  constructor({ createUserUseCase }: UserControllerOptions) {
-    this.createUserUseCase = createUserUseCase 
-  }
+  constructor(
+    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly getUserUseCase: GetUserUseCase
+  ) {}
 
   public createUser = async ( req: Request, res: Response ) => {
-    try {
+    const [ createUserDto, errorMessage ] = CreateUserValidator.validate(req.body) 
+    if ( errorMessage ) throw new ValidationError(errorMessage, 'CREATE_USER_VALIDATION_ERROR');
 
-      const [ createUserDto, errorMessage ] = CreateUserValidator.validate(req.body) 
-      if ( errorMessage ) throw new BadRequestError( errorMessage )
+    const createdUser = await this.createUserUseCase.execute( createUserDto! )
 
-      const result = await this.createUserUseCase.execute( createUserDto! )
+    res.status(201).json({ 
+      ok: true, 
+      message: '🚀 El usuario ha sido creado exitosamente',
+      user: createdUser 
+    })
+  }
 
-      res.status(201).json({ 
-        ok: true, 
-        message: '🚀 El usuario ha sido creado exitosamente',
-        user: result 
-      })
+  public getUserById = async( req: Request, res: Response ) => {
+    const { id } = req.params
 
-    } catch(error) {
-      res.status(400).json({ ok: false, message: (error as Error).message });
-    }
+    const user  = await this.getUserUseCase.execute({id})
+
+    res.status(200).json({
+      ok: true,
+      user
+    })
   }
   
 

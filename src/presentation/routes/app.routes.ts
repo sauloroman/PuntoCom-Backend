@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { UserRoutes } from './user.routes';
+import { ErrorHandlerMiddleware } from '../middlewares/error-handler.middleware';
 
 interface AppRoutesOptions {
   userRoutes: UserRoutes
@@ -19,6 +20,8 @@ export class AppRoutes {
     const router = Router()
 
     router.use('/api/user', this.userRoutes.routes) 
+
+    router.use( ErrorHandlerMiddleware.getHandler() )
     
     return  router
   }

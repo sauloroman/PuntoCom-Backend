@@ -1,3 +1,5 @@
+import { DomainError } from '../errors/domain.error';
+
 interface CategoryProps {
   id: string;
   name: string;
@@ -17,9 +19,10 @@ export class Category {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  private static MAX_NAME_LENGTH = 100;
-  private static MAX_DESCRIPTION_LENGTH = 220;
-  private static MAX_ICON_LENGTH = 100;
+  private static MAX_NAME_LENGTH: number = 100;
+  private static MAX_DESCRIPTION_LENGTH: number = 220;
+  private static MAX_ICON_LENGTH: number = 100;
+  private readonly MESSAGE_ERROR: string = "CATEGORY_VALIDATION_ERROR"
 
   constructor({
     id,
@@ -49,22 +52,22 @@ export class Category {
 
   private validateName(name: string) {
     if (!name || name.trim().length === 0) {
-      throw new Error('El nombre de la categoría es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El nombre de la categoría es obligatorio');
     }
     if (name.length > Category.MAX_NAME_LENGTH) {
-      throw new Error(`El nombre de la categoría no puede exceder ${Category.MAX_NAME_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `El nombre de la categoría no puede exceder ${Category.MAX_NAME_LENGTH} caracteres`);
     }
   }
 
   private validateDescription(description: string) {
     if (description.length > Category.MAX_DESCRIPTION_LENGTH) {
-      throw new Error(`La descripción no puede exceder ${Category.MAX_DESCRIPTION_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `La descripción no puede exceder ${Category.MAX_DESCRIPTION_LENGTH} caracteres`);
     }
   }
 
   private validateIcon(icon: string) {
     if (icon.length > Category.MAX_ICON_LENGTH) {
-      throw new Error(`El icono no puede exceder ${Category.MAX_ICON_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `El icono no puede exceder ${Category.MAX_ICON_LENGTH} caracteres`);
     }
   }
 

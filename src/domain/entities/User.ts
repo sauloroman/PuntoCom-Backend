@@ -1,4 +1,5 @@
 import { Email, Password, Role } from '../value-objects'
+import { DomainError } from '../errors/domain.error';
 
 interface UserProps {
   id: string,
@@ -25,9 +26,11 @@ export class User {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  private static MAX_NAME_LENGTH = 60;
-  private static MAX_LASTNAME_LENGTH = 60;
-  private static MAX_IMAGE_LENGTH = 200;
+  private static MAX_NAME_LENGTH: number = 60;
+  private static MAX_LASTNAME_LENGTH: number = 60;
+  private static MAX_IMAGE_LENGTH: number = 200;
+  private readonly MESSAGE_ERROR: string = "USER_VALIDATION_ERROR"
+
 
   constructor({
     id,
@@ -63,25 +66,25 @@ export class User {
 
   private validateName(name: string) {
     if (!name || name.trim().length === 0) {
-      throw new Error('El nombre es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El nombre es obligatorio');
     }
     if (name.length > User.MAX_NAME_LENGTH) {
-      throw new Error(`El nombre no puede exceder ${User.MAX_NAME_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `El nombre no puede exceder ${User.MAX_NAME_LENGTH} caracteres`);
     }
   }
 
   private validateLastname(lastname: string) {
     if (!lastname || lastname.trim().length === 0) {
-      throw new Error('El apellido es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El apellido es obligatorio');
     }
     if (lastname.length > User.MAX_LASTNAME_LENGTH) {
-      throw new Error(`El apellido no puede exceder ${User.MAX_LASTNAME_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `El apellido no puede exceder ${User.MAX_LASTNAME_LENGTH} caracteres`);
     }
   }
 
   private validateImage(image: string) {
     if (image.length > User.MAX_IMAGE_LENGTH) {
-      throw new Error(`La imagen no puede exceder ${User.MAX_IMAGE_LENGTH} caracteres`);
+      throw new DomainError(this.MESSAGE_ERROR, `La imagen no puede exceder ${User.MAX_IMAGE_LENGTH} caracteres`);
     }
   }
 

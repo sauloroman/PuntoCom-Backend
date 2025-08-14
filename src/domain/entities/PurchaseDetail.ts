@@ -1,4 +1,5 @@
 import { Money, Quantity } from '../value-objects';
+import { DomainError } from '../errors/domain.error';
 
 interface PurchaseDetailProps {
   id: string;
@@ -18,6 +19,8 @@ export class PurchaseDetail {
   private _purchaseId: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+
+  private readonly MESSAGE_ERROR: string = "PURCHASE_DETAIL_VALIDATION_ERROR"
 
   constructor({
     id,
@@ -48,25 +51,25 @@ export class PurchaseDetail {
 
   private validateQuantity(quantity: Quantity) {
     if (!quantity) {
-      throw new Error('La cantidad de compra es obligatoria');
+      throw new DomainError(this.MESSAGE_ERROR, 'La cantidad de compra es obligatoria');
     }
   }
 
   private validateUnitPrice(price: Money) {
     if (!price) {
-      throw new Error('El precio unitario es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El precio unitario es obligatorio');
     }
   }
 
   private validateProductId(productId: string) {
     if (!productId || productId.trim().length === 0) {
-      throw new Error('El ID del producto es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID del producto es obligatorio');
     }
   }
 
   private validatePurchaseId(purchaseId: string) {
     if (!purchaseId || purchaseId.trim().length === 0) {
-      throw new Error('El ID de la compra es obligatorio');
+      throw new DomainError(this.MESSAGE_ERROR, 'El ID de la compra es obligatorio');
     }
   }
 

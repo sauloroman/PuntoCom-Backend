@@ -12,4 +12,8 @@ export class DatesAdapter {
     return toZonedTime(date, this.timeZone);
   }
 
+  public static formatLocal(date: Date, pattern = 'yyyy-MM-dd HH:mm:ss'): string {
+    return format(this.toLocal(date), pattern, { timeZone: this.timeZone });
+  }
+
 }

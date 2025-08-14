@@ -1,3 +1,5 @@
+import { DomainError } from '../errors/domain.error';
+
 export enum AdjustmentEnum {
   ENTRADA = 'entrada',
   SALIDA = 'salida'
@@ -5,10 +7,11 @@ export enum AdjustmentEnum {
 
 export class AdjustmentType {
   private readonly _value: AdjustmentEnum;
+  private readonly MESSAGE_ERROR: string = "ADJUSTMENTTYPE_VALIDATION_ERROR"
 
   constructor(value: AdjustmentEnum) {
     if (!Object.values(AdjustmentEnum).includes(value)) {
-      throw new Error(`Tipo de ajuste inválido`);
+      throw new DomainError(this.MESSAGE_ERROR, `Tipo de ajuste inválido`);
     }
     this._value = value;
   }

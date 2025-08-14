@@ -1,5 +1,5 @@
 import { CreateUserRequestDtoI } from "../../../application/dtos/user/create-user.dto";
-import { RegularExp } from "../../../config/shared";
+import { RegularExp } from "../../../config/utils";
 import { RoleEnum } from "../../../domain/value-objects/Role";
 
 export class CreateUserValidator {
@@ -35,7 +35,9 @@ export class CreateUserValidator {
             return [undefined, 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un caracter especial'];
         }
 
-        if (!Object.values(RoleEnum).includes(input.role)) {
+        if (!input.role || input.role.trim().length === 0 ) {
+            return [undefined, 'El rol es obligatorio']
+        } else if (!Object.values(RoleEnum).includes(input.role)) {
             return [undefined, 'El rol proporcionado no es válido'];
         }
 

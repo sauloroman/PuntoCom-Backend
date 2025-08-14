@@ -1,11 +1,14 @@
+import { DomainError } from "../errors/domain.error";
+
 export class Money {
 
   private readonly _amount: number;
   private static QUANTITY_DECIMALS: number = 2;
+  private readonly MESSAGE_ERROR: string = "MONEY_VALIDATION_ERROR"
 
   constructor( amount: number ) {
     if ( isNaN(amount) || amount <= 0 ) {
-      throw new Error('El precio debe ser un número positivo')
+      throw new DomainError( this.MESSAGE_ERROR, 'El precio debe ser un número positivo')
     }
     this._amount = parseFloat(amount.toFixed(Money.QUANTITY_DECIMALS))
   }

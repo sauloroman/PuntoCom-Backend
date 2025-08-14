@@ -1,10 +1,13 @@
+import { DomainError } from '../errors/domain.error';
+
 export class Password {
 
   private readonly _hashedValue: string;
+  private readonly MESSAGE_ERROR: string = "PASSWORD_VALIDATION_ERROR"
 
   constructor(hashedValue: string) {
     if (!hashedValue ||  hashedValue.length === 0) {
-      throw new Error('Hash de contraseña inválido.')
+      throw new DomainError(this.MESSAGE_ERROR, 'Hash de contraseña inválido.')
     }
     this._hashedValue = hashedValue
   }

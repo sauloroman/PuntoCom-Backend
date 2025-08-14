@@ -2,7 +2,6 @@ import { User } from '../entities';
 import { Email } from '../value-objects/Email';
 
 export abstract class UserDatasource {
-
   abstract findById( userId: string ): Promise<User | null>
   abstract findByEmail( userEmail: Email ): Promise<User | null>
   abstract findAllActive(): Promise<User[]>
@@ -10,5 +9,4 @@ export abstract class UserDatasource {
   abstract create( user: User ): Promise<User>
   abstract update( user: User ): Promise<User>
   abstract changeStatus( userId: string, status: boolean ): Promise<User>
-
 }

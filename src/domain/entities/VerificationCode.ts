@@ -38,9 +38,6 @@ export class VerificationCode {
     if (!this._userId || this._userId.trim().length === 0) {
       throw new DomainError(this.MESSAGE_ERROR, 'El ID de usuario es obligatorio');
     }
-    if (this._expiresAt <= new Date()) {
-      throw new DomainError(this.MESSAGE_ERROR, 'La fecha de expiración debe ser futura');
-    }
   }
 
   get id(): string {

@@ -17,10 +17,7 @@ export class CreateVerificationCodeUseCase {
 
     await this.verificationCodeRepository.deleteAllCodesByUserId(userId)
     
-    let verificationCodeValue = ''
-    do {
-      verificationCodeValue = CodeGeneratorAdapter.generateNumericCode(this.CODE_LENGTH)
-    } while( await this.verificationCodeRepository.findByCode(verificationCodeValue) )
+    let verificationCodeValue = CodeGeneratorAdapter.generateNumericCode(this.CODE_LENGTH)
 
     const createdAt = DatesAdapter.now()
     const expiresAt = DatesAdapter.addMinutes( createdAt, 10 )

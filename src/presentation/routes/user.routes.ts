@@ -33,6 +33,10 @@ export class UserRoutes {
       ParamsHandlerMiddleware.hasIDItem()
     ], this.controller.activateUser )
 
+    router.patch('/validate/:id', [
+      ParamsHandlerMiddleware.hasIDItem()
+    ], this.controller.validateUser )
+
     return router
   }
 

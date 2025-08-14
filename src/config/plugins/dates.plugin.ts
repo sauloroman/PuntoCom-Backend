@@ -21,4 +21,10 @@ export class DatesAdapter {
     return new Date(localDate.getTime() + minutes * 60000); // 60000 ms = 1 minuto
   }
 
+  public static isExpired(date: Date, minutes: number): boolean {
+    const now = this.now();
+    const diffMinutes = (now.getTime() - this.toLocal(date).getTime()) / 60000;
+    return diffMinutes > minutes;
+  }
+
 }

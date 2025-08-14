@@ -43,7 +43,7 @@ export class CreateUserUseCase {
       role: user.role.value,
       image: user.image,
       isActive: user.isActive,
-      isValited: user.isValidated,
+      isValidated: user.isValidated,
       createdAt: DatesAdapter.formatLocal(DatesAdapter.toLocal(user.createdAt)),
       updatedAt: DatesAdapter.formatLocal(DatesAdapter.toLocal(user.createdAt))
     }

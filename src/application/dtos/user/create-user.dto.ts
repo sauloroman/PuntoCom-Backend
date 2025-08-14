@@ -16,7 +16,7 @@ export interface CreateUserResponseDtoI {
   role: RoleEnum,
   image: string,
   isActive: boolean,
-  isValited: boolean
+  isValidated: boolean
   createdAt: string,
   updatedAt: string,
 }

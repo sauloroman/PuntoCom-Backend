@@ -1,5 +1,7 @@
 export { CreateUserUseCase } from './create-user.use-case'
-export { GetUserUseCase } from './get-user.use-case'
+export { GetUserByIdUseCase } from './get-user.use-case'
+export { GetUserByEmailUseCase } from './get-user-email.use-case'
 export { ChangeStatusUserUseCase } from './change-status-user.use-case'
 export { ValidateUserUseCase } from './validate-user.use-case'
 export { LoginUserUseCase } from './login-user.use-case'
+export { ChangePasswordUseCase } from './change-password.use-case'

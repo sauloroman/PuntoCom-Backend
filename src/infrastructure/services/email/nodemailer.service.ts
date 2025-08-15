@@ -1,5 +1,5 @@
-import { EmailService, SendDeactivationAccountI, SendEmailI, SendVerificationCodeI } from '../../../application/services/email.service';
-import { welcomeEmailTemplate, accountDeactivatedEmailTemplate } from './templates';
+import { EmailService, SendChangePasswordI, SendDeactivationAccountI, SendEmailI, SendForgotPasswordI, SendVerificationCodeI } from '../../../application/services/email.service';
+import { welcomeEmailTemplate, accountDeactivatedEmailTemplate, resetPasswordEmailTemplate, passwordChangedEmailTemplate } from './templates';
 import { Transporter } from 'nodemailer';
 import nodemailer from 'nodemailer';
 
@@ -53,16 +53,42 @@ export class NodeMailerService implements EmailService {
 
   async sendValidateAccountEmail({ meta, token, username, verificationCode }: SendVerificationCodeI): Promise<void> {
     const { subject, to } = meta
-    const htmBody = welcomeEmailTemplate( username, token, verificationCode )
+    const htmlBody = welcomeEmailTemplate( username, token, verificationCode )
 
     await this.sendEmail({
       from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
       to,
       subject,
-      htmlBody: htmBody,
+      htmlBody: htmlBody,
       attachments: [],
     })
 
+  }
+  
+  async sendForgotPasswordEmail({ meta, token, username }: SendForgotPasswordI): Promise<void> {
+    const { subject, to } = meta  
+    const htmlBody = resetPasswordEmailTemplate( username, token )
+
+    await this.sendEmail({
+      from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
+      to,
+      subject,
+      htmlBody: htmlBody,
+      attachments: [],
+    })
+  }
+
+  async sendChangePasswordEmail({ meta, username }: SendChangePasswordI): Promise<void> {
+    const { subject, to } = meta  
+    const htmlBody = passwordChangedEmailTemplate( username )
+
+    await this.sendEmail({
+      from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
+      to,
+      subject,
+      htmlBody: htmlBody,
+      attachments: [],
+    })
   }
 
 }

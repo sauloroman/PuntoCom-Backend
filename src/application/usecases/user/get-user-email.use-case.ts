@@ -1,9 +1,10 @@
 import { DatesAdapter } from '../../../config/plugins/dates.plugin';
 import { UserRepository } from '../../../domain/repositories/user.repository';
+import { Email } from '../../../domain/value-objects';
 import { GetUserRequestDtoI, UserResponseDtoI } from '../../dtos/user.dto';
 import { ApplicationError } from '../../errors/application.error';
 
-export class GetUserByIdUseCase {
+export class GetUserByEmailUseCase {
 
   private readonly MESSAGE_ERROR: string = "GET_USER_ERROR"
 
@@ -11,10 +12,10 @@ export class GetUserByIdUseCase {
 
   public async execute(data: GetUserRequestDtoI): Promise<UserResponseDtoI> {
 
-    const { id: userId } = data
-
-    const user = await this.userRepository.findById(userId!)
-    if (!user) throw new ApplicationError(`El usuario con id ${userId} no existe`, this.MESSAGE_ERROR)
+    const { email: userEmail } = data
+    
+    const user = await this.userRepository.findByEmail(new Email(userEmail!))
+    if (!user) throw new ApplicationError(`El usuario con email ${userEmail} no existe`, this.MESSAGE_ERROR)
 
     return {
       id: user.id,

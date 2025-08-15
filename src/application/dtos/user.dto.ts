@@ -12,8 +12,31 @@ export interface CreateUserRequestDtoI {
   role: RoleEnum
 }
 
-export interface GetUserByIdRequestDtoI {
-  id: string
+export interface UpdateUserRequestDTOI {
+  id: string,
+  name?: string,
+  lastname?: string,
+  role?: RoleEnum
+}
+
+export interface UpdateUserRequestI {
+  name?: string,
+  lastname?: string,
+  role?: RoleEnum
+}
+
+export interface ForgotPasswordRequestI {
+  email: string
+}
+
+export interface ChangePasswordRequestDtoI {
+  token: string,
+  newPassword: string,
+}
+
+export interface GetUserRequestDtoI {
+  id?: string,
+  email?: string
 }
 
 export interface LoginUserRequestI {
@@ -22,12 +45,17 @@ export interface LoginUserRequestI {
 }
 
 export interface ValidateUserRequestI {
-    token: string,
-    code: string,
+  token: string,
+  code: string,
 }
 
 export interface ValidateUserI {
-    userId: string
+  userId: string,
+}
+
+export interface ChangePasswordRequestI {
+  id: string,
+  newPassword: string,
 }
 
 // Response

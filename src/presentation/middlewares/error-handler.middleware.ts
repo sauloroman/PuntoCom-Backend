@@ -27,6 +27,8 @@ export class ErrorHandlerMiddleware {
             return res.status(401).json({ ok: false, layer: 'APPLICATION', code: err.code, message: err.message });
           case 'CREATE_USER_ERROR':
             return res.status(400).json({ ok: false, layer: 'APPLICATION', code: err.code, message: err.message });
+          case 'MISSING_ID_PARAM':
+            return res.status(403).json({ ok: false, layer: 'APPLICATION', code: err.code, message: err.message });
           default:
             return res.status(400).json({ ok: false, layer: 'APPLICATION', code: err.code, message: err.message });
         }

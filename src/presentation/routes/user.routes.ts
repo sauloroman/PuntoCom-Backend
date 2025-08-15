@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
 import { AuthMiddleware, ParamsHandlerMiddleware } from '../middlewares';
 import { UserRepository } from '../../domain/repositories/user.repository';
+import { ValidateRolesMiddleware } from '../middlewares/authorization.middleware';
+import { RoleEnum } from '../../../generated/prisma';
 
 interface UserRoutesOptions {
   controller: UserController,
@@ -33,23 +35,27 @@ export class UserRoutes {
     // Private routes 
     // TODO: Implement Auth Middleware
 
-    router.post('/', [ // The only user role who can create a new user is an administrator
-      AuthMiddleware.validateLoggedUser( this.userRepository )
+    router.post('/', [ 
+      AuthMiddleware.validateLoggedUser( this.userRepository ),
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
     ], this.controller.createUser )
 
     router.get('/:id', [
       ParamsHandlerMiddleware.hasIDItem(),
-      AuthMiddleware.validateLoggedUser( this.userRepository )
+      AuthMiddleware.validateLoggedUser( this.userRepository ),
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
     ], this.controller.getUserById )
     
     router.patch('/deactivate/:id', [
       ParamsHandlerMiddleware.hasIDItem(),
-      AuthMiddleware.validateLoggedUser( this.userRepository )
+      AuthMiddleware.validateLoggedUser( this.userRepository ),
+      ValidateRolesMiddleware. isAdmin(),
     ], this.controller.deactivateUser )
 
     router.patch('/activate/:id', [
       ParamsHandlerMiddleware.hasIDItem(),
-      AuthMiddleware.validateLoggedUser( this.userRepository )
+      AuthMiddleware.validateLoggedUser( this.userRepository ),
+      ValidateRolesMiddleware.isAdmin(),
     ], this.controller.activateUser )
 
     router.put('/:id', [

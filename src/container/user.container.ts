@@ -2,7 +2,7 @@ import { EnvAdapter } from '../config/plugins';
 
 import { UserService } from '../application/services';
 import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
-import { ChangePasswordUseCase, ChangeStatusUserUseCase, CreateUserUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, LoginUserUseCase } from '../application/usecases/user';
+import { ChangePasswordUseCase, ChangeStatusUserUseCase, CreateUserUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase } from '../application/usecases/user';
 import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase } from '../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
 
@@ -49,6 +49,7 @@ export class UserContainer {
     const validateUserUseCase = new ValidateUserUseCase( userRepository )
     const updateUserUseCase = new UpdateUserUseCase( userRepository )
     const changePasswordUseCase = new ChangePasswordUseCase( userRepository )
+    const listUsersUseCase = new ListUsersUseCase( userRepository )
 
     const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepository )
     const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepository )
@@ -68,6 +69,7 @@ export class UserContainer {
       getVerificationCodeUC: getVerificationCodeUseCase,
       loginUserUC: loginUserUseCase,
       changePasswordUserUC: changePasswordUseCase,
+      listUsersUC: listUsersUseCase,
       
       updateUserUC: updateUserUseCase,
       validateUserUC: validateUserUseCase,

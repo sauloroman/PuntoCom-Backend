@@ -36,32 +36,34 @@ export class UserRoutes {
     // Private routes 
     // TODO: Implement Auth Middleware
 
+    router.use([AuthMiddleware.validateLoggedUser( this.userRepository )])
+
+    router.get('/', [
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
+      
+    ], this.controller.getUsers )
+
     router.post('/', [ 
-      AuthMiddleware.validateLoggedUser( this.userRepository ),
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
     ], this.controller.createUser )
 
     router.get('/:id', [
       ParamsHandlerMiddleware.hasIDItem(),
-      AuthMiddleware.validateLoggedUser( this.userRepository ),
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
     ], this.controller.getUserById )
     
     router.patch('/deactivate/:id', [
       ParamsHandlerMiddleware.hasIDItem(),
-      AuthMiddleware.validateLoggedUser( this.userRepository ),
-      ValidateRolesMiddleware. isAdmin(),
-    ], this.controller.deactivateUser )
-
+       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
+      ], this.controller.deactivateUser )
+      
     router.patch('/activate/:id', [
-      ParamsHandlerMiddleware.hasIDItem(),
-      AuthMiddleware.validateLoggedUser( this.userRepository ),
-      ValidateRolesMiddleware.isAdmin(),
+        ParamsHandlerMiddleware.hasIDItem(),
+        ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
     ], this.controller.activateUser )
 
     router.put('/:id', [
       ParamsHandlerMiddleware.hasIDItem(),
-      AuthMiddleware.validateLoggedUser( this.userRepository )
     ], this.controller.updateUser )
 
     return router

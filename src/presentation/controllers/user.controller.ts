@@ -10,6 +10,29 @@ export class UserController {
     private readonly userService: UserService
   ) { }
 
+  public getUsers = async (req: Request, res: Response) => {
+    const { page, limit, sort, filter } = req.query
+
+    const pagination = {
+      page: Number(page),
+      limit: Number(limit),
+      sort: sort as string,
+      filter: filter as string,
+    }
+    
+    const { items, page: currentPage, total, totalPages }  = await this.userService.listUsers( pagination )
+    
+    return res.status(200).json({
+      ok: true,
+      meta: {
+        page: currentPage,
+        total,
+        totalPages,
+      },
+      users: items,
+    })
+  }
+
   public createUser = async (req: Request, res: Response) => {
     const [dto, error] = CreateUserValidator.validate(req.body)
     if (error) throw new ValidationError(error, 'CREATE_USER_VALIDATION_ERROR')

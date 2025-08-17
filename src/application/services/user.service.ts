@@ -1,11 +1,11 @@
 import { JwtAdapter, DatesAdapter } from '../../config/plugins';
-import { CreateUserUseCase, GetUserByIdUseCase, ChangeStatusUserUseCase, ValidateUserUseCase, LoginUserUseCase, GetUserByEmailUseCase, ChangePasswordUseCase } from '../usecases/user';
+import { CreateUserUseCase, GetUserByIdUseCase, ChangeStatusUserUseCase, ValidateUserUseCase, LoginUserUseCase, GetUserByEmailUseCase, ChangePasswordUseCase, ListUsersUseCase } from '../usecases/user';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../usecases/verification-code';
 import { SendChangePasswordEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendVerificationCodeEmailUseCase } from '../usecases/email';
 import { ApplicationError } from '../errors/application.error';
 import { UpdateUserUseCase } from '../usecases/user/update-user.use-case';
 import { ChangePasswordRequestDtoI, CreateUserRequestDtoI, ForgotPasswordRequestI, ResendVerificationCodeRequestI, UpdateUserRequestDTOI } from '../dtos/user.dto';
-import { User } from '../../domain/entities';
+import { PaginationDTO } from '../dtos/pagination.dto';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
@@ -16,6 +16,7 @@ interface UserServiceI {
   updateUserUC: UpdateUserUseCase
   loginUserUC: LoginUserUseCase,
   changePasswordUserUC: ChangePasswordUseCase,
+  listUsersUC: ListUsersUseCase
 
   createVerificationCodeUC: CreateVerificationCodeUseCase
   getVerificationCodeUC: GetVerificationCodeUseCase
@@ -36,6 +37,7 @@ export class UserService {
   private readonly updateUserUC: UpdateUserUseCase
   private readonly loginUserUC: LoginUserUseCase
   private readonly changePasswordUserUC: ChangePasswordUseCase
+  private readonly listUsersUC: ListUsersUseCase
   
   private readonly createVerificationCodeUC: CreateVerificationCodeUseCase
   private readonly getVerificationCodeUC: GetVerificationCodeUseCase
@@ -54,6 +56,7 @@ export class UserService {
     updateUserUC,
     loginUserUC,
     changePasswordUserUC,
+    listUsersUC,
     createVerificationCodeUC,
     getVerificationCodeUC,
     sendDeactivationEmailUC,
@@ -69,12 +72,17 @@ export class UserService {
     this.updateUserUC = updateUserUC
     this.loginUserUC = loginUserUC
     this.changePasswordUserUC = changePasswordUserUC
+    this.listUsersUC = listUsersUC
     this.createVerificationCodeUC = createVerificationCodeUC
     this.getVerificationCodeUC = getVerificationCodeUC
     this.sendDeactivationEmailUC = sendDeactivationEmailUC
     this.sendVerificationCodeEmailUC = sendVerificationCodeEmailUC
     this.sendForgotPasswordEmailUC = sendForgotPasswordEmailUC
     this.sendChangePasswordEmaiUC = sendChangePasswordEmaiUC
+  }
+
+  async listUsers( dto: PaginationDTO ) {
+    return await this.listUsersUC.execute( dto )
   }
 
   async registerUser(dto: CreateUserRequestDtoI) {

@@ -6,6 +6,8 @@ import { InfrastructureError } from '../../errors/infrastructure-error';
 
 import { PrismaClient, User as PrismaUser } from '../../../../generated/prisma';
 import { UserDatasource } from '../../../domain/datasources/user.datasource';
+import { PaginationDTO, PaginationResponseDto } from '../../../application/dtos/pagination.dto';
+import { buildPaginationOptions } from './utils/pagination-options';
 
 export class PrismaUserDatasource implements UserDatasource {
 
@@ -13,6 +15,34 @@ export class PrismaUserDatasource implements UserDatasource {
 
   constructor(prismaClient: PrismaClient) {
     this.prisma = prismaClient;
+  }
+
+  async getUsers(pagination: PaginationDTO): Promise<PaginationResponseDto<User>> {
+    try {
+
+      const { limit, orderBy, page, skip, take, where } = buildPaginationOptions(pagination)
+
+      const [ users, total ] = await Promise.all([
+        this.prisma.user.findMany({ where, skip, take, orderBy }),
+        this.prisma.user.count({ where })
+      ])
+
+      const totalPages = Math.ceil(total / limit)
+
+      return { 
+        items: users.map(this.toDomain),
+        total,
+        page,
+        totalPages
+      }
+
+    } catch( error ) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al obtener los usuarios',
+        'PRISMA_FIND_BY_ID_ERROR',
+        error
+      );
+    }
   }
 
   async findById(userId: string): Promise<User | null> {

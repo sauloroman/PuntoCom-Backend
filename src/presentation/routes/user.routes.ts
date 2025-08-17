@@ -31,6 +31,7 @@ export class UserRoutes {
     router.patch('/validate', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.validateUser )
     router.post('/forgot-password', this.controller.forgotPassword )
     router.post('/change-password', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.changePassword)
+    router.post('/resend-verification-code', this.controller.resendVerificationCode )
 
     // Private routes 
     // TODO: Implement Auth Middleware

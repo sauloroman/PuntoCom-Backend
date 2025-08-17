@@ -58,6 +58,10 @@ export interface ChangePasswordRequestI {
   newPassword: string,
 }
 
+export interface ResendVerificationCodeRequestI {
+  email: string
+}
+
 // Response
 export interface UserResponseDtoI {
   id: string,

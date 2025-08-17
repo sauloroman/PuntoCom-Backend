@@ -1,6 +1,6 @@
 // src/presentation/controllers/UserController.ts
 import { Request, Response } from 'express';
-import { ChangePasswordValidator, CreateUserValidator, LoginUserValidator, UpdateUserValidator, ValidateUserValidator } from '../validators/user';
+import { ChangePasswordValidator, CreateUserValidator, LoginUserValidator, ResendVerificationCodeValidator, UpdateUserValidator, ValidateUserValidator } from '../validators/user';
 import { ValidationError } from '../../application/errors/validation.error';
 import { UserService } from '../../application/services/user.service';
 import { ForgotPasswordUserValidator } from '../validators/user/forgot-password-user.validator';
@@ -105,7 +105,19 @@ export class UserController {
       ok: true,
       message: 'Se ha actualizado la contraseña correctamente'
     })
+  }
 
+  public resendVerificationCode = async (req: Request, res: Response) => {
+    const [ dto, error ] = ResendVerificationCodeValidator.validate( req.body )
+    if ( error ) throw new ValidationError(error, 'RESEND_VERIFICATION_CODE_VALIDATION_ERROR')
+
+    const result = await this.userService.resendVerificationCode(dto!)
+
+    res.status(200).json({
+      ok: true,
+      message: `Se ha reenviado el código de verificación para ${dto?.email}`,
+      user: result.user 
+    })
   }
 
   public getUserById = async (req: Request, res: Response) => {

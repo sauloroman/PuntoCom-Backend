@@ -4,7 +4,8 @@ import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../us
 import { SendChangePasswordEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendVerificationCodeEmailUseCase } from '../usecases/email';
 import { ApplicationError } from '../errors/application.error';
 import { UpdateUserUseCase } from '../usecases/user/update-user.use-case';
-import { ChangePasswordRequestDtoI, CreateUserRequestDtoI, ForgotPasswordRequestI, UpdateUserRequestDTOI } from '../dtos/user.dto';
+import { ChangePasswordRequestDtoI, CreateUserRequestDtoI, ForgotPasswordRequestI, ResendVerificationCodeRequestI, UpdateUserRequestDTOI } from '../dtos/user.dto';
+import { User } from '../../domain/entities';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
@@ -78,6 +79,22 @@ export class UserService {
 
   async registerUser(dto: CreateUserRequestDtoI) {
     const user = await this.createUserUC.execute(dto)
+    const verificationCode = await this.createVerificationCodeUC.execute({ userId: user.id })
+    const token = await JwtAdapter.generateJWT({ id: user.id }) as string
+    
+    await this.sendVerificationCodeEmailUC.execute({
+      token,
+      userEmail: user.email,
+      username: `${user.name} ${user.lastname}`,
+      verificationCode: verificationCode.code
+    })
+    
+    return { user, token }
+  }
+
+  async resendVerificationCode( dto: ResendVerificationCodeRequestI ) {
+    
+    const user = await this.getUserByEmail( dto!.email )
     const verificationCode = await this.createVerificationCodeUC.execute({ userId: user.id })
     const token = await JwtAdapter.generateJWT({ id: user.id }) as string
     

@@ -35,7 +35,6 @@ export class PrismaVerificationCodeDatasource implements VerificationCodeDatasou
   }
 
   async save(verificationCode: VerificationCode): Promise<void> {
-    console.log(verificationCode)
     try {
       await this.prismaClient.verificationCode.create({ data: this.toPrisma(verificationCode) })
     } catch( error ) {

@@ -5,18 +5,8 @@ export function buildPaginationOptions(dto: PaginationDTO) {
   const limit = Number(dto.limit) || 10;
   const skip = (page - 1) * limit;
 
-  let orderBy: any = undefined;
-  if (dto.sort) {
-    const [field, order] = dto.sort.split(':'); // user_name:asc
-    orderBy = { [field]: order };
-  }
-
-  let where: any = undefined;
-  if (dto.filter) {
-    try {
-      where = JSON.parse(dto.filter);
-    } catch {}
-  }
+  let orderBy: any =dto.sort;
+  let where: any = dto.filter;
 
   return { skip, take: limit, where, orderBy, page, limit };
 }

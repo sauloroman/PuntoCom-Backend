@@ -28,15 +28,4 @@ export class ParamsHandlerMiddleware {
       next()
     }
   }
-
-  public static paginationQuery() {
-    return async ( req: Request, res: Response, next: NextFunction ) => {
-
-      const { page, limit, sort, filter } = req.query
-
-      
-
-    }
-  }
-
 }

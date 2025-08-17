@@ -1,7 +1,7 @@
 import { DomainError } from '../errors/domain.error';
 
 interface CategoryProps {
-  id: string;
+  id?: string;
   name: string;
   description?: string; // opcional con default
   icon?: string;        // opcional con default
@@ -11,7 +11,7 @@ interface CategoryProps {
 }
 
 export class Category {
-  private readonly _id: string;
+  private readonly _id?: string;
   private _name: string;
   private _description: string;
   private _icon: string;
@@ -21,11 +21,11 @@ export class Category {
 
   private static MAX_NAME_LENGTH: number = 100;
   private static MAX_DESCRIPTION_LENGTH: number = 220;
-  private static MAX_ICON_LENGTH: number = 100;
+  private static MAX_ICON_LENGTH: number = 200;
   private readonly MESSAGE_ERROR: string = "CATEGORY_VALIDATION_ERROR"
 
   constructor({
-    id,
+    id = '',
     name,
     description = 'Categoría sin descripción',
     icon = 'Categoría sin ícono',
@@ -72,7 +72,7 @@ export class Category {
   }
 
   get id(): string {
-    return this._id;
+    return this._id ?? '';
   }
 
   get name(): string {

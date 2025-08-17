@@ -17,8 +17,6 @@ import { UserRoutes } from '../presentation/routes/user.routes';
 import { UserController } from '../presentation/controllers/user.controller';
 import { UpdateUserUseCase } from '../application/usecases/user/update-user.use-case';
 
-const prisma = PrismaDatasource.getInstance()
-
 export class UserContainer {
 
   public readonly userRoutes: UserRoutes;
@@ -27,11 +25,11 @@ export class UserContainer {
 
     // Repositorios
     const userRepository = new UserRepositoryImpl( 
-      new PrismaUserDatasource( prisma ) 
+      new PrismaUserDatasource( PrismaDatasource.getInstance() ) 
     )
 
     const verificationCodeRepository = new VerificationCodeRepositoryImpl(
-      new PrismaVerificationCodeDatasource( prisma )
+      new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance() )
     )
     const emailService = new NodeMailerService({
       mailerEmail: EnvAdapter.MAILER_EMAIL,
@@ -84,8 +82,7 @@ export class UserContainer {
     const userController = new UserController(userService)
 
     this.userRoutes = new UserRoutes({ 
-      controller: userController,
-      userRepository: userRepository, 
+      controller: userController
     })
 
   }

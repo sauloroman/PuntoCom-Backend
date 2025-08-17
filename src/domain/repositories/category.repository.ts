@@ -1,7 +1,7 @@
 import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
 import { Category } from "../entities";
 
-export abstract class CategoryDatasource {
+export abstract class CategoryRepository {
     abstract findById( categoryId: string ): Promise<Category | null>
     abstract findByName( categoryName: string ): Promise<Category | null>
     abstract create( category: Category ): Promise<Category>

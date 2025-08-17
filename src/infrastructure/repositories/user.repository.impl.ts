@@ -20,14 +20,6 @@ export class UserRepositoryImpl implements UserRepository {
     return await this.userDatasource.findByEmail(userEmail)
   }
 
-  async findAllActive(): Promise<User[]> {
-    return await this.userDatasource.findAllActive()
-  }
-
-  async findAllInactive(): Promise<User[]> {
-    return await this.userDatasource.findAllInactive()
-  }
-
   async create(user: User): Promise<User> {
     return await this.userDatasource.create( user )
   }

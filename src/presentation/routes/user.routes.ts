@@ -1,24 +1,20 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
-import { AuthMiddleware, ParamsHandlerMiddleware } from '../middlewares';
-import { UserRepository } from '../../domain/repositories/user.repository';
-import { ValidateRolesMiddleware } from '../middlewares/authorization.middleware';
+import { AuthMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from '../middlewares';
 import { RoleEnum } from '../../../generated/prisma';
+import { Auth } from '../middlewares/auth';
 
 interface UserRoutesOptions {
   controller: UserController,
-  userRepository: UserRepository
 }
 
 export class UserRoutes {
 
   public readonly routes: Router;
-  public readonly userRepository: UserRepository
   private readonly controller: UserController;
 
-  constructor({ controller, userRepository }: UserRoutesOptions){
+  constructor({ controller }: UserRoutesOptions){
     this.controller = controller
-    this.userRepository =  userRepository
     this.routes = this.initRoutes()
   }
 
@@ -36,11 +32,16 @@ export class UserRoutes {
     // Private routes 
     // TODO: Implement Auth Middleware
 
-    router.use([AuthMiddleware.validateLoggedUser( this.userRepository )])
+    router.use([ Auth.Logged ])
 
     router.get('/', [
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-      
+      MapperFilterMiddleware.ToPrisma()
+    ], this.controller.getUsers )
+
+    router.get('/search', [
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
+      MapperFilterMiddleware.ToPrismaContains()
     ], this.controller.getUsers )
 
     router.post('/', [ 

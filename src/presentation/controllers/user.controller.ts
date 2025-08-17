@@ -11,7 +11,9 @@ export class UserController {
   ) { }
 
   public getUsers = async (req: Request, res: Response) => {
-    const { page, limit, sort, filter } = req.query
+    const { page, limit } = req.query
+    const sort = (req as any).sort
+    const filter = (req as any).filter
 
     const pagination = {
       page: Number(page),

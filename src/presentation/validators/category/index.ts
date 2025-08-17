@@ -1,0 +1,1 @@
+export { CreateCategoryValidator } from './create-category.validator'

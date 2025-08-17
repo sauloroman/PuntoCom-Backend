@@ -39,7 +39,7 @@ export class PrismaUserDatasource implements UserDatasource {
     } catch( error ) {
       throw new InfrastructureError(
         '[Prisma]: Error al obtener los usuarios',
-        'PRISMA_FIND_BY_ID_ERROR',
+        'PRISMA_FIND_USERS_BY_FILTER_ERROR',
         error
       );
     }
@@ -70,32 +70,6 @@ export class PrismaUserDatasource implements UserDatasource {
         'PRISMA_FIND_BY_EMAIL_ERROR',
         error
       );    
-    }
-  }
-
-  async findAllActive(): Promise<User[]> {
-    try {
-      const userData = await this.prisma.user.findMany({ where: { user_is_active: true }});
-      return userData.map(user => this.toDomain(user));
-    } catch (error) {
-      throw new InfrastructureError(
-        '[Prisma]: Error al obtener usuarios activos',
-        'PRISMA_FIND_ALL_ACTIVE_ERROR',
-        error
-      );
-    }
-  }
-
-  async findAllInactive(): Promise<User[]> {
-    try {
-      const userData = await this.prisma.user.findMany({ where: { user_is_active: false }});
-      return userData.map(user => this.toDomain(user));
-    } catch (error) {
-      throw new InfrastructureError(
-        '[Prisma]: Error al obtener usuarios inactivos',
-        'PRISMA_FIND_ALL_INACTIVE_ERROR',
-        error
-      );
     }
   }
 

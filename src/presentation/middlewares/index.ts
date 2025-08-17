@@ -1,3 +1,5 @@
 export { AuthMiddleware } from './authentication.middleware'
+export { ValidateRolesMiddleware } from './authorization.middleware'
 export { ErrorHandlerMiddleware } from './error-handler.middleware'
 export { ParamsHandlerMiddleware } from './req-options-handler.middleware'
+export { MapperFilterMiddleware } from './mapper-filter.middleware'

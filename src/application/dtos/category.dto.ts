@@ -3,6 +3,21 @@ export interface CreateCategoryRequestDto {
     description?: string,
 }
 
+export interface UpdateCategoryRequestDto {
+    name?: string,
+    description?: string,
+}
+
+export interface UpdateCategoryRequest {
+    id: string,
+    name?: string,
+    description?: string,
+}
+
+export interface ChangeCategoryStatusRequestDto {
+    id: string
+}
+
 export interface CategoryResponseDto {
     id: string,
     name: string,

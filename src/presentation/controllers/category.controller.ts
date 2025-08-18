@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CategoryService } from "../../application/services/category.service";
 import { CreateCategoryValidator } from "../validators/category";
 import { ApplicationError } from "../../application/errors/application.error";
+import { UpdateCategoryValidator } from "../validators/category/update-category.validator";
 
 export class CategoryController {
 
@@ -16,8 +17,49 @@ export class CategoryController {
 
         res.status(201).json({
             ok: true,
-            msg: 'La categoría ha sido creada existosamente',
+            message: 'La categoría ha sido creada existosamente',
             category: category
+        })
+    }
+
+    public getCategoryById = async (req: Request, res: Response ) => {
+        const { id: categoryId } = req.params
+        const category = await this.categoryService.getCategoryById( categoryId )
+        res.status(200).json({
+            ok: true,
+            category
+        })
+    }
+
+    public updateCategory = async (req: Request, res: Response) => {
+        const { id: categoryId } = req.params
+        const [ dto, error ] = UpdateCategoryValidator.validate( req.body )
+        if ( error ) throw new ApplicationError(error, 'UPDATE_CATEGORY_VALIDATOR_ERROR')
+        const category = await this.categoryService.updateCategory({ id: categoryId, ...dto })
+        res.status(200).json({
+            ok: true,
+            message: 'La categoría ha sido actualizada correctamente',
+            category
+        })
+    }
+
+    public activateCategory = async (req: Request, res: Response) => {
+        const { id: categoryId } = req.params
+        const category = await this.categoryService.changeCategoryStatus(categoryId, true)
+        res.status(200).json({
+            ok: true,
+            message: 'La categoría ha sido activada exitosamente',
+            category
+        })
+    }
+
+    public deactivateCategory = async (req: Request, res: Response) => {
+        const { id: categoryId } = req.params
+        const category = await this.categoryService.changeCategoryStatus(categoryId, false)
+        res.status(200).json({
+            ok: true,
+            message: 'La categoría ha sido desactivada exitosamente',
+            category
         })
     }
 

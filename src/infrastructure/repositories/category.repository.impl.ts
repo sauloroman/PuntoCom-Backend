@@ -8,7 +8,7 @@ export class CategoryRepositoryImp implements CategoryRepository {
     constructor(private readonly categoryDatasource: CategoryDatasource){}
 
     async findById(categoryId: string): Promise<Category | null> {
-        throw new Error("Method not implemented.");
+        return await this.categoryDatasource.findById( categoryId )
     }
     
     async findByName(categoryName: string): Promise<Category | null> {
@@ -20,11 +20,11 @@ export class CategoryRepositoryImp implements CategoryRepository {
     }
     
     async update(category: Category): Promise<Category> {
-        throw new Error("Method not implemented.");
+        return await this.categoryDatasource.update( category )
     }
     
     async changeStatus(categoryId: string, status: boolean): Promise<Category> {
-        throw new Error("Method not implemented.");
+        return await this.categoryDatasource.changeStatus( categoryId, status )
     }
     
     async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {

@@ -1,4 +1,5 @@
 import { CategoryService } from "../application/services/category.service";
+import { ChangeCategoryStatusUseCase, GetCategoryByIdUseCase, UpdateCategoryUseCase } from "../application/usecases/categories";
 import { CreateCategoryUseCase } from "../application/usecases/categories/create-category.use-case";
 import { PrismaCategoryDatasource } from "../infrastructure/datasource/prisma/prisma-category.datasource";
 import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
@@ -17,9 +18,15 @@ export class CategoryContainer {
         )
 
         const createCategoryUseCase = new CreateCategoryUseCase(categoryRepository)
+        const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryRepository)
+        const updateCategoryUseCase = new UpdateCategoryUseCase(categoryRepository)
+        const changeCategoryStatusUseCase = new ChangeCategoryStatusUseCase(categoryRepository)
 
         const categoryService = new CategoryService({
-            createCategoryUC: createCategoryUseCase
+            createCategoryUC: createCategoryUseCase,
+            getCategoryByIdUC: getCategoryByIdUseCase,
+            updateCategoryUC: updateCategoryUseCase,
+            changeStatusCategoryUC: changeCategoryStatusUseCase
         })
 
         const categoryController = new CategoryController(categoryService)

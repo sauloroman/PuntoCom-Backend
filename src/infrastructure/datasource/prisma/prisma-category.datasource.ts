@@ -13,7 +13,17 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
     }
 
     async findById(categoryId: string): Promise<Category | null> {
-        throw new Error("Method not implemented.");
+        try {
+            const category = await this.prisma.category.findUnique({ where: { category_id: categoryId }})
+            if ( !category ) return null
+            return this.toDomain(category)
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[Prisma]: Error al obtener la categoría por id',
+                'PRISMA_FIND_CATEGORY_BY_ID_ERROR',
+                 error
+            );
+        }
     }
 
     async findByName(categoryName: string): Promise<Category | null> {
@@ -24,7 +34,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
         } catch( error ) {
             throw new InfrastructureError(
                 '[Prisma]: Error al obtener la categoría por nombre',
-                'PRISMA_FIND_USERS_BY_FILTER_ERROR',
+                'PRISMA_FIND_CATEGORY_BY_NAME_ERROR',
                  error
             );
         }
@@ -37,18 +47,42 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
         } catch( error ) {
             throw new InfrastructureError(
                 '[Prisma]: Error al crear la categoría',
-                'PRISMA_FIND_USERS_BY_FILTER_ERROR',
+                'PRISMA_CREATE_CATEGORY_ERROR',
                  error
             );
         }
     }
 
     async update(category: Category): Promise<Category> {
-        throw new Error("Method not implemented.");
+        try {
+            const categoryUpdated = await this.prisma.category.update({
+                where: { category_id: category.id },
+                data: this.toPrisma(category)
+            })
+            return this.toDomain( categoryUpdated )
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[Prisma]: Error al actualizar la categoría',
+                'PRISMA_CREATE_CATEGORY_ERROR',
+                 error
+            );
+        }
     }
 
     async changeStatus(categoryId: string, status: boolean): Promise<Category> {
-        throw new Error("Method not implemented.");
+        try {
+            const categoryUpdated = await this.prisma.category.update({
+                where: { category_id: categoryId },
+                data: { category_is_active: status }
+            })
+            return this.toDomain( categoryUpdated )
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[Prisma]: Error al actualizar la categoría',
+                'PRISMA_CREATE_CATEGORY_ERROR',
+                 error
+            );
+        }
     }
 
     async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {

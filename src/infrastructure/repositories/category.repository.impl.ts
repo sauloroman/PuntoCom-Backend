@@ -28,7 +28,7 @@ export class CategoryRepositoryImp implements CategoryRepository {
     }
     
     async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
-        throw new Error("Method not implemented.");
+        return await this.categoryDatasource.getCategories(pagination)
     }
 
 }

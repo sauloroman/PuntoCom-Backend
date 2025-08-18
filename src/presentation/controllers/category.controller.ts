@@ -63,4 +63,35 @@ export class CategoryController {
         })
     }
 
+    public getCategories = async (req: Request, res: Response ) => {
+        const { page, limit } = req.query
+        const sort = (req as any).sort
+        const filter = (req as any).filter
+
+        const pagination = {
+            page: Number(page),
+            limit: Number(limit),
+            sort: sort as string,
+            filter: filter as string
+        }
+
+        const { 
+            items,
+            page: currentPage,
+            total,
+            totalPages
+        } = await this.categoryService.listCategories(pagination)
+
+        return res.status(200).json({
+            ok: true,
+            meta: {
+                page: currentPage,
+                totalPages,
+                total,
+            },
+            categories: items
+        })
+
+    } 
+
 }

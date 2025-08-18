@@ -3,6 +3,7 @@ import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/
 import { CategoryDatasource } from "../../../domain/datasources/category.datasource";
 import { Category } from "../../../domain/entities";
 import { InfrastructureError } from "../../errors/infrastructure-error";
+import { buildPaginationOptions } from "./utils/pagination-options";
 
 export class PrismaCategoryDatasource implements CategoryDatasource {
 
@@ -86,7 +87,31 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
     }
 
     async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
-        throw new Error("Method not implemented.");
+        try {
+
+            const { limit, orderBy, page, skip, take, where } = buildPaginationOptions(pagination)
+
+            const [ categories, total ] = await Promise.all([
+                this.prisma.category.findMany({ where, skip, take, orderBy }),
+                this.prisma.category.count({ where })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            return {
+                items: categories.map( this.toDomain ),
+                total,
+                page,
+                totalPages
+            }
+
+        } catch(error) {
+            throw new InfrastructureError(
+                '[Prisma]: Error al obtener las categorías',
+                'PRISMA_FIND_USERS_BY_FILTER_ERROR',
+                error
+            );
+        }
     }
 
     private toDomain(categoryData: PrismaCategory): Category {

@@ -28,8 +28,8 @@ export class UserController {
       ok: true,
       meta: {
         page: currentPage,
-        total,
         totalPages,
+        total,
       },
       users: items,
     })

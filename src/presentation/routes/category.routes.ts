@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { CategoryController } from "../controllers/category.controller";
 import { Auth } from "../middlewares/auth";
-import { ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
 
 interface CategoryRoutesI {
@@ -21,7 +21,12 @@ export class CategoryRoutes {
     private initRoutes(): Router {
         const router = Router()
 
-        router.use([ Auth.Logged,  ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ) ])
+        router.use([Auth.Logged])
+
+        router.get('/', [MapperFilterMiddleware.ToPrisma()], this.controller.getCategories)
+        router.get('/search', [MapperFilterMiddleware.ToPrismaContains()], this.controller.getCategories)
+
+        router.use([ ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ) ])
 
         router.post('/', this.controller.createCategory )
         router.get('/:id', [ParamsHandlerMiddleware.hasIDItem()], this.controller.getCategoryById )

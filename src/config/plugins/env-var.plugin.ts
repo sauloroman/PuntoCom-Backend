@@ -18,4 +18,7 @@ export class EnvAdapter {
   public static MAILER_EMAIL: string = env.get('MAILER_EMAIL').required().asEmailString()
   public static SEND_EMAIL: boolean = env.get('SEND_EMAIL').required().asBool()
   public static MAILER_SECRET_KEY: string = env.get('MAILER_SECRET_KEY').required().asString()
+
+  public static CLOUDINARY_URL: string = env.get('CLOUDINARY_URL').required().asString()
+
 }

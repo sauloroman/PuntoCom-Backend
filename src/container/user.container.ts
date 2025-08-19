@@ -2,9 +2,10 @@ import { EnvAdapter } from '../config/plugins';
 
 import { UserService } from '../application/services';
 import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
-import { ChangePasswordUseCase, ChangeStatusUserUseCase, CreateUserUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase } from '../application/usecases/user';
+import { ChangePasswordUseCase, ChangeStatusUserUseCase, CreateUserUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
 import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase } from '../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
+import { DestroyUserImageUseCase, UploadUserImageUseCase } from '../application/usecases/upload';
 
 import { PrismaDatasource } from '../infrastructure/datasource/prisma/prisma-client';
 import { UserRepositoryImpl } from '../infrastructure/repositories/user.repository.impl';
@@ -12,6 +13,7 @@ import { PrismaUserDatasource } from '../infrastructure/datasource/prisma/prisma
 import { VerificationCodeRepositoryImpl } from '../infrastructure/repositories/verification-code.repository.impl';
 import { PrismaVerificationCodeDatasource } from '../infrastructure/datasource/prisma/prisma-verification-code.datasource';
 import { NodeMailerService } from '../infrastructure/services/email/nodemailer.service';
+import { CloudinaryFileUploadService } from '../infrastructure/services/file-upload/cloudinary.service';
 
 import { UserRoutes } from '../presentation/routes/user.routes';
 import { UserController } from '../presentation/controllers/user.controller';
@@ -31,12 +33,15 @@ export class UserContainer {
     const verificationCodeRepository = new VerificationCodeRepositoryImpl(
       new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance() )
     )
+
     const emailService = new NodeMailerService({
       mailerEmail: EnvAdapter.MAILER_EMAIL,
       mailerService: EnvAdapter.MAILER_SERVICE,
       postToProvider: EnvAdapter.SEND_EMAIL,
       senderEmailPassword: EnvAdapter.MAILER_SECRET_KEY
     })
+
+    const uploadFileService = new CloudinaryFileUploadService()
 
     // Casos de uso
     const loginUserUseCase = new LoginUserUseCase(userRepository)
@@ -48,6 +53,7 @@ export class UserContainer {
     const updateUserUseCase = new UpdateUserUseCase( userRepository )
     const changePasswordUseCase = new ChangePasswordUseCase( userRepository )
     const listUsersUseCase = new ListUsersUseCase( userRepository )
+    const updateUserImageUseCase = new UpdateUserImageUseCase( userRepository )
 
     const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepository )
     const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepository )
@@ -56,6 +62,9 @@ export class UserContainer {
     const sendDeactivationAccountUserUseCase = new SendDeactivationAccountEmailUseCase( emailService )
     const sendForgotPasswordEmailUseCase = new SendForgotPasswordEmailUseCase(emailService)
     const changePasswordEmailUseCase = new SendChangePasswordEmailUseCase(emailService)
+
+    const uploadUserImageUseCase = new UploadUserImageUseCase(uploadFileService)
+    const destroyUserImageUseCase = new DestroyUserImageUseCase(uploadFileService)
 
     // Servicios
     const userService = new UserService({
@@ -68,6 +77,7 @@ export class UserContainer {
       loginUserUC: loginUserUseCase,
       changePasswordUserUC: changePasswordUseCase,
       listUsersUC: listUsersUseCase,
+      updateUserImageUC: updateUserImageUseCase,
       
       updateUserUC: updateUserUseCase,
       validateUserUC: validateUserUseCase,
@@ -76,6 +86,9 @@ export class UserContainer {
       sendVerificationCodeEmailUC: sendVerificationCodeEmailUseCase,
       sendForgotPasswordEmailUC: sendForgotPasswordEmailUseCase,
       sendChangePasswordEmaiUC: changePasswordEmailUseCase,
+
+      uploadUserImageUC: uploadUserImageUseCase,
+      destroyUserImageUC: destroyUserImageUseCase
     })
 
     // Controlador

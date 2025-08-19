@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
-import { AuthMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from '../middlewares';
+import { AuthMiddleware, FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from '../middlewares';
 import { RoleEnum } from '../../../generated/prisma';
 import { Auth } from '../middlewares/auth';
 
@@ -33,6 +33,11 @@ export class UserRoutes {
     // TODO: Implement Auth Middleware
 
     router.use([ Auth.Logged ])
+
+    router.patch('/upload-image/:id', [ 
+      ParamsHandlerMiddleware.hasIDItem(),
+      FileUploadMiddleware.validateContainFiles 
+    ], this.controller.uploadUserImage )
 
     router.get('/', [
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),

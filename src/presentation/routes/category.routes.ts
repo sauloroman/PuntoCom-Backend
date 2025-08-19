@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { CategoryController } from "../controllers/category.controller";
 import { Auth } from "../middlewares/auth";
-import { MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
 
 interface CategoryRoutesI {
@@ -23,6 +23,7 @@ export class CategoryRoutes {
 
         router.use([Auth.Logged])
 
+        // router.patch('/upload-image', [FileUploadMiddleware.validateContainFiles], this.controller)
         router.get('/', [MapperFilterMiddleware.ToPrisma()], this.controller.getCategories)
         router.get('/search', [MapperFilterMiddleware.ToPrismaContains()], this.controller.getCategories)
 

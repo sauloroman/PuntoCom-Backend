@@ -1,11 +1,31 @@
 import { JwtAdapter, DatesAdapter } from '../../config/plugins';
-import { CreateUserUseCase, GetUserByIdUseCase, ChangeStatusUserUseCase, ValidateUserUseCase, LoginUserUseCase, GetUserByEmailUseCase, ChangePasswordUseCase, ListUsersUseCase } from '../usecases/user';
+import { 
+  CreateUserUseCase, 
+  GetUserByIdUseCase,
+  ChangeStatusUserUseCase, 
+  ValidateUserUseCase, 
+  LoginUserUseCase, 
+  GetUserByEmailUseCase, 
+  ChangePasswordUseCase, 
+  ListUsersUseCase, 
+  UpdateUserImageUseCase} from '../usecases/user';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../usecases/verification-code';
-import { SendChangePasswordEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendVerificationCodeEmailUseCase } from '../usecases/email';
+import { 
+  SendChangePasswordEmailUseCase, 
+  SendDeactivationAccountEmailUseCase, 
+  SendForgotPasswordEmailUseCase, 
+  SendVerificationCodeEmailUseCase } from '../usecases/email';
 import { ApplicationError } from '../errors/application.error';
 import { UpdateUserUseCase } from '../usecases/user/update-user.use-case';
-import { ChangePasswordRequestDtoI, CreateUserRequestDtoI, ForgotPasswordRequestI, ResendVerificationCodeRequestI, UpdateUserRequestDTOI } from '../dtos/user.dto';
+import { 
+  ChangePasswordRequestDtoI, 
+  CreateUserRequestDtoI, 
+  ForgotPasswordRequestI, 
+  ResendVerificationCodeRequestI, 
+  UpdateUserRequestDTOI } from '../dtos/user.dto';
 import { PaginationDTO } from '../dtos/pagination.dto';
+import { DestroyUserImageUseCase, UploadUserImageUseCase } from '../usecases/upload';
+import { UploadedFile } from 'express-fileupload';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
@@ -15,7 +35,8 @@ interface UserServiceI {
   validateUserUC: ValidateUserUseCase
   updateUserUC: UpdateUserUseCase
   loginUserUC: LoginUserUseCase,
-  changePasswordUserUC: ChangePasswordUseCase,
+  changePasswordUserUC: ChangePasswordUseCase
+  updateUserImageUC: UpdateUserImageUseCase
   listUsersUC: ListUsersUseCase
 
   createVerificationCodeUC: CreateVerificationCodeUseCase
@@ -25,6 +46,9 @@ interface UserServiceI {
   sendVerificationCodeEmailUC: SendVerificationCodeEmailUseCase
   sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
   sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
+
+  uploadUserImageUC: UploadUserImageUseCase
+  destroyUserImageUC: DestroyUserImageUseCase
 }
 
 export class UserService {
@@ -36,6 +60,7 @@ export class UserService {
   private readonly validateUserUC: ValidateUserUseCase
   private readonly updateUserUC: UpdateUserUseCase
   private readonly loginUserUC: LoginUserUseCase
+  private readonly updateUserImageUC: UpdateUserImageUseCase
   private readonly changePasswordUserUC: ChangePasswordUseCase
   private readonly listUsersUC: ListUsersUseCase
   
@@ -47,6 +72,9 @@ export class UserService {
   private readonly sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
   private readonly sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
+  private readonly uploadUserImageUC: UploadUserImageUseCase
+  private readonly destroyUserImageUC: DestroyUserImageUseCase
+
   constructor({
     createUserUC,
     getUserByIdUC,
@@ -55,6 +83,7 @@ export class UserService {
     validateUserUC,
     updateUserUC,
     loginUserUC,
+    updateUserImageUC,
     changePasswordUserUC,
     listUsersUC,
     createVerificationCodeUC,
@@ -62,7 +91,9 @@ export class UserService {
     sendDeactivationEmailUC,
     sendVerificationCodeEmailUC,
     sendForgotPasswordEmailUC,
-    sendChangePasswordEmaiUC
+    sendChangePasswordEmaiUC,
+    uploadUserImageUC,
+    destroyUserImageUC
   }: UserServiceI) {
     this.createUserUC = createUserUC
     this.getUserByIdUC = getUserByIdUC
@@ -70,6 +101,7 @@ export class UserService {
     this.changeStatusUC = changeStatusUC
     this.validateUserUC = validateUserUC
     this.updateUserUC = updateUserUC
+    this.updateUserImageUC = updateUserImageUC
     this.loginUserUC = loginUserUC
     this.changePasswordUserUC = changePasswordUserUC
     this.listUsersUC = listUsersUC
@@ -79,6 +111,21 @@ export class UserService {
     this.sendVerificationCodeEmailUC = sendVerificationCodeEmailUC
     this.sendForgotPasswordEmailUC = sendForgotPasswordEmailUC
     this.sendChangePasswordEmaiUC = sendChangePasswordEmaiUC
+    this.uploadUserImageUC = uploadUserImageUC
+    this.destroyUserImageUC = destroyUserImageUC
+  }
+
+  async uploadUserImage( image: UploadedFile, userId: string ) {
+    const user = await this.getUserById(userId) 
+    if ( !user ) throw new ApplicationError(`El usuario con id ${userId} no existe`)
+
+    if ( user.image !== 'Usuario sin imagen' ) {
+      await this.destroyUserImageUC.execute(user.image)
+    }  
+
+    const urlImage = await this.uploadUserImageUC.execute(image, userId)
+    const updatedUser = await this.updateUserImageUC.execute({ id: user.id, url: urlImage })    
+    return updatedUser
   }
 
   async listUsers( dto: PaginationDTO ) {

@@ -2,13 +2,13 @@
 import { Request, Response } from 'express';
 import { ChangePasswordValidator, CreateUserValidator, LoginUserValidator, ResendVerificationCodeValidator, UpdateUserValidator, ValidateUserValidator } from '../validators/user';
 import { ValidationError } from '../../application/errors/validation.error';
-import { UserService } from '../../application/services/user.service';
+import { UserService } from '../../application/services';
 import { ForgotPasswordUserValidator } from '../validators/user/forgot-password-user.validator';
 
 export class UserController {
   constructor(
-    private readonly userService: UserService
-  ) { }
+    private readonly userService: UserService,
+  ) {}
 
   public getUsers = async (req: Request, res: Response) => {
     const { page, limit } = req.query
@@ -149,4 +149,19 @@ export class UserController {
     const user = await this.userService.getUserById(req.params.id)
     res.status(200).json({ ok: true, user })
   }
+
+  public uploadUserImage = async (req: Request, res: Response) => {
+    const { id: userId } = req.params
+    const { files } = req.body
+    const image = files[0]
+
+    const user = await this.userService.uploadUserImage(image, userId)
+
+    res.status(200).json({
+      ok: true,
+      message: 'La imagen del usuario ha sido actualizada correctamente',
+      user
+    })
+  }
+
 }

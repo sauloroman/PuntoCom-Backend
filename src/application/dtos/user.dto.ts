@@ -62,6 +62,11 @@ export interface ResendVerificationCodeRequestI {
   email: string
 }
 
+export interface UpdateUserImageDto {
+  id: string,
+  url: string
+}
+
 // Response
 export interface UserResponseDtoI {
   id: string,

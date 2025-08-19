@@ -94,4 +94,18 @@ export class CategoryController {
 
     } 
 
+    public uploadCategoryImage = async (req: Request, res: Response) => {
+        const { id: categoryId } = req.params
+        const { files } = req.body
+        const image = files[0]
+
+        const category = await this.categoryService.uploadCategoryImage(image, categoryId)
+
+        res.status(200).json({
+            ok: true,
+            message: 'La imagen de la categoría ha sido actualizada correctamente',
+            category
+        })
+    }
+
 }

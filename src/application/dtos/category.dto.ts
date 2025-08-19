@@ -18,6 +18,11 @@ export interface ChangeCategoryStatusRequestDto {
     id: string
 }
 
+export interface UpdateCategoryImageDto {
+    id: string,
+    url: string
+}
+
 export interface CategoryResponseDto {
     id: string,
     name: string,

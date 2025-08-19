@@ -17,6 +17,19 @@ export class PrismaUserDatasource implements UserDatasource {
     this.prisma = prismaClient;
   }
 
+  async getAllUsers(): Promise<User[]> {
+    try {
+      const users = await this.prisma.user.findMany()
+      return users.map( this.toDomain )
+    } catch( error ) {
+      throw new InfrastructureError(
+        '[Prisma]: Error al obtener todos los usuarios',
+        'PRISMA_FIND_USERS_ERROR',
+        error
+      );
+    }
+  }
+
   async getUsers(pagination: PaginationDTO): Promise<PaginationResponseDto<User>> {
     try {
 

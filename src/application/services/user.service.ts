@@ -8,7 +8,8 @@ import {
   GetUserByEmailUseCase, 
   ChangePasswordUseCase, 
   ListUsersUseCase, 
-  UpdateUserImageUseCase} from '../usecases/user';
+  UpdateUserImageUseCase,
+  GetAllUsersUseCase} from '../usecases/user';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../usecases/verification-code';
 import { 
   SendChangePasswordEmailUseCase, 
@@ -24,13 +25,15 @@ import {
   ResendVerificationCodeRequestI, 
   UpdateUserRequestDTOI } from '../dtos/user.dto';
 import { PaginationDTO } from '../dtos/pagination.dto';
-import { DestroyUserImageUseCase, UploadUserImageUseCase } from '../usecases/upload';
+import { DestroyImageUseCase, UploadImageUseCase, UploadPdfUseCase } from '../usecases/upload';
 import { UploadedFile } from 'express-fileupload';
+import { buildUsersHtml } from '../../infrastructure/services/pdf/templates/users-report.template';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
   getUserByIdUC: GetUserByIdUseCase,
   getUserByEmailUC: GetUserByEmailUseCase
+  getAllUsersUC: GetAllUsersUseCase
   changeStatusUC: ChangeStatusUserUseCase
   validateUserUC: ValidateUserUseCase
   updateUserUC: UpdateUserUseCase
@@ -47,8 +50,9 @@ interface UserServiceI {
   sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
   sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
-  uploadUserImageUC: UploadUserImageUseCase
-  destroyUserImageUC: DestroyUserImageUseCase
+  uploadUserImageUC: UploadImageUseCase
+  destroyUserImageUC: DestroyImageUseCase
+  uploadUsersReportUC: UploadPdfUseCase
 }
 
 export class UserService {
@@ -56,6 +60,7 @@ export class UserService {
   private readonly createUserUC: CreateUserUseCase
   private readonly getUserByIdUC: GetUserByIdUseCase
   private readonly getUserByEmailUC: GetUserByEmailUseCase
+  private readonly getAllUsersUC: GetAllUsersUseCase
   private readonly changeStatusUC: ChangeStatusUserUseCase
   private readonly validateUserUC: ValidateUserUseCase
   private readonly updateUserUC: UpdateUserUseCase
@@ -72,13 +77,15 @@ export class UserService {
   private readonly sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
   private readonly sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
-  private readonly uploadUserImageUC: UploadUserImageUseCase
-  private readonly destroyUserImageUC: DestroyUserImageUseCase
+  private readonly uploadUserImageUC: UploadImageUseCase
+  private readonly destroyUserImageUC: DestroyImageUseCase
+  private readonly uploadUsersReportUC: UploadPdfUseCase
 
   constructor({
     createUserUC,
     getUserByIdUC,
     getUserByEmailUC,
+    getAllUsersUC,
     changeStatusUC,
     validateUserUC,
     updateUserUC,
@@ -93,11 +100,13 @@ export class UserService {
     sendForgotPasswordEmailUC,
     sendChangePasswordEmaiUC,
     uploadUserImageUC,
-    destroyUserImageUC
+    destroyUserImageUC,
+    uploadUsersReportUC
   }: UserServiceI) {
     this.createUserUC = createUserUC
     this.getUserByIdUC = getUserByIdUC
     this.getUserByEmailUC = getUserByEmailUC
+    this.getAllUsersUC = getAllUsersUC
     this.changeStatusUC = changeStatusUC
     this.validateUserUC = validateUserUC
     this.updateUserUC = updateUserUC
@@ -113,6 +122,14 @@ export class UserService {
     this.sendChangePasswordEmaiUC = sendChangePasswordEmaiUC
     this.uploadUserImageUC = uploadUserImageUC
     this.destroyUserImageUC = destroyUserImageUC
+    this.uploadUsersReportUC = uploadUsersReportUC
+  }
+
+  async generateUsersReport(  ) {
+    const users = await this.getAllUsersUC.execute()
+    const html = buildUsersHtml(users)
+    const pdfUrl = await this.uploadUsersReportUC.execute(html, {folder: 'reports/users'})
+    return pdfUrl
   }
 
   async uploadUserImage( image: UploadedFile, userId: string ) {
@@ -123,7 +140,7 @@ export class UserService {
       await this.destroyUserImageUC.execute(user.image)
     }  
 
-    const urlImage = await this.uploadUserImageUC.execute(image, userId)
+    const urlImage = await this.uploadUserImageUC.execute("puntocom/users", image, userId)
     const updatedUser = await this.updateUserImageUC.execute({ id: user.id, url: urlImage })    
     return updatedUser
   }

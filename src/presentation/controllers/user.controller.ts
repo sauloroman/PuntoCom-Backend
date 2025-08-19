@@ -164,4 +164,13 @@ export class UserController {
     })
   }
 
+  public generateUsersReport = async (req: Request, res: Response) => {
+    const pdf = await this.userService.generateUsersReport()
+    res.status(200).json({
+      ok: true,
+      message: 'Reporte de usuarios generado',
+      urL: pdf
+    })
+  }
+
 }

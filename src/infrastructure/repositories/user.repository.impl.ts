@@ -8,6 +8,10 @@ export class UserRepositoryImpl implements UserRepository {
 
   constructor( private readonly userDatasource: UserDatasource ){}
   
+  async getAllUsers(): Promise<User[]> {
+    return await this.userDatasource.getAllUsers()
+  }
+  
   async getUsers(pagination: PaginationDTO): Promise<PaginationResponseDto<User>> {
     return await this.userDatasource.getUsers( pagination )
   }

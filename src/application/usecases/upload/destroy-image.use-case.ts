@@ -1,15 +1,14 @@
-import { User } from "../../../domain/entities";
 import { FileUploadService } from "../../services";
 
-export class DestroyUserImageUseCase {
+export class DestroyImageUseCase {
 
     constructor(private readonly uploadService: FileUploadService){}
 
-    public async execute( userImageUrl: string ) {
-        if (!userImageUrl) return
+    public async execute( imageUrl: string ) {
+        if (!imageUrl) return
 
         await this.uploadService.removeFile({
-            path: userImageUrl,
+            path: imageUrl,
             resourceType: 'image'
         })
     }

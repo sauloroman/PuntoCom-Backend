@@ -23,7 +23,11 @@ export class CategoryRoutes {
 
         router.use([Auth.Logged])
 
-        // router.patch('/upload-image', [FileUploadMiddleware.validateContainFiles], this.controller)
+        router.patch('/upload-image/:id', [ 
+            ParamsHandlerMiddleware.hasIDItem(),
+            FileUploadMiddleware.validateContainFiles 
+        ], this.controller.uploadCategoryImage )
+
         router.get('/', [MapperFilterMiddleware.ToPrisma()], this.controller.getCategories)
         router.get('/search', [MapperFilterMiddleware.ToPrismaContains()], this.controller.getCategories)
 

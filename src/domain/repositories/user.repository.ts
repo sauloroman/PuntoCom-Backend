@@ -9,4 +9,5 @@ export abstract class UserRepository {
   abstract update( user: User ): Promise<User>
   abstract changeStatus( userId: string, status: boolean ): Promise<User>
   abstract getUsers( pagination: PaginationDTO ): Promise<PaginationResponseDto<User>>
+  abstract getAllUsers(): Promise<User[]>
 }

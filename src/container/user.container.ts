@@ -2,10 +2,10 @@ import { EnvAdapter } from '../config/plugins';
 
 import { UserService } from '../application/services';
 import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
-import { ChangePasswordUseCase, ChangeStatusUserUseCase, CreateUserUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
+import { ChangePasswordUseCase, ChangeStatusUserUseCase, CreateUserUseCase, GetAllUsersUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
 import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase } from '../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
-import { DestroyUserImageUseCase, UploadUserImageUseCase } from '../application/usecases/upload';
+import { DestroyImageUseCase, UploadImageUseCase, UploadPdfUseCase } from '../application/usecases/upload';
 
 import { PrismaDatasource } from '../infrastructure/datasource/prisma/prisma-client';
 import { UserRepositoryImpl } from '../infrastructure/repositories/user.repository.impl';
@@ -18,6 +18,7 @@ import { CloudinaryFileUploadService } from '../infrastructure/services/file-upl
 import { UserRoutes } from '../presentation/routes/user.routes';
 import { UserController } from '../presentation/controllers/user.controller';
 import { UpdateUserUseCase } from '../application/usecases/user/update-user.use-case';
+import { PuppeteerPdfService } from '../infrastructure/services/pdf/puppeteer.service';
 
 export class UserContainer {
 
@@ -42,6 +43,7 @@ export class UserContainer {
     })
 
     const uploadFileService = new CloudinaryFileUploadService()
+    const pdfService = new PuppeteerPdfService() 
 
     // Casos de uso
     const loginUserUseCase = new LoginUserUseCase(userRepository)
@@ -53,6 +55,7 @@ export class UserContainer {
     const updateUserUseCase = new UpdateUserUseCase( userRepository )
     const changePasswordUseCase = new ChangePasswordUseCase( userRepository )
     const listUsersUseCase = new ListUsersUseCase( userRepository )
+    const getAllUsersUseCase = new GetAllUsersUseCase(userRepository)
     const updateUserImageUseCase = new UpdateUserImageUseCase( userRepository )
 
     const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepository )
@@ -63,8 +66,9 @@ export class UserContainer {
     const sendForgotPasswordEmailUseCase = new SendForgotPasswordEmailUseCase(emailService)
     const changePasswordEmailUseCase = new SendChangePasswordEmailUseCase(emailService)
 
-    const uploadUserImageUseCase = new UploadUserImageUseCase(uploadFileService)
-    const destroyUserImageUseCase = new DestroyUserImageUseCase(uploadFileService)
+    const uploadUserImageUseCase = new UploadImageUseCase(uploadFileService)
+    const destroyUserImageUseCase = new DestroyImageUseCase(uploadFileService)
+    const uploadUserReportUseCase = new UploadPdfUseCase( pdfService, uploadFileService )
 
     // Servicios
     const userService = new UserService({
@@ -73,6 +77,7 @@ export class UserContainer {
       createVerificationCodeUC: createVerificationCodeUseCase,
       getUserByIdUC: getUserByIdUseCase,
       getUserByEmailUC: getUserByEmailUseCase,
+      getAllUsersUC: getAllUsersUseCase,
       getVerificationCodeUC: getVerificationCodeUseCase,
       loginUserUC: loginUserUseCase,
       changePasswordUserUC: changePasswordUseCase,
@@ -88,7 +93,8 @@ export class UserContainer {
       sendChangePasswordEmaiUC: changePasswordEmailUseCase,
 
       uploadUserImageUC: uploadUserImageUseCase,
-      destroyUserImageUC: destroyUserImageUseCase
+      destroyUserImageUC: destroyUserImageUseCase,
+      uploadUsersReportUC: uploadUserReportUseCase
     })
 
     // Controlador

@@ -68,6 +68,8 @@ export class UserRoutes {
         ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
     ], this.controller.activateUser )
 
+    router.get('/report/generate', [ ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)], this.controller.generateUsersReport )
+
     router.put('/:id', [
       ParamsHandlerMiddleware.hasIDItem(),
     ], this.controller.updateUser )

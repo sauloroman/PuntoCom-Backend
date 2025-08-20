@@ -2,7 +2,7 @@ import { Email, Phone } from '../value-objects';
 import { DomainError } from '../errors/domain.error';
 
 interface SupplierProps {
-  id: string;
+  id?: string;
   name: string;
   lastname: string;
   company: string;
@@ -15,7 +15,7 @@ interface SupplierProps {
 }
 
 export class Supplier {
-  private readonly _id: string;
+  private readonly _id?: string;
   private _name: string;
   private _lastname: string;
   private _company: string;
@@ -34,7 +34,7 @@ export class Supplier {
 
 
   constructor({
-    id,
+    id = '',
     name,
     lastname,
     company,
@@ -100,7 +100,7 @@ export class Supplier {
   }
 
   get id(): string {
-    return this._id;
+    return this._id ?? '';
   }
 
   get name(): string {

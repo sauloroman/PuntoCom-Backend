@@ -4,6 +4,7 @@ import { SupplierDatasource } from "../../../domain/datasources/supplier.datasou
 import { Supplier } from "../../../domain/entities";
 import { Email, Phone } from "../../../domain/value-objects";
 import { InfrastructureError } from "../../errors/infrastructure-error";
+import { buildPaginationOptions } from "./utils/pagination-options";
 
 export class PrismaSupplierDatasource implements SupplierDatasource {
     
@@ -56,7 +57,11 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
     
     async update(supplier: Supplier): Promise<Supplier> {
         try {
-            throw new Error('')
+            const updatedSupplier = await this.prisma.supplier.update({
+                where: { supplier_id: supplier.id },
+                data: this.toPrisma(supplier)
+            })
+            return this.toDomain( updatedSupplier )
         } catch( error ) {
             throw new InfrastructureError(
                 '[Prisma]: Error al actualizar el proveeodr',
@@ -83,7 +88,31 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
     }
     
     async getSuppliers(pagination: PaginationDTO): Promise<PaginationResponseDto<Supplier>> {
-        throw new Error("Method not implemented.");
+        try {
+        
+            const { limit, orderBy, page, skip, take, where } = buildPaginationOptions(pagination)
+
+            const [ suppliers, total ] = await Promise.all([
+                this.prisma.supplier.findMany({ where, skip, take, orderBy }),
+                this.prisma.supplier.count({ where })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            return {
+                items: suppliers.map(this.toDomain),
+                total,
+                page,
+                totalPages
+            }
+
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[Prisma]: Error al filtrar los proveedores',
+                'PRISMA_FIND_SUPPLIERS_BY_FILTER_ERROR',
+                error
+            );
+        }
     }
     
     async getAllSuppliers(): Promise<Supplier[]> {

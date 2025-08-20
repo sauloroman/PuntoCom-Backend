@@ -8,7 +8,7 @@ export class SupplierRepositoryImpl implements SupplierRepository {
     constructor(private readonly supplierDatasource: SupplierDatasource){}
     
     async findById(supplierId: string): Promise<Supplier | null> {
-        throw new Error("Method not implemented.");
+        return await this.supplierDatasource.findById(supplierId)
     }
 
     async findByEmail(supplierEmail: string): Promise<Supplier | null> {
@@ -20,19 +20,19 @@ export class SupplierRepositoryImpl implements SupplierRepository {
     }
 
     async update(supplier: Supplier): Promise<Supplier> {
-        throw new Error("Method not implemented.");
+        return await this.supplierDatasource.update(supplier)
     }
 
-    async changeStatus(SupplierId: string, status: boolean): Promise<Supplier> {
-        throw new Error("Method not implemented.");
+    async changeStatus(supplierId: string, status: boolean): Promise<Supplier> {
+        return await this.supplierDatasource.changeStatus(supplierId, status)
     }
 
     async getSuppliers(pagination: PaginationDTO): Promise<PaginationResponseDto<Supplier>> {
-        throw new Error("Method not implemented.");
+        return await this.supplierDatasource.getSuppliers(pagination)
     }
 
     async getAllSuppliers(): Promise<Supplier[]> {
-        throw new Error("Method not implemented.");
+        return await this.supplierDatasource.getAllSuppliers()
     }
 
 }

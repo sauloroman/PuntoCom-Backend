@@ -1,0 +1,1 @@
+export { CreateSupplierUseCase } from './create-supplier.use-case'

@@ -1,5 +1,5 @@
 import { SupplierService } from "../application/services";
-import { CreateSupplierUseCase } from "../application/usecases/suppliers";
+import { CreateSupplierUseCase, UpdateSupplierUseCase } from "../application/usecases/suppliers";
 import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
 import { PrismaSupplierDatasource } from "../infrastructure/datasource/prisma/prisma-supplier.datasource";
 import { SupplierRepositoryImpl } from "../infrastructure/repositories/supplier.repository.impl";
@@ -17,9 +17,11 @@ export class SupplierContainer {
         )   
 
         const createSupplierUseCase = new CreateSupplierUseCase( supplierRepository ) 
+        const updateSupplierUseCase = new UpdateSupplierUseCase( supplierRepository )
 
         const supplierService = new SupplierService({
-            createSupplierUC: createSupplierUseCase
+            createSupplierUC: createSupplierUseCase,
+            updateSupplierUC: updateSupplierUseCase
         })
 
         const supplierController = new SupplierController( supplierService )

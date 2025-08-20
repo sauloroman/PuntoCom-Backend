@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { SupplierController } from "../controllers/supplier.controller";
 import { Auth } from "../middlewares/auth";
-import { ValidateRolesMiddleware } from "../middlewares";
+import { ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
 
 interface SupplierRoutesI {
@@ -26,6 +26,11 @@ export class SupplierRoutes {
         router.post('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.postSupplier )
+
+        router.put('/:id', [
+            ParamsHandlerMiddleware.hasIDItem(),
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
+        ], this.controller.updateSupplier )
 
         return router
     }

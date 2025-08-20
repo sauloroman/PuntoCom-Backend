@@ -8,7 +8,10 @@ const fieldMap: Record<string, Record<string, string>> = {
         userRole: "role",
         categoryName: "category_name",
         categoryStatus: "category_is_active",
-        categoryCreatedAt: "category_createdAt"
+        categoryCreatedAt: "category_createdAt",
+        supplierName: 'supplier_name',
+        supplierStatus: 'supplier_is_active',
+        supplierCreatedAt: 'supplier_createdAt'
     }
 };
 

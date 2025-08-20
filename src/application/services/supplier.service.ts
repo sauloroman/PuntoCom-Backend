@@ -1,10 +1,21 @@
+import { PaginationDTO } from "../dtos/pagination.dto";
 import { CreateSupplierRequestDto, UpdateSupplierRequestDto } from "../dtos/supplier.dto";
-import { ChangeStatusSupplierUseCase, CreateSupplierUseCase, UpdateSupplierUseCase } from "../usecases/suppliers";
+import { 
+    ChangeStatusSupplierUseCase, 
+    CreateSupplierUseCase, 
+    GetAllSuppliersUseCase, 
+    GetSupplierByIdUseCase, 
+    ListSuppliersUseCase, 
+    UpdateSupplierUseCase 
+} from "../usecases/suppliers";
 
 interface SupplierServiceI {
     createSupplierUC: CreateSupplierUseCase,
     updateSupplierUC: UpdateSupplierUseCase,
     changeSupplierStatusUC: ChangeStatusSupplierUseCase
+    getSupplierByIdUC: GetSupplierByIdUseCase
+    getAllSuppliersUC: GetAllSuppliersUseCase
+    listSuppliersUC: ListSuppliersUseCase
 }
 
 export class SupplierService {
@@ -12,15 +23,24 @@ export class SupplierService {
     private readonly createSupplierUC: CreateSupplierUseCase
     private readonly updateSupplierUC: UpdateSupplierUseCase
     private readonly changeSupplierStatusUC: ChangeStatusSupplierUseCase
+    private readonly getSupplierByIdUC: GetSupplierByIdUseCase
+    private readonly getAllSuppliersUC: GetAllSuppliersUseCase
+    private readonly listSuppliersUC: ListSuppliersUseCase
 
     constructor({
         createSupplierUC,
         updateSupplierUC,
-        changeSupplierStatusUC
+        changeSupplierStatusUC,
+        getSupplierByIdUC,
+        getAllSuppliersUC,
+        listSuppliersUC
     }: SupplierServiceI){
         this.createSupplierUC = createSupplierUC
         this.updateSupplierUC = updateSupplierUC
         this.changeSupplierStatusUC = changeSupplierStatusUC
+        this.getSupplierByIdUC = getSupplierByIdUC
+        this.getAllSuppliersUC = getAllSuppliersUC
+        this.listSuppliersUC = listSuppliersUC
     }
 
     public async createSupplier( dto: CreateSupplierRequestDto ) {
@@ -39,5 +59,17 @@ export class SupplierService {
 
     public async activateSupplier(supplierId: string) {
         return await this.changeSupplierStatusUC.execute(supplierId, true)
+    }
+
+    public async getSupplierById(supplierId: string) {
+        return await this.getSupplierByIdUC.execute(supplierId)
+    }
+
+    public async getAllSuppliers() {
+        return await this.getAllSuppliersUC.execute()
+    }
+
+    public async listSuppliers(pagination: PaginationDTO) {
+        return await this.listSuppliersUC.execute(pagination)
     }
 }

@@ -1,3 +1,6 @@
 export { CreateSupplierUseCase } from './create-supplier.use-case'
 export { UpdateSupplierUseCase } from './update-supplier.use-case'
 export { ChangeStatusSupplierUseCase } from './change-status-supplier.use-case'
+export { GetSupplierByIdUseCase } from './get-supplier-by-id.use-case'
+export { GetAllSuppliersUseCase } from './get-all-supplier.use-case'
+export { ListSuppliersUseCase } from './list-suppliers.use-case'

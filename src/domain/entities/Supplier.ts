@@ -6,10 +6,10 @@ interface SupplierProps {
   name: string;
   lastname: string;
   company: string;
-  isActive?: boolean;
   phone: Phone;
   email: Email;
   address?: string;
+  isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -1,5 +1,5 @@
 import { EmailService, SendChangePasswordI, SendDeactivationAccountI, SendEmailI, SendForgotPasswordI, SendVerificationCodeI } from '../../../application/services/email.service';
-import { welcomeEmailTemplate, accountDeactivatedEmailTemplate, resetPasswordEmailTemplate, passwordChangedEmailTemplate } from './templates';
+import { welcomeEmailTemplate, accountDeactivatedEmailTemplate, resetPasswordEmailTemplate, passwordChangedEmailTemplate } from '../../../config/templates/email';
 import { Transporter } from 'nodemailer';
 import nodemailer from 'nodemailer';
 

@@ -1,5 +1,7 @@
+import { UserResponseDtoI } from "../../../application/dtos/user.dto";
 import { PdfOptions, PdfService } from "../../../application/services/pdf.service";
 import puppeteer from "puppeteer";
+import { buildUsersHtml } from "../../../config/templates/pdf";
 
 export class PuppeteerPdfService implements PdfService {
     
@@ -17,6 +19,12 @@ export class PuppeteerPdfService implements PdfService {
 
         await browser.close()
         return Buffer.from(pdfBuffer)
+    }
+
+    async generateUsersReport(users: UserResponseDtoI[],  options?: PdfOptions & {folder: string}): Promise<Buffer> {
+        const html = buildUsersHtml(users)
+        const buffer = await this.generatePdf(html, options)
+        return buffer
     }
 
 }

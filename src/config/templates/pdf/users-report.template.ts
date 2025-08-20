@@ -1,5 +1,6 @@
-import { UserResponseDtoI } from "../../../../application/dtos/user.dto";
-import { DatesAdapter } from "../../../../config/plugins";
+import { UserResponseDtoI } from "../../../application/dtos/user.dto";
+import { DatesAdapter } from "../../plugins";
+
 
 export function buildUsersHtml(users: UserResponseDtoI[]) {
   
@@ -92,6 +93,7 @@ export function buildUsersHtml(users: UserResponseDtoI[]) {
           <th>Correo</th>
           <th>Rol</th>
           <th>Estado</th>
+          <th>Fecha de creación</th>
         </tr>
         ${users.map(u => `
           <tr>

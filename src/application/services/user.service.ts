@@ -27,7 +27,6 @@ import {
 import { PaginationDTO } from '../dtos/pagination.dto';
 import { DestroyImageUseCase, UploadImageUseCase, UploadPdfUseCase } from '../usecases/upload';
 import { UploadedFile } from 'express-fileupload';
-import { buildUsersHtml } from '../../infrastructure/services/pdf/templates/users-report.template';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
@@ -127,8 +126,7 @@ export class UserService {
 
   async generateUsersReport(  ) {
     const users = await this.getAllUsersUC.execute()
-    const html = buildUsersHtml(users)
-    const pdfUrl = await this.uploadUsersReportUC.execute(html, {folder: 'reports/users'})
+    const pdfUrl = await this.uploadUsersReportUC.execute(users, {folder: 'puntocom/reports/users'})
     return pdfUrl
   }
 

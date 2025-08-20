@@ -1,0 +1,1 @@
+export { buildUsersHtml } from './users-report.template'

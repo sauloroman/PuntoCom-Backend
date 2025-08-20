@@ -46,7 +46,7 @@ model Supplier {
   supplier_id         String   @id @default(uuid())
   supplier_name       String
   supplier_lastname   String
-  supplier_company    String   @unique
+  supplier_company    String   
   supplier_phone      String   @default("Proveedor sin teléfono")
   supplier_email      String   @unique @default("Proveedor sin correo")
   supplier_address    String   @default("Proveedor sin dirección")

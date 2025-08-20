@@ -1,12 +1,11 @@
-import { EnvAdapter } from "../../../../config/plugins";
+import { EnvAdapter } from "../../plugins";
 
-export function welcomeEmailTemplate(
+export function resetPasswordEmailTemplate(
   name: string,
-  token: string,
-  validationCode: string | number
+  token: string
 ): string {
 
-  const url = `${EnvAdapter.FRONTEND_URL}/${token}` 
+  const url = `${EnvAdapter.FRONTEND_URL}/reset-password/${token}`;
   const year = new Date().getFullYear();
 
   return `
@@ -14,31 +13,30 @@ export function welcomeEmailTemplate(
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Bienvenido a Mi App</title>
+      <title>Restablece tu contraseña - PuntoCom</title>
     </head>
     <body style="margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color:#f5f8fa; color:#333;">
       <div style="max-width:600px; margin:40px auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
         
         <div style="background-color:#1e3a8a; padding:20px; text-align:center; color:white;">
           <img src="https://via.placeholder.com/120x40?text=LOGO" alt="Logo" style="max-width:120px; margin-bottom:10px;">
-          <h2 style="margin:0; font-size:20px;">Bienvenido a PuntoCom ☕</h2>
+          <h2 style="margin:0; font-size:20px;">Restablece tu contraseña ☕</h2>
         </div>
         
         <div style="padding:30px; text-align:center;">
-          <h1 style="color:#1e3a8a; font-size:24px; margin-bottom:15px;">¡Hola, ${name}!</h1>
+          <h1 style="color:#1e3a8a; font-size:24px; margin-bottom:15px;">Hola, ${name}</h1>
           <p style="font-size:16px; color:#555; line-height:1.5; margin:0 0 15px;">
-            Tu cuenta ha sido creada exitosamente.<br>
-            Para activar tu cuenta y comenzar a usar la aplicación, haz clic en el siguiente botón e ingresa tu código de validación:
+            Hemos recibido una solicitud para restablecer tu contraseña.<br>
+            Si fuiste tú, haz clic en el siguiente botón para crear una nueva:
           </p>
           
           <a href="${url}" 
             style="display:inline-block; margin-top:25px; padding:12px 25px; background-color:#2563eb; color:white; text-decoration:none; border-radius:6px; font-weight:bold;">
-            Validar Cuenta
+            Crear nueva contraseña
           </a>
           
-          <p style="margin-top:20px; font-size:16px; color:#555;">
-            Tu código de validación es:<br>
-            <strong style="font-size:18px; color:#1e3a8a;">${validationCode}</strong>
+          <p style="margin-top:20px; font-size:14px; color:#555;">
+            Si tú no solicitaste este cambio, puedes ignorar este correo.
           </p>
         </div>
         

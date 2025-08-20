@@ -4,6 +4,7 @@ import { UploadedFile } from "express-fileupload";
 import { FileUploadService } from "../../services";
 import { PdfOptions, PdfService } from "../../services/pdf.service";
 import { IDAdapter } from '../../../config/plugins';
+import { UserResponseDtoI } from '../../dtos/user.dto';
 
 export class UploadPdfUseCase {
 
@@ -14,9 +15,8 @@ export class UploadPdfUseCase {
         private readonly uploadFileService: FileUploadService
     ){}
 
-    public async execute( html: string, options?: PdfOptions & {folder: string} ): Promise<string> {
-
-        const buffer = await this.pdfService.generatePdf(html, options)
+    public async execute( users: UserResponseDtoI[], options?: PdfOptions & {folder: string} ): Promise<string> {
+        const buffer = await this.pdfService.generateUsersReport(users, options)
         const tempPath = path.join(__dirname, `${IDAdapter.generate()}.pdf`)
         fs.writeFileSync(tempPath, buffer)
     

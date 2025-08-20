@@ -1,22 +1,26 @@
 import { CreateSupplierRequestDto, UpdateSupplierRequestDto } from "../dtos/supplier.dto";
-import { CreateSupplierUseCase, UpdateSupplierUseCase } from "../usecases/suppliers";
+import { ChangeStatusSupplierUseCase, CreateSupplierUseCase, UpdateSupplierUseCase } from "../usecases/suppliers";
 
 interface SupplierServiceI {
     createSupplierUC: CreateSupplierUseCase,
-    updateSupplierUC: UpdateSupplierUseCase
+    updateSupplierUC: UpdateSupplierUseCase,
+    changeSupplierStatusUC: ChangeStatusSupplierUseCase
 }
 
 export class SupplierService {
 
     private readonly createSupplierUC: CreateSupplierUseCase
     private readonly updateSupplierUC: UpdateSupplierUseCase
+    private readonly changeSupplierStatusUC: ChangeStatusSupplierUseCase
 
     constructor({
         createSupplierUC,
-        updateSupplierUC
+        updateSupplierUC,
+        changeSupplierStatusUC
     }: SupplierServiceI){
         this.createSupplierUC = createSupplierUC
         this.updateSupplierUC = updateSupplierUC
+        this.changeSupplierStatusUC = changeSupplierStatusUC
     }
 
     public async createSupplier( dto: CreateSupplierRequestDto ) {
@@ -29,4 +33,11 @@ export class SupplierService {
         return supplierUpdated
     }
 
+    public async deactivateSupplier(supplierId: string) {
+        return await this.changeSupplierStatusUC.execute(supplierId, false)
+    }
+
+    public async activateSupplier(supplierId: string) {
+        return await this.changeSupplierStatusUC.execute(supplierId, true)
+    }
 }

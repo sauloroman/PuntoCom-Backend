@@ -32,6 +32,16 @@ export class SupplierRoutes {
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.updateSupplier )
 
+        router.patch('/deactivate/:id', [
+            ParamsHandlerMiddleware.hasIDItem(),
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ) 
+        ], this.controller.deactivateSupplier )
+
+        router.patch('/activate/:id', [
+            ParamsHandlerMiddleware.hasIDItem(),
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ) 
+        ], this.controller.activateSupplier )
+
         return router
     }
 

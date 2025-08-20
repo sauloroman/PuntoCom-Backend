@@ -16,7 +16,7 @@ export class SupplierController {
 
         res.status(201).json({
             ok: true,
-            message: `Se ha creado el proveedor correctamente`,
+            message: `Se ha creado el proveedor exitosamente`,
             supplier: supplier
         })
     }
@@ -30,10 +30,29 @@ export class SupplierController {
 
         res.status(200).json({
             ok: true,
-            message: 'El proveedor ha sido actualizado correctamente',
+            message: 'El proveedor ha sido actualizado exitosamente',
             supplier: updatedSupplier
         })
+    }
 
+    public deactivateSupplier = async (req: Request, res: Response) => {
+        const { id: supplierId } = req.params
+        const supplier = await this.supplierService.deactivateSupplier(supplierId)
+        res.status(200).json({
+            ok: true,
+            message: 'El proveedor ha sido desactivado exitosamente',
+            supplier: supplier
+        })
+    }
+
+    public activateSupplier = async (req: Request, res: Response) => {
+        const { id: supplierId } = req.params
+        const supplier = await this.supplierService.activateSupplier(supplierId)
+        res.status(200).json({
+            ok: true,
+            message: 'El proveedor ha sido activado exitosamente',
+            supplier: supplier
+        })
     }
 
 }

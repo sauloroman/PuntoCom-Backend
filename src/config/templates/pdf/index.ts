@@ -1,1 +1,2 @@
-export { buildUsersHtml } from './users-report.template'
+export { buildUsersHtml } from './list-users-report.template'
+export { buildSuppliersHtml } from './list-suppliers-report.template'

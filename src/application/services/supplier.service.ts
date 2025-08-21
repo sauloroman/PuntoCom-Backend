@@ -1,3 +1,4 @@
+import { buildSuppliersHtml } from "../../config/templates/pdf";
 import { PaginationDTO } from "../dtos/pagination.dto";
 import { CreateSupplierRequestDto, UpdateSupplierRequestDto } from "../dtos/supplier.dto";
 import { 
@@ -8,6 +9,7 @@ import {
     ListSuppliersUseCase, 
     UpdateSupplierUseCase 
 } from "../usecases/suppliers";
+import { UploadPdfUseCase } from "../usecases/upload";
 
 interface SupplierServiceI {
     createSupplierUC: CreateSupplierUseCase,
@@ -16,6 +18,7 @@ interface SupplierServiceI {
     getSupplierByIdUC: GetSupplierByIdUseCase
     getAllSuppliersUC: GetAllSuppliersUseCase
     listSuppliersUC: ListSuppliersUseCase
+    uploadSupplierReportUC: UploadPdfUseCase
 }
 
 export class SupplierService {
@@ -26,6 +29,7 @@ export class SupplierService {
     private readonly getSupplierByIdUC: GetSupplierByIdUseCase
     private readonly getAllSuppliersUC: GetAllSuppliersUseCase
     private readonly listSuppliersUC: ListSuppliersUseCase
+    private readonly uploadSupplierReportUC: UploadPdfUseCase
 
     constructor({
         createSupplierUC,
@@ -33,7 +37,8 @@ export class SupplierService {
         changeSupplierStatusUC,
         getSupplierByIdUC,
         getAllSuppliersUC,
-        listSuppliersUC
+        listSuppliersUC,
+        uploadSupplierReportUC
     }: SupplierServiceI){
         this.createSupplierUC = createSupplierUC
         this.updateSupplierUC = updateSupplierUC
@@ -41,6 +46,14 @@ export class SupplierService {
         this.getSupplierByIdUC = getSupplierByIdUC
         this.getAllSuppliersUC = getAllSuppliersUC
         this.listSuppliersUC = listSuppliersUC
+        this.uploadSupplierReportUC = uploadSupplierReportUC
+    }
+
+    public async generateListSupplierReport() {
+        const suppliers = await this.getAllSuppliersUC.execute()
+        const html = buildSuppliersHtml(suppliers)
+        const pdfUrl = await this.uploadSupplierReportUC.execute(html, {folder: 'puntocom/reports/suppliers'})
+        return pdfUrl
     }
 
     public async createSupplier( dto: CreateSupplierRequestDto ) {

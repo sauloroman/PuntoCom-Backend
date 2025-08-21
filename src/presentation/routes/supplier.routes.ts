@@ -32,6 +32,11 @@ export class SupplierRoutes {
             MapperFilterMiddleware.ToPrisma()
         ], this.controller.getSuppliers )
 
+        router.get('/search', [
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
+            MapperFilterMiddleware.ToPrismaContains()
+        ], this.controller.getSuppliers )
+
         router.get('/:id', [
             ParamsHandlerMiddleware.hasIDItem(),
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
@@ -51,6 +56,10 @@ export class SupplierRoutes {
             ParamsHandlerMiddleware.hasIDItem(),
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ) 
         ], this.controller.activateSupplier )
+
+        router.get('/report/generate', [
+            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
+        ], this.controller.generateListSuppliersReport )
 
         return router
     }

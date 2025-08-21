@@ -11,6 +11,7 @@ const fieldMap: Record<string, Record<string, string>> = {
         categoryCreatedAt: "category_createdAt",
         supplierName: 'supplier_name',
         supplierStatus: 'supplier_is_active',
+        supplierCompany: "supplier_company",
         supplierCreatedAt: 'supplier_createdAt'
     }
 };

@@ -4,20 +4,21 @@ import { UploadedFile } from "express-fileupload";
 import { FileUploadService } from "../../services";
 import { PdfOptions, PdfService } from "../../services/pdf.service";
 import { IDAdapter } from '../../../config/plugins';
-import { UserResponseDtoI } from '../../dtos/user.dto';
 
 export class UploadPdfUseCase {
 
     private readonly validExtentions = ['pdf']
 
     constructor(
-        private readonly pdfService: PdfService,
-        private readonly uploadFileService: FileUploadService
+        private readonly uploadFileService: FileUploadService,
+        private readonly pdfService: PdfService
     ){}
 
-    public async execute( users: UserResponseDtoI[], options?: PdfOptions & {folder: string} ): Promise<string> {
-        const buffer = await this.pdfService.generateUsersReport(users, options)
+    public async execute( html: string, options?: PdfOptions & {folder: string} ): Promise<string> {
+        
         const tempPath = path.join(__dirname, `${IDAdapter.generate()}.pdf`)
+        const buffer = await this.pdfService.generatePdf(html)
+
         fs.writeFileSync(tempPath, buffer)
     
         const fileUrl = await this.uploadFileService.uploadFile({

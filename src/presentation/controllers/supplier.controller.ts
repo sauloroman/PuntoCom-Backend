@@ -89,4 +89,13 @@ export class SupplierController {
         })
     }
 
+    public generateListSuppliersReport = async ( req: Request, res: Response ) => {
+        const pdfUrl = await this.supplierService.generateListSupplierReport()
+        res.status(200).json({
+            ok: true,
+            message: 'Reporte de proveedores generado exitosamente',
+            url: pdfUrl
+        })
+    }
+
 }

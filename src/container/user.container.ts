@@ -68,7 +68,7 @@ export class UserContainer {
 
     const uploadUserImageUseCase = new UploadImageUseCase(uploadFileService)
     const destroyUserImageUseCase = new DestroyImageUseCase(uploadFileService)
-    const uploadUserReportUseCase = new UploadPdfUseCase( pdfService, uploadFileService )
+    const uploadUserReportUseCase = new UploadPdfUseCase( uploadFileService, pdfService )
 
     // Servicios
     const userService = new UserService({

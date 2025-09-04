@@ -28,9 +28,13 @@ export class UserRoutes {
     router.post('/forgot-password', this.controller.forgotPassword )
     router.post('/change-password', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.changePassword)
     router.post('/resend-verification-code', this.controller.resendVerificationCode )
-
+    
     // Private routes 
     router.use([ Auth.Logged ])
+    
+    router.post('/', [ 
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
+    ], this.controller.createUser )
 
     router.get('/renew-token', this.controller.renewToken)
 
@@ -49,9 +53,6 @@ export class UserRoutes {
       MapperFilterMiddleware.ToPrismaContains()
     ], this.controller.getUsers )
 
-    router.post('/', [ 
-      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
-    ], this.controller.createUser )
 
     router.get('/:id', [
       ParamsHandlerMiddleware.hasIDItem(),

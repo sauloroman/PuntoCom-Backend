@@ -1,4 +1,3 @@
-// src/presentation/controllers/UserController.ts
 import { Request, Response } from 'express';
 import { ChangePasswordValidator, CreateUserValidator, LoginUserValidator, ResendVerificationCodeValidator, UpdateUserValidator, ValidateUserValidator } from '../validators/user';
 import { ValidationError } from '../../application/errors/validation.error';

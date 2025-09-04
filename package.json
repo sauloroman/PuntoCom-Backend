@@ -7,7 +7,9 @@
     "dev": "tsnd --project tsconfig.json --respawn src/app.ts",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/app.js",
-    "prisma:migrate": "npx prisma migrate dev --name init"
+    "prisma:migrate": "npx prisma migrate dev --name init",
+    "prisma:seed:categories": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-category.seed.ts",
+    "prisma:seed:suppliers": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-suppliers.seed.ts"
   },
   "author": "Saulo Román Santillán Nava",
   "license": "ISC",

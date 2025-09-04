@@ -9,4 +9,5 @@ export abstract class SupplierRepository {
     abstract changeStatus( supplierId: string, status: boolean ): Promise<Supplier>
     abstract getSuppliers( pagination: PaginationDTO ): Promise<PaginationResponseDto<Supplier>>
     abstract getAllSuppliers(): Promise<Supplier[]>
+    abstract getUniqueCompanies(): Promise<string[]>
 }

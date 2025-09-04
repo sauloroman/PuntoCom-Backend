@@ -13,8 +13,10 @@ export class UpdateCategoryUseCase {
 
     public async execute( data: UpdateCategoryRequest ): Promise<CategoryResponseDto> {
 
-        const existingCategory = await this.categoryRepository.findByName( data.name! )
-        if ( existingCategory ) throw new ApplicationError(`La categoría ${data.name} ya existe. Intente con otro nombre`, this.MESSAGE_ERROR)
+        if ( data.name ) {
+            const existingCategory = await this.categoryRepository.findByName( data.name! )
+            if ( existingCategory ) throw new ApplicationError(`La categoría ${data.name} ya existe. Intente con otro nombre`, this.MESSAGE_ERROR)
+        }
         
         const categoryToUpdate = await this.categoryRepository.findById( data.id )
         if ( !categoryToUpdate ) throw new ApplicationError(`La categoría con id ${data.id} no existe.`, this.MESSAGE_ERROR2 )

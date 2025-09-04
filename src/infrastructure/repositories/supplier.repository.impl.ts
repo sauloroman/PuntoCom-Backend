@@ -7,6 +7,10 @@ export class SupplierRepositoryImpl implements SupplierRepository {
 
     constructor(private readonly supplierDatasource: SupplierDatasource){}
     
+    async getUniqueCompanies(): Promise<string[]> {
+        return await this.supplierDatasource.getUniqueCompanies()
+    }
+    
     async findById(supplierId: string): Promise<Supplier | null> {
         return await this.supplierDatasource.findById(supplierId)
     }

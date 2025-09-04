@@ -9,6 +9,7 @@ import {
     ListSuppliersUseCase, 
     UpdateSupplierUseCase 
 } from "../usecases/suppliers";
+import { GetUniqueCompaniesSupplier } from "../usecases/suppliers/get-unique-companies-supplier.use-case";
 import { UploadPdfUseCase } from "../usecases/upload";
 
 interface SupplierServiceI {
@@ -19,6 +20,7 @@ interface SupplierServiceI {
     getAllSuppliersUC: GetAllSuppliersUseCase
     listSuppliersUC: ListSuppliersUseCase
     uploadSupplierReportUC: UploadPdfUseCase
+    getUniqueCompaniesSupplierUC: GetUniqueCompaniesSupplier
 }
 
 export class SupplierService {
@@ -30,6 +32,7 @@ export class SupplierService {
     private readonly getAllSuppliersUC: GetAllSuppliersUseCase
     private readonly listSuppliersUC: ListSuppliersUseCase
     private readonly uploadSupplierReportUC: UploadPdfUseCase
+    private readonly getUniqueCompaniesSupplierUC: GetUniqueCompaniesSupplier
 
     constructor({
         createSupplierUC,
@@ -38,7 +41,8 @@ export class SupplierService {
         getSupplierByIdUC,
         getAllSuppliersUC,
         listSuppliersUC,
-        uploadSupplierReportUC
+        uploadSupplierReportUC,
+        getUniqueCompaniesSupplierUC
     }: SupplierServiceI){
         this.createSupplierUC = createSupplierUC
         this.updateSupplierUC = updateSupplierUC
@@ -47,6 +51,11 @@ export class SupplierService {
         this.getAllSuppliersUC = getAllSuppliersUC
         this.listSuppliersUC = listSuppliersUC
         this.uploadSupplierReportUC = uploadSupplierReportUC
+        this.getUniqueCompaniesSupplierUC = getUniqueCompaniesSupplierUC
+    }
+
+    public async getUniqueCompanies() {
+        return await this.getUniqueCompaniesSupplierUC.execute()
     }
 
     public async generateListSupplierReport() {

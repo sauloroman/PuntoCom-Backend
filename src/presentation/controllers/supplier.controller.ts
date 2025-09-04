@@ -8,6 +8,14 @@ export class SupplierController {
 
     constructor(private readonly supplierService: SupplierService){}
 
+    public getUniqueCompanies = async (req: Request, res: Response) => {
+        const companies = await this.supplierService.getUniqueCompanies()
+        res.status(200).json({
+            ok: true,
+            companies
+        })
+    }
+
     public getSuppliers = async (req: Request, res: Response) => {
         const { page, limit } = req.query
         const sort = (req as any).sort

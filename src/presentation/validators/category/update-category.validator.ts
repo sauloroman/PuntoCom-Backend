@@ -7,12 +7,16 @@ export class UpdateCategoryValidator {
 
     public static validate( input: any ): [UpdateCategoryRequestDto?, string?] {
 
-        if ( input.name && input.name.length > 0 && input.name.length > this.MAX_NAME_LENGTH ) {
-            return [undefined, `El nombre no puede exceder ${this.MAX_NAME_LENGTH} caracteres`]
+        if ( input.name && input.name.length > 0) {
+            if (input.name.length > this.MAX_NAME_LENGTH ) {
+                return [undefined, `El nombre no puede exceder ${this.MAX_NAME_LENGTH} caracteres`]
+            }
         }
 
-        if ( input.description && input.description.length > 0 && input.description.length > this.MAX_NAME_LENGTH ) {
-            return [undefined, `La descripción no puede exceder ${this.MAX_DESCRIPTION_LENGTH} caracteres`]
+        if ( input.description && input.description.length > 0 ) {
+            if (input.description.length > this.MAX_DESCRIPTION_LENGTH) {
+                return [undefined, `La descripción no puede exceder ${this.MAX_DESCRIPTION_LENGTH} caracteres`]
+            }
         }
 
         return [{

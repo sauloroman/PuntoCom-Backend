@@ -25,7 +25,7 @@ export class UploadPdfUseCase {
             file: { tempFilePath: tempPath, mimetype: 'application/pdf'} as UploadedFile,
             folder: options?.folder ?? 'reports',
             validExtentions: this.validExtentions,
-            resourceType: 'raw'
+            resourceType: 'auto'
         })
     
         fs.unlinkSync(tempPath)

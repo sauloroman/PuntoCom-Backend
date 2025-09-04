@@ -23,6 +23,8 @@ export class SupplierRoutes {
 
         router.use([Auth.Logged])
 
+        router.get('/companies', this.controller.getUniqueCompanies )
+
         router.post('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.postSupplier )

@@ -10,6 +10,16 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
+  public renewToken = async (req: Request, res: Response) => {
+    const { user: userReq } = (req.body as any)
+    const data = await this.userService.renewToken(userReq._id)
+    res.status(200).json({
+      ok: true,
+      user: data.user,
+      token: data.token
+    })
+  }
+
   public getUsers = async (req: Request, res: Response) => {
     const { page, limit } = req.query
     const sort = (req as any).sort

@@ -30,9 +30,9 @@ export class UserRoutes {
     router.post('/resend-verification-code', this.controller.resendVerificationCode )
 
     // Private routes 
-    // TODO: Implement Auth Middleware
-
     router.use([ Auth.Logged ])
+
+    router.get('/renew-token', this.controller.renewToken)
 
     router.patch('/upload-image/:id', [ 
       ParamsHandlerMiddleware.hasIDItem(),

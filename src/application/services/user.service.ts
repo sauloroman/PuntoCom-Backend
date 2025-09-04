@@ -125,6 +125,14 @@ export class UserService {
     this.uploadUsersReportUC = uploadUsersReportUC
   }
 
+  async renewToken(userId: string) {
+    const user = await this.getUserById(userId)
+    const token = await JwtAdapter.generateJWT({ id: user.id, email: user.email, role: user.role})
+    return {
+      user, token
+    }
+  }
+
   async generateListUsersReport(  ) {
     const users = await this.getAllUsersUC.execute()
     const html = buildUsersHtml(users)

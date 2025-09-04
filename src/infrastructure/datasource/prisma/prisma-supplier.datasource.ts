@@ -14,6 +14,26 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
       this.prisma = prismaClient;
     }
 
+    async getUniqueCompanies(): Promise<string[]> {
+        try {
+            const suppliers = await this.prisma.supplier.findMany({
+                select: { supplier_company: true }
+            });
+
+            const companies = suppliers
+                .map(supplier => supplier.supplier_company)
+                .filter((company): company is string => !!company);
+
+            return [...new Set(companies)];
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[Prisma]: Error al obtener las compañias',
+                'PRISMA_GET_COMPANIES_ERROR',
+                error
+            );
+        }
+    }
+
     async findById(supplierId: string): Promise<Supplier | null> {
         try {
             const supplier = await this.prisma.supplier.findUnique({ where: { supplier_id: supplierId }})

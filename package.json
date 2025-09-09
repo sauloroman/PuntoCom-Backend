@@ -8,8 +8,9 @@
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/app.js",
     "prisma:migrate": "npx prisma migrate dev --name init",
-    "prisma:seed:categories": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-category.seed.ts",
-    "prisma:seed:suppliers": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-suppliers.seed.ts"
+    "db:seed:categories": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-category.seed.ts",
+    "db:seed:suppliers": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-suppliers.seed.ts",
+    "db:seed:users": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-users.seed.ts"
   },
   "author": "Saulo Román Santillán Nava",
   "license": "ISC",

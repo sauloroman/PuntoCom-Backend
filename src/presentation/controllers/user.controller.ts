@@ -3,11 +3,23 @@ import { ChangePasswordValidator, CreateUserValidator, LoginUserValidator, Resen
 import { ValidationError } from '../../application/errors/validation.error';
 import { UserService } from '../../application/services';
 import { ForgotPasswordUserValidator } from '../validators/user/forgot-password-user.validator';
+import { CheckAdminPasswordValidator } from '../validators/user/check-admin-password.validator';
 
 export class UserController {
   constructor(
     private readonly userService: UserService,
   ) {}
+
+  public checkAdminPassword = async (req: Request, res: Response) => {
+    const [ dto, error ] = CheckAdminPasswordValidator.validate(req.body)
+    if ( error ) throw new ValidationError(error, 'CHECK_ADMIN_PASSWORD')
+    const isValid = await this.userService.checkAdminPassword(dto!)
+    res.status(200).json({
+      ok: true,
+      message: 'Contraseña correcta',
+      validPassword: isValid
+    })
+  }
 
   public renewToken = async (req: Request, res: Response) => {
     const { user: userReq } = (req.body as any)

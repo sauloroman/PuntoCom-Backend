@@ -1,7 +1,12 @@
 import { RoleEnum } from '../../domain/value-objects/Role';
 
 export interface ChangeStatusUserRequestI {
-    userId: string
+  userId: string
+}
+
+export interface CheckAdminPasswordDtoI {
+  id: string,
+  adminPassword: string
 }
 
 export interface CreateUserRequestDtoI {

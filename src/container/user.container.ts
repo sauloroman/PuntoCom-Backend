@@ -2,7 +2,7 @@ import { EnvAdapter } from '../config/plugins';
 
 import { UserService } from '../application/services';
 import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
-import { ChangePasswordUseCase, ChangeStatusUserUseCase, CreateUserUseCase, GetAllUsersUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
+import { ChangePasswordUseCase, ChangeStatusUserUseCase, CheckAdminPasswordUseCase, CreateUserUseCase, GetAllUsersUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
 import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase } from '../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
 import { DestroyImageUseCase, UploadImageUseCase, UploadPdfUseCase } from '../application/usecases/upload';
@@ -57,6 +57,7 @@ export class UserContainer {
     const listUsersUseCase = new ListUsersUseCase( userRepository )
     const getAllUsersUseCase = new GetAllUsersUseCase(userRepository)
     const updateUserImageUseCase = new UpdateUserImageUseCase( userRepository )
+    const checkAdminPassUseCase = new CheckAdminPasswordUseCase( userRepository )
 
     const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepository )
     const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepository )
@@ -83,6 +84,7 @@ export class UserContainer {
       changePasswordUserUC: changePasswordUseCase,
       listUsersUC: listUsersUseCase,
       updateUserImageUC: updateUserImageUseCase,
+      checkAdminPasswordUC: checkAdminPassUseCase,
       
       updateUserUC: updateUserUseCase,
       validateUserUC: validateUserUseCase,

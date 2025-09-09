@@ -36,6 +36,10 @@ export class UserRoutes {
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
     ], this.controller.createUser )
 
+    router.post('/check-admin-password', [
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
+    ], this.controller.checkAdminPassword)
+
     router.get('/renew-token', this.controller.renewToken)
 
     router.patch('/upload-image/:id', [ 

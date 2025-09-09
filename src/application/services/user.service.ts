@@ -9,7 +9,8 @@ import {
   ChangePasswordUseCase, 
   ListUsersUseCase, 
   UpdateUserImageUseCase,
-  GetAllUsersUseCase} from '../usecases/user';
+  GetAllUsersUseCase,
+  CheckAdminPasswordUseCase} from '../usecases/user';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../usecases/verification-code';
 import { 
   SendChangePasswordEmailUseCase, 
@@ -20,6 +21,7 @@ import { ApplicationError } from '../errors/application.error';
 import { UpdateUserUseCase } from '../usecases/user/update-user.use-case';
 import { 
   ChangePasswordRequestDtoI, 
+  CheckAdminPasswordDtoI, 
   CreateUserRequestDtoI, 
   ForgotPasswordRequestI, 
   ResendVerificationCodeRequestI, 
@@ -41,6 +43,7 @@ interface UserServiceI {
   changePasswordUserUC: ChangePasswordUseCase
   updateUserImageUC: UpdateUserImageUseCase
   listUsersUC: ListUsersUseCase
+  checkAdminPasswordUC: CheckAdminPasswordUseCase,
 
   createVerificationCodeUC: CreateVerificationCodeUseCase
   getVerificationCodeUC: GetVerificationCodeUseCase
@@ -68,6 +71,7 @@ export class UserService {
   private readonly updateUserImageUC: UpdateUserImageUseCase
   private readonly changePasswordUserUC: ChangePasswordUseCase
   private readonly listUsersUC: ListUsersUseCase
+  private readonly checkAdminPasswordUC: CheckAdminPasswordUseCase
   
   private readonly createVerificationCodeUC: CreateVerificationCodeUseCase
   private readonly getVerificationCodeUC: GetVerificationCodeUseCase
@@ -93,6 +97,7 @@ export class UserService {
     updateUserImageUC,
     changePasswordUserUC,
     listUsersUC,
+    checkAdminPasswordUC,
     createVerificationCodeUC,
     getVerificationCodeUC,
     sendDeactivationEmailUC,
@@ -114,6 +119,7 @@ export class UserService {
     this.loginUserUC = loginUserUC
     this.changePasswordUserUC = changePasswordUserUC
     this.listUsersUC = listUsersUC
+    this.checkAdminPasswordUC = checkAdminPasswordUC
     this.createVerificationCodeUC = createVerificationCodeUC
     this.getVerificationCodeUC = getVerificationCodeUC
     this.sendDeactivationEmailUC = sendDeactivationEmailUC
@@ -123,6 +129,10 @@ export class UserService {
     this.uploadUserImageUC = uploadUserImageUC
     this.destroyUserImageUC = destroyUserImageUC
     this.uploadUsersReportUC = uploadUsersReportUC
+  }
+
+  async checkAdminPassword( dto: CheckAdminPasswordDtoI ) {
+    return await this.checkAdminPasswordUC.execute(dto)
   }
 
   async renewToken(userId: string) {

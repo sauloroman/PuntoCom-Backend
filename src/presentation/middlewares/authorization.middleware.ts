@@ -7,7 +7,6 @@ export class ValidateRolesMiddleware {
     return async (req: Request, res: Response, next: NextFunction) => {
 
       const user = req.body.user
-      console.log(req.body.user)
 
       if (!user) {
         return res.status(401).json({ message: "Usuario no autenticado" });

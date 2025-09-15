@@ -7,10 +7,10 @@ export class UploadImageUseCase {
 
     constructor(private readonly uploadService: FileUploadService){}
 
-    public async execute( folder: string, image: UploadedFile, userId: string ): Promise<string> {
+    public async execute( folder: string, image: UploadedFile, id: string ): Promise<string> {
         const url = await this.uploadService.uploadFile({
             file: image,
-            folder: `${folder}/${userId}`,
+            folder: `${folder}/${id}`,
             validExtentions: this.validExtentions,
             resourceType: 'image'
         })

@@ -61,7 +61,7 @@ export class SupplierService {
     public async generateListSupplierReport() {
         const suppliers = await this.getAllSuppliersUC.execute()
         const html = buildSuppliersHtml(suppliers)
-        const pdfUrl = await this.uploadSupplierReportUC.execute(html, {folder: 'puntocom/reports/suppliers'})
+        const pdfUrl = await this.uploadSupplierReportUC.execute(html, {folder: '/reports/suppliers'})
         return pdfUrl
     }
 

@@ -28,8 +28,6 @@ export class UploadPdfUseCase {
             resourceType: 'auto'
         })
     
-        fs.unlinkSync(tempPath)
-        
         return fileUrl
     }
 

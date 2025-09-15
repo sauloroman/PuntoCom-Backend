@@ -2,23 +2,23 @@ import { ProductCode, Money, Stock } from '../value-objects';
 import { DomainError } from '../errors/domain.error';
 
 interface ProductProps {
-  id: string;
+  id?: string;
   name: string;
-  description?: string;
-  image?: string;
   code: ProductCode;
   sellingPrice: Money;
   stock: Stock;
   stockMin: Stock;
   categoryId: string;
   supplierId: string;
+  description?: string;
+  image?: string;
   isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export class Product {
-  private readonly _id: string;
+  private readonly _id?: string;
   private _name: string;
   private _description: string;
   private _image: string;
@@ -39,7 +39,7 @@ export class Product {
 
 
   constructor({
-    id,
+    id = '',
     name,
     description = 'Producto sin descripción',
     image = 'Producto sin imagen',
@@ -120,7 +120,7 @@ export class Product {
 
 
   get id(): string {
-    return this._id;
+    return this._id ?? '';
   }
 
   get name(): string {

@@ -1,3 +1,5 @@
+import { ProductCode } from "../../domain/value-objects";
+
 export class CodeGeneratorAdapter {
 
   public static generateNumericCode(length: number): string {
@@ -9,6 +11,20 @@ export class CodeGeneratorAdapter {
       code += digit.toString();
     }
     return code;
+  }
+
+  public static generateProductCode(): ProductCode {
+    const productCodeLength = ProductCode['MAX_QUANTITY_CHARACTERS']
+
+    let numericCode = this.generateNumericCode(productCodeLength)
+
+    if ( numericCode.startsWith('0') ) {
+      numericCode = (Math.floor(Math.random() * 9) + 1).toString() + numericCode.slice(1)
+    } 
+
+    const productCode = new ProductCode(numericCode)
+
+    return productCode
   }
 
 }

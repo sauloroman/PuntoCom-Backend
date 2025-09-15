@@ -6,7 +6,7 @@ import { UploadPdfUseCase } from "../application/usecases/upload";
 import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
 import { PrismaSupplierDatasource } from "../infrastructure/datasource/prisma/prisma-supplier.datasource";
 import { SupplierRepositoryImpl } from "../infrastructure/repositories/supplier.repository.impl";
-import { CloudinaryFileUploadService } from "../infrastructure/services/file-upload/cloudinary.service";
+import { LocalFileUploadService } from "../infrastructure/services/file-upload/local.service";
 import { PuppeteerPdfService } from "../infrastructure/services/pdf/puppeteer.service";
 import { SupplierController } from "../presentation/controllers/supplier.controller";
 import { SupplierRoutes } from "../presentation/routes";
@@ -21,7 +21,7 @@ export class SupplierContainer {
             new PrismaSupplierDatasource( PrismaDatasource.getInstance() )
         )   
 
-        const uploadService = new CloudinaryFileUploadService()
+        const uploadService = new LocalFileUploadService()
         const pdfService = new PuppeteerPdfService()
 
         const createSupplierUseCase = new CreateSupplierUseCase( supplierRepository ) 

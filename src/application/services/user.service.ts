@@ -146,7 +146,7 @@ export class UserService {
   async generateListUsersReport(  ) {
     const users = await this.getAllUsersUC.execute()
     const html = buildUsersHtml(users)
-    const pdfUrl = await this.uploadUsersReportUC.execute(html, {folder: 'puntocom/reports/users'})
+    const pdfUrl = await this.uploadUsersReportUC.execute(html, {folder: 'reports/users'})
     return pdfUrl
   }
 

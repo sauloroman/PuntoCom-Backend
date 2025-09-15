@@ -1,0 +1,8 @@
+export { CreateProductUseCase } from './create-product.use-case'
+export { UpdateProductUseCase } from './update-product.use-case'
+export { GetProductByIdUseCase } from './get-product-by-id.use-case'
+export { GetProductByNameUseCase } from './get-product-by-name.use-case'
+export { ChangeStatusProductUseCase } from './change-status-product.use-case'
+export { ListProductsUseCase } from './list-products.use-case'
+export { UpdateProductImageUseCase } from './update-image-product.use-case'
+export { GetAllProductsUseCase } from './get-all-products.use-case'

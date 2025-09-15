@@ -1,4 +1,4 @@
-import { HashAdapter, DatesAdapter, IDAdapter } from '../../../config/plugins';
+import { HashAdapter, DatesAdapter } from '../../../config/plugins';
 
 import { UserRepository } from '../../../domain/repositories/user.repository';
 import { Email, Password, Role } from '../../../domain/value-objects';

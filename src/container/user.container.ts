@@ -19,6 +19,7 @@ import { UserRoutes } from '../presentation/routes/user.routes';
 import { UserController } from '../presentation/controllers/user.controller';
 import { UpdateUserUseCase } from '../application/usecases/user/update-user.use-case';
 import { PuppeteerPdfService } from '../infrastructure/services/pdf/puppeteer.service';
+import { LocalFileUploadService } from '../infrastructure/services/file-upload/local.service';
 
 export class UserContainer {
 
@@ -43,6 +44,7 @@ export class UserContainer {
     })
 
     const uploadFileService = new CloudinaryFileUploadService()
+    const uploadPdfService = new LocalFileUploadService()
     const pdfService = new PuppeteerPdfService() 
 
     // Casos de uso
@@ -69,7 +71,7 @@ export class UserContainer {
 
     const uploadUserImageUseCase = new UploadImageUseCase(uploadFileService)
     const destroyUserImageUseCase = new DestroyImageUseCase(uploadFileService)
-    const uploadUserReportUseCase = new UploadPdfUseCase( uploadFileService, pdfService )
+    const uploadUserReportUseCase = new UploadPdfUseCase( uploadPdfService, pdfService )
 
     // Servicios
     const userService = new UserService({

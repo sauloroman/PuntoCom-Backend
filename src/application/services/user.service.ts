@@ -27,9 +27,8 @@ import {
   ResendVerificationCodeRequestI, 
   UpdateUserRequestDTOI } from '../dtos/user.dto';
 import { PaginationDTO } from '../dtos/pagination.dto';
-import { DestroyImageUseCase, UploadImageUseCase, UploadPdfUseCase } from '../usecases/upload';
+import { DestroyImageUseCase, UploadImageUseCase } from '../usecases/upload';
 import { UploadedFile } from 'express-fileupload';
-import { buildUsersHtml } from '../../config/templates/pdf';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
@@ -55,7 +54,6 @@ interface UserServiceI {
 
   uploadUserImageUC: UploadImageUseCase
   destroyUserImageUC: DestroyImageUseCase
-  uploadUsersReportUC: UploadPdfUseCase
 }
 
 export class UserService {
@@ -83,7 +81,6 @@ export class UserService {
 
   private readonly uploadUserImageUC: UploadImageUseCase
   private readonly destroyUserImageUC: DestroyImageUseCase
-  private readonly uploadUsersReportUC: UploadPdfUseCase
 
   constructor({
     createUserUC,
@@ -106,7 +103,6 @@ export class UserService {
     sendChangePasswordEmaiUC,
     uploadUserImageUC,
     destroyUserImageUC,
-    uploadUsersReportUC
   }: UserServiceI) {
     this.createUserUC = createUserUC
     this.getUserByIdUC = getUserByIdUC
@@ -128,7 +124,6 @@ export class UserService {
     this.sendChangePasswordEmaiUC = sendChangePasswordEmaiUC
     this.uploadUserImageUC = uploadUserImageUC
     this.destroyUserImageUC = destroyUserImageUC
-    this.uploadUsersReportUC = uploadUsersReportUC
   }
 
   async checkAdminPassword( dto: CheckAdminPasswordDtoI ) {
@@ -141,13 +136,6 @@ export class UserService {
     return {
       user, token
     }
-  }
-
-  async generateListUsersReport(  ) {
-    const users = await this.getAllUsersUC.execute()
-    const html = buildUsersHtml(users)
-    const pdfUrl = await this.uploadUsersReportUC.execute(html, {folder: 'reports/users'})
-    return pdfUrl
   }
 
   async uploadUserImage( image: UploadedFile, userId: string ) {
@@ -263,5 +251,9 @@ export class UserService {
 
   async getUserByEmail(userEmail: string) {
     return await this.getUserByEmailUC.execute({ email: userEmail })
+  }
+
+  async getAllUsers() {
+    return await this.getAllUsersUC.execute()
   }
 }

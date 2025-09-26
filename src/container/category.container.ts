@@ -1,5 +1,10 @@
 import { CategoryService } from "../application/services/category.service";
-import { ChangeCategoryStatusUseCase, GetCategoryByIdUseCase, ListCategoriesUseCase, UpdateCategoryUseCase } from "../application/usecases/categories";
+import { 
+    ChangeCategoryStatusUseCase, 
+    GetAllCategoriesUseCase, 
+    GetCategoryByIdUseCase, 
+    ListCategoriesUseCase, 
+    UpdateCategoryUseCase } from "../application/usecases/categories";
 import { CreateCategoryUseCase } from "../application/usecases/categories/create-category.use-case";
 import { UpdateImageCategoryUseCase } from "../application/usecases/categories/update-image-category.use-case";
 import { DestroyImageUseCase, UploadImageUseCase } from "../application/usecases/upload";
@@ -24,6 +29,7 @@ export class CategoryContainer {
 
         const createCategoryUseCase = new CreateCategoryUseCase(categoryRepository)
         const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryRepository)
+        const getAllCategoriesUseCase = new GetAllCategoriesUseCase(categoryRepository)
         const updateCategoryUseCase = new UpdateCategoryUseCase(categoryRepository)
         const changeCategoryStatusUseCase = new ChangeCategoryStatusUseCase(categoryRepository)
         const listCategoriesUseCase = new ListCategoriesUseCase(categoryRepository)
@@ -35,6 +41,7 @@ export class CategoryContainer {
         const categoryService = new CategoryService({   
             createCategoryUC: createCategoryUseCase,
             getCategoryByIdUC: getCategoryByIdUseCase,
+            getAllCategoriesUC: getAllCategoriesUseCase,
             updateCategoryUC: updateCategoryUseCase,
             changeStatusCategoryUC: changeCategoryStatusUseCase,
             listCategoriesUC: listCategoriesUseCase,

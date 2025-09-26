@@ -60,10 +60,6 @@ export class ProductRoutes {
             FileUploadMiddleware.validateContainFiles
         ], this.controller.uploadProductImage )
 
-        router.get('/report/generate', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
-        ], this.controller.generateListProductsReport )
-
         return router
     }
 

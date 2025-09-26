@@ -40,6 +40,7 @@ export class ChangePasswordUseCase {
             name: updatedUser.name,
             lastname: updatedUser.lastname,
             email: updatedUser.email.value,
+            phone: user.phone.value,
             role: updatedUser.role.value,
             image: updatedUser.image,
             isActive: updatedUser.isActive,

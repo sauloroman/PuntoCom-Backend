@@ -1,5 +1,3 @@
-import { Money, ProductCode, Stock } from "../../domain/value-objects"
-
 export interface CreateProduct {
     name: string,
     description?: string,
@@ -12,6 +10,7 @@ export interface CreateProduct {
 
 export interface UpdateProductRequest {
     id: string,
+    imageCode?: string,
     name?: string,
     description?: string,
     sellingPrice?: number,
@@ -65,6 +64,7 @@ export interface ProductResponseIncludeDto {
     stock: number,
     stockMin: number,
     image: string,
+    imageCode: string,
     code: string,
     categoryId: string,
     supplierId: string,

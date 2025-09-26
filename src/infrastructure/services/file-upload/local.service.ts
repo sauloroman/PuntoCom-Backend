@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import { IDAdapter } from '../../../config/plugins';
-import { FileUploadService, RemoveFileI, UploadFileI } from "../../../application/services/file-upload.service";
+import { FileUploadService, RemoveFileI, UploadFileCloud, UploadFileI } from "../../../application/services/file-upload.service";
 import { InfrastructureError } from '../../errors/infrastructure-error';
 import { UploadedFile } from 'express-fileupload';
 
@@ -49,7 +49,7 @@ export class LocalFileUploadService implements FileUploadService {
                 )
             }
     
-            return `${folder}/${fileName}`
+            return `uploads/${folder}/${fileName}`
 
         } catch (error) {
             throw new InfrastructureError(
@@ -79,5 +79,9 @@ export class LocalFileUploadService implements FileUploadService {
                 error
             )
         }
+    }
+
+    uploadBuffer(buffer: Buffer, options: UploadFileCloud): Promise<string> {
+        throw new Error('Method not implemented.');
     }
 }

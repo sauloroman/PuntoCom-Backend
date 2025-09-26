@@ -13,6 +13,19 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
         this.prisma = prisma
     }
 
+    async getAllCategories(): Promise<Category[]> {
+        try {
+            const categories = await this.prisma.category.findMany()
+            return categories.map(this.toDomain)
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[Prisma]: Error al obtener todas las categorias',
+                'PRISMA_FIND_CATEGORIES',
+                 error
+            );
+        } 
+    }
+
     async findById(categoryId: string): Promise<Category | null> {
         try {
             const category = await this.prisma.category.findUnique({ where: { category_id: categoryId }})

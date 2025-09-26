@@ -2,6 +2,7 @@ import { Application, Router } from "express";
 import express from 'express';
 import fileUpload from "express-fileupload";
 import cors from 'cors'
+import path from "path";
 
 interface ServerConfigurationOptions {
   router: Router,
@@ -24,7 +25,8 @@ export class ServerConfiguration {
     this._app.use( cors() )
     this._app.use( express.json() )
     this._app.use( express.urlencoded({ extended: true }))
-    this._app.use( express.static( publicPath ) )
+    this._app.use( express.static( publicPath ) )    
+    this._app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));  
     this._app.use( router )
   }
 

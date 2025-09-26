@@ -1,7 +1,7 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
 import { UserRepository } from "../../../domain/repositories/user.repository";
-import { Email, Password, Role } from "../../../domain/value-objects";
+import { Email, Password, Phone, Role } from "../../../domain/value-objects";
 import { UpdateUserRequestDTOI, UserResponseDtoI } from "../../dtos/user.dto";
 import { ApplicationError } from "../../errors/application.error";
 
@@ -13,7 +13,7 @@ export class UpdateUserUseCase {
 
     public async execute( data: UpdateUserRequestDTOI ): Promise<UserResponseDtoI> {
 
-        const { id, lastname, name, role } = data
+        const { id, lastname, name, role, phone } = data
 
         const existingUser = await this.userRepository.findById( id )
         if (!existingUser) throw new ApplicationError(`El usuario con id ${id} no existe`, this.MESSAGE_ERROR)
@@ -25,6 +25,7 @@ export class UpdateUserUseCase {
             isValidated: existingUser.isValidated,
             lastname: lastname ? lastname : existingUser.lastname,
             name: name ? name: existingUser.name,
+            phone: phone ? new Phone(phone) : existingUser.phone,
             password: new Password(existingUser.password.value),
             role: role ? new Role( role ): new Role( existingUser.role.value ),
             image: existingUser.image,
@@ -39,6 +40,7 @@ export class UpdateUserUseCase {
             name: updatedUser.name,
             lastname: updatedUser.lastname,
             email: updatedUser.email.value,
+            phone: updatedUser.phone.value,
             role: updatedUser.role.value,
             image: updatedUser.image,
             isActive: updatedUser.isActive,

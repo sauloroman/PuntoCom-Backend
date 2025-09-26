@@ -1,5 +1,5 @@
 import { User } from '../../../domain/entities';
-import { Email, Password, Role } from '../../../domain/value-objects';
+import { Email, Password, Phone, Role } from '../../../domain/value-objects';
 import { RoleEnum } from '../../../domain/value-objects/Role';
 
 import { InfrastructureError } from '../../errors/infrastructure-error';
@@ -138,6 +138,7 @@ export class PrismaUserDatasource implements UserDatasource {
       lastname: userData.user_lastname,
       image: userData.user_image,
       email: new Email(userData.user_email),
+      phone: new Phone(userData.user_phone),
       password: new Password(userData.user_password),
       role: new Role(userData.role as RoleEnum),
       isActive: userData.user_is_active,
@@ -150,6 +151,7 @@ export class PrismaUserDatasource implements UserDatasource {
   private toPrisma(user: User): Omit<PrismaUser, 'user_id' | 'user_createdAt' | 'user_updatedAt'> {
     return {
       user_name: user.name,
+      user_phone: user.phone.value,
       user_lastname: user.lastname,
       user_email: user.email.value,
       user_password: user.password.value,

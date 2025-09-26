@@ -5,7 +5,7 @@ import { ValidateUserUseCase } from '../application/usecases/user/validate-user.
 import { ChangePasswordUseCase, ChangeStatusUserUseCase, CheckAdminPasswordUseCase, CreateUserUseCase, GetAllUsersUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
 import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase } from '../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
-import { DestroyImageUseCase, UploadImageUseCase, UploadPdfUseCase } from '../application/usecases/upload';
+import { DestroyImageUseCase, UploadImageUseCase } from '../application/usecases/upload';
 
 import { PrismaDatasource } from '../infrastructure/datasource/prisma/prisma-client';
 import { UserRepositoryImpl } from '../infrastructure/repositories/user.repository.impl';
@@ -71,7 +71,6 @@ export class UserContainer {
 
     const uploadUserImageUseCase = new UploadImageUseCase(uploadFileService)
     const destroyUserImageUseCase = new DestroyImageUseCase(uploadFileService)
-    const uploadUserReportUseCase = new UploadPdfUseCase( uploadPdfService, pdfService )
 
     // Servicios
     const userService = new UserService({
@@ -98,7 +97,6 @@ export class UserContainer {
 
       uploadUserImageUC: uploadUserImageUseCase,
       destroyUserImageUC: destroyUserImageUseCase,
-      uploadUsersReportUC: uploadUserReportUseCase
     })
 
     // Controlador

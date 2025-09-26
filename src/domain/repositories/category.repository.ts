@@ -8,4 +8,5 @@ export abstract class CategoryRepository {
     abstract update( category: Category ): Promise<Category>
     abstract changeStatus( categoryId: string, status: boolean ): Promise<Category>
     abstract getCategories( pagination: PaginationDTO ): Promise<PaginationResponseDto<Category>>
+    abstract getAllCategories(): Promise<Category[]>
 }

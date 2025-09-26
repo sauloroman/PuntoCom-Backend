@@ -10,7 +10,8 @@
     "prisma:migrate": "npx prisma migrate dev --name init",
     "db:seed:categories": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-category.seed.ts",
     "db:seed:suppliers": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-suppliers.seed.ts",
-    "db:seed:users": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-users.seed.ts"
+    "db:seed:users": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-users.seed.ts",
+    "db:seed:products": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-products.seed.ts"
   },
   "author": "Saulo Román Santillán Nava",
   "license": "ISC",
@@ -22,6 +23,7 @@
     "@types/node": "^24.2.1",
     "@types/nodemailer": "^6.4.17",
     "@types/puppeteer": "^5.4.7",
+    "@types/streamifier": "^0.1.2",
     "@types/uuid": "^10.0.0",
     "prisma": "^6.6.0",
     "rimraf": "^6.0.1",
@@ -31,6 +33,7 @@
   "dependencies": {
     "@prisma/client": "^6.6.0",
     "bcryptjs": "^3.0.2",
+    "bwip-js": "^4.7.0",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "date-fns-tz": "^3.2.0",
@@ -42,6 +45,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.5",
     "puppeteer": "^24.16.2",
+    "streamifier": "^0.1.1",
     "uuid": "^11.1.0"
   }
 }

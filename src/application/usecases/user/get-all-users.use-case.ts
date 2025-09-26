@@ -13,6 +13,7 @@ export class GetAllUsersUseCase {
             name: user.name,
             lastname: user.lastname,
             email: user.email.value,
+            phone: user.phone.value,
             image: user.image,
             isActive: user.isActive,
             isValidated: user.isValidated,

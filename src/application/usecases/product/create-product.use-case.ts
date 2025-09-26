@@ -2,7 +2,7 @@ import { CodeGeneratorAdapter, DatesAdapter } from "../../../config/plugins";
 import { Product } from "../../../domain/entities";
 import { ProductRepository } from "../../../domain/repositories/product.repository";
 import { Money, Stock } from "../../../domain/value-objects";
-import { CreateProduct, ProductResponseDto } from "../../dtos/product.dto";
+import { CreateProduct, ProductResponseIncludeDto } from "../../dtos/product.dto";
 import { ApplicationError } from "../../errors/application.error";
 
 export class CreateProductUseCase {
@@ -11,7 +11,7 @@ export class CreateProductUseCase {
 
     constructor(private readonly productRepository: ProductRepository){}
 
-    public async execute( data: CreateProduct ): Promise<ProductResponseDto> {
+    public async execute( data: CreateProduct ): Promise<ProductResponseIncludeDto> {
         
         const existingProduct = await this.productRepository.findByName(data.name)
         if ( existingProduct ) throw new ApplicationError(`El nombre ${data.name} ya corresponde a un producto`,this.MESSAGE_ERROR)
@@ -27,12 +27,13 @@ export class CreateProductUseCase {
             sellingPrice: new Money(data.sellingPrice),
             categoryId: data.categoryId,
             supplierId: data.supplierId,
+            imageCode: '',
             isActive: true,
             createdAt: DatesAdapter.now(),
             updatedAt: DatesAdapter.now()
         })
 
-        const createdProduct = await this.productRepository.create(product)
+        const createdProduct = await this.productRepository.create(product) 
 
         return {
             id: createdProduct.id,
@@ -43,11 +44,14 @@ export class CreateProductUseCase {
             stock: createdProduct.stock,
             stockMin: createdProduct.stockMin,
             image: createdProduct.image,
+            imageCode: '',
             isActive: createdProduct.isActive,
             categoryId: createdProduct.categoryId,
             supplierId: createdProduct.supplierId,
             createdAt: DatesAdapter.formatLocal( DatesAdapter.toLocal(product.createdAt)),
             updatedAt: DatesAdapter.formatLocal( DatesAdapter.toLocal(product.updatedAt)),
+            Category: createdProduct.Category,
+            Supplier: createdProduct.Supplier
         }
 
     }

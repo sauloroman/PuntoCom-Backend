@@ -29,6 +29,7 @@ export class LoginUserUseCase {
             name: user.name,
             lastname: user.lastname,
             email: user.email.value,
+            phone: user.phone.value,
             role: user.role.value,
             image: user.image,
             isActive: user.isActive,

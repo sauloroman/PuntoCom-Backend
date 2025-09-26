@@ -10,9 +10,14 @@ export interface RemoveFileI {
     resourceType: any
 }
 
+export interface UploadFileCloud {
+    folder: string,
+    resourceType: any
+}
+
 export abstract class FileUploadService {
 
     abstract uploadFile( data: UploadFileI ): Promise<string>
     abstract removeFile( data: RemoveFileI ): Promise<boolean | null>
-
+    abstract uploadBuffer(buffer: Buffer, options: UploadFileCloud): Promise<string>
 }

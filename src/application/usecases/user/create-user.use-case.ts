@@ -1,7 +1,7 @@
 import { HashAdapter, DatesAdapter } from '../../../config/plugins';
 
 import { UserRepository } from '../../../domain/repositories/user.repository';
-import { Email, Password, Role } from '../../../domain/value-objects';
+import { Email, Password, Phone, Role } from '../../../domain/value-objects';
 import { User } from '../../../domain/entities';
 
 import { ApplicationError } from '../../errors/application.error';
@@ -40,6 +40,7 @@ export class CreateUserUseCase {
       name: user.name,
       lastname: user.lastname,
       email: user.email.value,
+      phone: user.phone.value,
       role: user.role.value,
       image: user.image,
       isActive: user.isActive,

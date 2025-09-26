@@ -166,9 +166,6 @@ export class PrismaProductDatasource implements ProductDatasource {
     private toDomain( productData: 
         PrismaProduct & { Category?: PrismaCategory, Supplier?: PrismaSupplier }
     ): ProductResponseIncludeDto {
-
-        console.log(productData)
-
         return {
             id: productData.product_id,
             name: productData.product_name,
@@ -178,6 +175,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             stock: new Stock(productData.product_stock).value,
             stockMin: new Stock(productData.product_stock_min).value,
             image: productData.product_image,
+            imageCode: productData.product_image_code,
             createdAt: productData.product_createdAt,
             updatedAt: productData.product_updatedAt,
             isActive: productData.product_is_active,
@@ -212,6 +210,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             product_code: product.code.value,
             category_id: product.categoryId,
             product_image: product.image,
+            product_image_code: product.imageCode,
             product_is_active: product.isActive,
             product_selling_price: new Decimal(product.sellingPrice.value),
             product_stock: product.stock.value,

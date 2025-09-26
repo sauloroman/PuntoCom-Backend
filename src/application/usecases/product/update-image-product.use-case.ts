@@ -23,6 +23,7 @@ export class UpdateProductImageUseCase {
             stock: new Stock(existingProduct.stock),
             stockMin: new Stock(existingProduct.stockMin),
             image: url,
+            imageCode: existingProduct.imageCode,
             categoryId: existingProduct.categoryId,
             supplierId: existingProduct.supplierId,
             isActive: existingProduct.isActive,
@@ -39,6 +40,7 @@ export class UpdateProductImageUseCase {
             description: updatedProduct.description,
             code: updatedProduct.code,
             image: updatedProduct.image,
+            imageCode: updatedProduct.imageCode,
             sellingPrice: updatedProduct.sellingPrice,
             stock: updatedProduct.stock,
             stockMin: updatedProduct.stockMin,
@@ -47,6 +49,8 @@ export class UpdateProductImageUseCase {
             isActive: updatedProduct.isActive,
             createdAt: DatesAdapter.formatLocal(DatesAdapter.toLocal( typeof updatedProduct.createdAt === 'string' ? new Date(updatedProduct.createdAt) : updatedProduct.createdAt)),
             updatedAt: DatesAdapter.formatLocal(DatesAdapter.toLocal( typeof updatedProduct.updatedAt === 'string' ? new Date(updatedProduct.updatedAt) : updatedProduct.updatedAt)),
+            Category: updatedProduct.Category,
+            Supplier: updatedProduct.Supplier
         }
 
     }

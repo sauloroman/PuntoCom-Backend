@@ -28,6 +28,7 @@ export class CategoryRoutes {
             FileUploadMiddleware.validateContainFiles 
         ], this.controller.uploadCategoryImage )
 
+        router.get('/all', this.controller.getAllCategories)
         router.get('/', [MapperFilterMiddleware.ToPrisma()], this.controller.getCategories)
         router.get('/search', [MapperFilterMiddleware.ToPrismaContains()], this.controller.getCategories)
 

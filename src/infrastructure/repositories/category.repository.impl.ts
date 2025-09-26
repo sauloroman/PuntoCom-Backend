@@ -31,4 +31,8 @@ export class CategoryRepositoryImp implements CategoryRepository {
         return await this.categoryDatasource.getCategories(pagination)
     }
 
+    async getAllCategories(): Promise<Category[]> {
+        return await this.categoryDatasource.getAllCategories()
+    }
+
 }

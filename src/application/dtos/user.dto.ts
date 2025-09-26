@@ -1,3 +1,4 @@
+import { Phone } from '../../domain/value-objects';
 import { RoleEnum } from '../../domain/value-objects/Role';
 
 export interface ChangeStatusUserRequestI {
@@ -21,7 +22,8 @@ export interface UpdateUserRequestDTOI {
   id: string,
   name?: string,
   lastname?: string,
-  role?: RoleEnum
+  role?: RoleEnum,
+  phone?: string,
 }
 
 export interface UpdateUserRequestI {
@@ -78,6 +80,7 @@ export interface UserResponseDtoI {
   name: string,
   lastname: string,
   email: string,
+  phone: string,
   role: string,
   image: string,
   isActive: boolean,

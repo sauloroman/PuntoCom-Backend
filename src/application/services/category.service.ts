@@ -1,7 +1,14 @@
 import { UploadedFile } from "express-fileupload";
 import { CreateCategoryRequestDto, UpdateCategoryRequest } from "../dtos/category.dto";
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { ChangeCategoryStatusUseCase, CreateCategoryUseCase, GetCategoryByIdUseCase, ListCategoriesUseCase, UpdateCategoryUseCase } from "../usecases/categories";
+import { 
+    ChangeCategoryStatusUseCase, 
+    CreateCategoryUseCase, 
+    GetCategoryByIdUseCase, 
+    ListCategoriesUseCase, 
+    UpdateCategoryUseCase,
+    GetAllCategoriesUseCase 
+} from "../usecases/categories";
 import { DestroyImageUseCase, UploadImageUseCase } from "../usecases/upload";
 import { ApplicationError } from "../errors/application.error";
 import { UpdateImageCategoryUseCase } from "../usecases/categories/update-image-category.use-case";
@@ -9,6 +16,7 @@ import { UpdateImageCategoryUseCase } from "../usecases/categories/update-image-
 interface CategoryServiceI {
     createCategoryUC: CreateCategoryUseCase,
     getCategoryByIdUC: GetCategoryByIdUseCase,
+    getAllCategoriesUC: GetAllCategoriesUseCase,
     updateCategoryUC: UpdateCategoryUseCase,
     changeStatusCategoryUC: ChangeCategoryStatusUseCase
     listCategoriesUC: ListCategoriesUseCase,
@@ -22,6 +30,7 @@ export class CategoryService {
     
     private readonly createCategoryUC: CreateCategoryUseCase
     private readonly getCategoryByIdUC: GetCategoryByIdUseCase
+    private readonly getAllCategoriesUC: GetAllCategoriesUseCase
     private readonly updateCategoryUC: UpdateCategoryUseCase
     private readonly changeStatusCategoryUC: ChangeCategoryStatusUseCase
     private readonly listCategoriesUC: ListCategoriesUseCase
@@ -33,6 +42,7 @@ export class CategoryService {
     constructor({
         createCategoryUC,
         getCategoryByIdUC,
+        getAllCategoriesUC,
         updateCategoryUC,
         changeStatusCategoryUC,
         listCategoriesUC,
@@ -42,6 +52,7 @@ export class CategoryService {
     }: CategoryServiceI){
         this.createCategoryUC = createCategoryUC
         this.getCategoryByIdUC = getCategoryByIdUC
+        this.getAllCategoriesUC = getAllCategoriesUC 
         this.updateCategoryUC = updateCategoryUC
         this.changeStatusCategoryUC = changeStatusCategoryUC
         this.listCategoriesUC = listCategoriesUC
@@ -49,6 +60,10 @@ export class CategoryService {
 
         this.uploadCategoryImageUC = uploadCategoryImageUC
         this.destroyCategoryImageUC = destroyCategoryImageUC
+    }
+
+    async getAllCategories() {
+        return await this.getAllCategoriesUC.execute()
     }
 
     async uploadCategoryImage( image: UploadedFile, categoryId: string ) {

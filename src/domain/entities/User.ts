@@ -1,4 +1,4 @@
-import { Email, Password, Role } from '../value-objects'
+import { Email, Password, Phone, Role } from '../value-objects'
 import { DomainError } from '../errors/domain.error';
 
 interface UserProps {
@@ -10,6 +10,7 @@ interface UserProps {
   role: Role,
   isActive: boolean,
   isValidated: boolean,
+  phone?: Phone,
   image?: string,
   createdAt?: Date,
   updatedAt?: Date
@@ -23,6 +24,7 @@ export class User {
   private _password: Password;
   private _role: Role;
   private _image: string;
+  private _phone: Phone;
   private _isActive: boolean;
   private _isValidated: boolean;
   private _createdAt: Date;
@@ -33,7 +35,6 @@ export class User {
   private static MAX_IMAGE_LENGTH: number = 200;
   private readonly MESSAGE_ERROR: string = "USER_VALIDATION_ERROR"
 
-
   constructor({
     id = '',
     name,
@@ -43,6 +44,7 @@ export class User {
     role,
     isActive = true,
     isValidated = false,
+    phone = new Phone(""),
     image = 'Usuario sin imagen',
     createdAt = new Date(),
     updatedAt = new Date()
@@ -53,6 +55,7 @@ export class User {
     this._email = email;
     this._password = password;
     this._role = role;
+    this._phone = phone;
     this._image = image;
     this._isActive = isActive;
     this._isValidated = isValidated
@@ -108,6 +111,10 @@ export class User {
     return this._email;
   }
 
+  get phone(): Phone {
+    return this._phone;
+  }
+
   get password(): Password {
     return this._password;
   }
@@ -150,6 +157,7 @@ export class User {
     name?: string;
     lastname?: string;
     email?: Email;
+    phone?: Phone,
     password?: Password;
     role?: Role;
     image?: string;
@@ -165,6 +173,9 @@ export class User {
     }
     if (params.email !== undefined) {
       this._email = params.email;
+    }
+    if (params !== undefined) {
+      this._phone = params.phone!;
     }
     if (params.password !== undefined) {
       this._password = params.password;

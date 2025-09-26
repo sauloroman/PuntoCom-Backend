@@ -1,8 +1,10 @@
 import { EnvAdapter } from "../../../config/plugins";
-import { FileUploadService, RemoveFileI, UploadFileI } from "../../../application/services/file-upload.service";
+import { FileUploadService, RemoveFileI, UploadFileCloud, UploadFileI } from "../../../application/services/file-upload.service";
 import { InfrastructureError } from "../../errors/infrastructure-error";
 import { v2 as cloudinary } from 'cloudinary'
 import { UploadedFile } from "express-fileupload";
+import streamifier from 'streamifier'
+
 
 cloudinary.config( EnvAdapter.CLOUDINARY_URL )
 
@@ -67,6 +69,26 @@ export class CloudinaryFileUploadService implements FileUploadService {
             )
         }
     }
+
+    public async uploadBuffer(buffer: Buffer, options: UploadFileCloud): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: options.folder,
+                    type: 'upload',
+                    resource_type: options.resourceType,
+                },
+                (error, result) => {
+                    if (error) return reject(error)
+                    if (!result) return reject(new Error('Upload result is empty'))
+                    resolve(result.secure_url)
+                }
+            )
+
+            streamifier.createReadStream(buffer).pipe(uploadStream)
+        })
+    }
+
 
 }
 

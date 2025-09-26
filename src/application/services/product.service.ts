@@ -1,11 +1,18 @@
 import { UploadedFile } from "express-fileupload";
 import { PaginationDTO } from "../dtos/pagination.dto";
 import { ChangeStatusDto, CreateProduct, UpdateProductRequest } from "../dtos/product.dto";
-import { ChangeStatusProductUseCase, CreateProductUseCase, GetAllProductsUseCase, ListProductsUseCase, UpdateProductImageUseCase, UpdateProductUseCase } from "../usecases/product";
+import { 
+    ChangeStatusProductUseCase, 
+    CreateProductUseCase, 
+    GetAllProductsUseCase, 
+    ListProductsUseCase, 
+    UpdateProductImageUseCase, 
+    UpdateProductUseCase 
+} from "../usecases/product";
 import { GetProductByIdUseCase } from "../usecases/product/get-product-by-id.use-case";
-import { DestroyImageUseCase, UploadImageUseCase, UploadPdfUseCase } from "../usecases/upload";
+import { DestroyImageUseCase, UploadImageUseCase } from "../usecases/upload";
 import { ApplicationError } from "../errors/application.error";
-import { buildProductsHtml } from "../../config/templates/pdf/list-products-report.template";
+import { UploadBarCodeUseCase } from "../usecases/upload/upload-bar-code.use-case";
 
 interface ProductServiceOptions {
     getProductByIdUC: GetProductByIdUseCase,
@@ -16,8 +23,8 @@ interface ProductServiceOptions {
     changeStatusProductUC: ChangeStatusProductUseCase,
     listProductsUC: ListProductsUseCase,
 
-    uploadProductReportUC: UploadPdfUseCase,
     uploadProductImageUC: UploadImageUseCase,
+    uploadBarCodeImageUC: UploadBarCodeUseCase,
     destroyProductImageUC: DestroyImageUseCase
 }
 
@@ -31,7 +38,7 @@ export class ProductService {
     private readonly changeStatusProductUC: ChangeStatusProductUseCase 
     private readonly listProductsUC: ListProductsUseCase
 
-    private readonly uploadProductReportUC: UploadPdfUseCase
+    private readonly uploadBarCodeImageUC: UploadBarCodeUseCase
     private readonly uploadProductImageUC: UploadImageUseCase
     private readonly destroyProductImageUC: DestroyImageUseCase
 
@@ -44,7 +51,7 @@ export class ProductService {
         changeStatusProductUC,
         listProductsUC,
 
-        uploadProductReportUC,
+        uploadBarCodeImageUC,
         uploadProductImageUC,
         destroyProductImageUC
     }: ProductServiceOptions){
@@ -56,7 +63,7 @@ export class ProductService {
         this.changeStatusProductUC = changeStatusProductUC
         this.listProductsUC = listProductsUC
 
-        this.uploadProductReportUC = uploadProductReportUC
+        this.uploadBarCodeImageUC = uploadBarCodeImageUC
         this.uploadProductImageUC = uploadProductImageUC
         this.destroyProductImageUC = destroyProductImageUC
     }    
@@ -66,7 +73,13 @@ export class ProductService {
     }
 
     public async createProduct( dto: CreateProduct ) {
-        return await this.createProductUC.execute(dto)
+        const productCreated = await this.createProductUC.execute(dto) 
+        const urlProductCodeImage = await this.uploadBarCodeImageUC.execute(
+            'puntocom/products', 
+            productCreated.code, 
+            productCreated.id 
+        )
+        return await this.updateProductUC.execute({ id: productCreated.id, imageCode: urlProductCodeImage })
     }
 
     public async updateProduct( dto: UpdateProductRequest ) {
@@ -75,6 +88,10 @@ export class ProductService {
 
     public async changeStatus( dto: ChangeStatusDto ) {
         return await this.changeStatusProductUC.execute( dto )
+    }
+
+    public async getAllProducts() {
+        return await this.getAllProductsUC.execute()
     }
 
     public async listSuppliers( pagination: PaginationDTO ) {
@@ -92,13 +109,6 @@ export class ProductService {
         const urlImage = await this.uploadProductImageUC.execute('puntocom/products', image, product.id )
         const updatedProduct = await this.updateProductImageUC.execute({ id: product.id, url: urlImage })
         return updatedProduct
-    }
-
-    public async generateListProductsReport() {
-        const products = await this.getAllProductsUC.execute()
-        const html = buildProductsHtml(products)
-        const pdfUrl = await this.uploadProductReportUC.execute(html, { folder: '/reports/products' })
-        return pdfUrl
     }
 
 }

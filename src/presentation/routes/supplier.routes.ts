@@ -59,10 +59,6 @@ export class SupplierRoutes {
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ) 
         ], this.controller.activateSupplier )
 
-        router.get('/report/generate', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
-        ], this.controller.generateListSuppliersReport )
-
         return router
     }
 

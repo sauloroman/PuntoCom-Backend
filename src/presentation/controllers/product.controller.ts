@@ -7,15 +7,6 @@ export class ProductController {
 
     constructor( private readonly productService: ProductService ){}
 
-    public generateListProductsReport = async (req: Request, res: Response) => {
-        const pdfUrl = await this.productService.generateListProductsReport()
-        res.status(200).json({
-            ok: true,
-            message: 'Reporte de products generado existosamente',
-            url: pdfUrl
-        })
-    }
-
     public uploadProductImage = async (req: Request, res: Response) => {
         const { id: productId } = req.params
         const { files } = req.body

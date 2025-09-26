@@ -91,8 +91,15 @@ export class CategoryController {
             },
             categories: items
         })
-
     } 
+
+    public getAllCategories = async (req: Request, res: Response) => {
+        const allCategories = await this.categoryService.getAllCategories()
+        res.status(200).json({
+            ok: true,
+            categories: allCategories
+        })
+    }
 
     public uploadCategoryImage = async (req: Request, res: Response) => {
         const { id: categoryId } = req.params

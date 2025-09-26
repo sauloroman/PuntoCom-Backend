@@ -1,4 +1,3 @@
-import { buildSuppliersHtml } from "../../config/templates/pdf";
 import { PaginationDTO } from "../dtos/pagination.dto";
 import { CreateSupplierRequestDto, UpdateSupplierRequestDto } from "../dtos/supplier.dto";
 import { 
@@ -10,7 +9,6 @@ import {
     UpdateSupplierUseCase 
 } from "../usecases/suppliers";
 import { GetUniqueCompaniesSupplier } from "../usecases/suppliers/get-unique-companies-supplier.use-case";
-import { UploadPdfUseCase } from "../usecases/upload";
 
 interface SupplierServiceI {
     createSupplierUC: CreateSupplierUseCase,
@@ -19,7 +17,6 @@ interface SupplierServiceI {
     getSupplierByIdUC: GetSupplierByIdUseCase
     getAllSuppliersUC: GetAllSuppliersUseCase
     listSuppliersUC: ListSuppliersUseCase
-    uploadSupplierReportUC: UploadPdfUseCase
     getUniqueCompaniesSupplierUC: GetUniqueCompaniesSupplier
 }
 
@@ -31,7 +28,6 @@ export class SupplierService {
     private readonly getSupplierByIdUC: GetSupplierByIdUseCase
     private readonly getAllSuppliersUC: GetAllSuppliersUseCase
     private readonly listSuppliersUC: ListSuppliersUseCase
-    private readonly uploadSupplierReportUC: UploadPdfUseCase
     private readonly getUniqueCompaniesSupplierUC: GetUniqueCompaniesSupplier
 
     constructor({
@@ -41,7 +37,6 @@ export class SupplierService {
         getSupplierByIdUC,
         getAllSuppliersUC,
         listSuppliersUC,
-        uploadSupplierReportUC,
         getUniqueCompaniesSupplierUC
     }: SupplierServiceI){
         this.createSupplierUC = createSupplierUC
@@ -50,19 +45,11 @@ export class SupplierService {
         this.getSupplierByIdUC = getSupplierByIdUC
         this.getAllSuppliersUC = getAllSuppliersUC
         this.listSuppliersUC = listSuppliersUC
-        this.uploadSupplierReportUC = uploadSupplierReportUC
         this.getUniqueCompaniesSupplierUC = getUniqueCompaniesSupplierUC
     }
 
     public async getUniqueCompanies() {
         return await this.getUniqueCompaniesSupplierUC.execute()
-    }
-
-    public async generateListSupplierReport() {
-        const suppliers = await this.getAllSuppliersUC.execute()
-        const html = buildSuppliersHtml(suppliers)
-        const pdfUrl = await this.uploadSupplierReportUC.execute(html, {folder: '/reports/suppliers'})
-        return pdfUrl
     }
 
     public async createSupplier( dto: CreateSupplierRequestDto ) {

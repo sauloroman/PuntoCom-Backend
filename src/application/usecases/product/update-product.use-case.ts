@@ -2,7 +2,7 @@ import { DatesAdapter } from "../../../config/plugins";
 import { Product } from "../../../domain/entities";
 import { ProductRepository } from "../../../domain/repositories/product.repository";
 import { Money, ProductCode, Stock } from "../../../domain/value-objects";
-import { ProductResponseDto, ProductResponseIncludeDto, UpdateProductRequest } from "../../dtos/product.dto";
+import { ProductResponseIncludeDto, UpdateProductRequest } from "../../dtos/product.dto";
 import { ApplicationError } from "../../errors/application.error";
 
 export class UpdateProductUseCase {
@@ -12,7 +12,7 @@ export class UpdateProductUseCase {
 
     constructor(private readonly productRepository: ProductRepository){}
 
-    public async execute( data: UpdateProductRequest ): Promise<ProductResponseDto> {
+    public async execute( data: UpdateProductRequest ): Promise<ProductResponseIncludeDto> {
 
         if ( data.name ) {
             const existingProduct = await this.productRepository.findByName(data.name)
@@ -27,6 +27,7 @@ export class UpdateProductUseCase {
             name: data.name ? data.name : productToUpdate.name,
             description: data.description ? data.description : productToUpdate.description,
             code: new ProductCode(productToUpdate.code),
+            imageCode: data.imageCode ? data.imageCode: productToUpdate.imageCode,
             sellingPrice: new Money(data.sellingPrice ? data.sellingPrice : productToUpdate.sellingPrice),
             stock: new Stock(data.stock ? data.stock : productToUpdate.stock),
             stockMin: new Stock(data.stockMin ? data.stockMin : productToUpdate.stockMin),
@@ -47,6 +48,7 @@ export class UpdateProductUseCase {
             description: updatedProduct.description,
             code: updatedProduct.code,
             image: updatedProduct.image,
+            imageCode: updatedProduct.imageCode,
             sellingPrice: updatedProduct.sellingPrice,
             stock: updatedProduct.stock,
             stockMin: updatedProduct.stockMin,
@@ -55,6 +57,8 @@ export class UpdateProductUseCase {
             isActive: updatedProduct.isActive,
             createdAt: DatesAdapter.formatLocal(DatesAdapter.toLocal( typeof updatedProduct.createdAt === 'string' ? new Date(updatedProduct.createdAt) : updatedProduct.createdAt)),
             updatedAt: DatesAdapter.formatLocal(DatesAdapter.toLocal( typeof updatedProduct.updatedAt === 'string' ? new Date(updatedProduct.updatedAt) : updatedProduct.updatedAt)),
+            Category: updatedProduct.Category,
+            Supplier: updatedProduct.Supplier
         }
     }
 

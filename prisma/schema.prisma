@@ -14,6 +14,7 @@ model Product {
   product_description String  @default("Producto sin descripción")
   product_image      String   @default("Producto sin imagen")
   product_code       String   @unique
+  product_image_code String
   product_selling_price Decimal @db.Decimal(11, 2)
   product_stock      Int
   product_stock_min  Int
@@ -114,6 +115,7 @@ model User {
   user_createdAt  DateTime @default(now())
   user_updatedAt  DateTime @updatedAt
   user_is_validated Boolean @default(false)
+  user_phone      String  @default("Usuario sin numero")
   role            RoleEnum
 
   Purchases       Purchase[]

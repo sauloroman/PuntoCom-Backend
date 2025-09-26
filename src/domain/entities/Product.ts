@@ -8,6 +8,7 @@ interface ProductProps {
   sellingPrice: Money;
   stock: Stock;
   stockMin: Stock;
+  imageCode: string;
   categoryId: string;
   supplierId: string;
   description?: string;
@@ -26,6 +27,7 @@ export class Product {
   private _sellingPrice: Money;
   private _stock: Stock;
   private _stockMin: Stock;
+  private _imageCode: string;
   private _categoryId: string;
   private _supplierId: string;
   private _isActive: boolean;
@@ -47,6 +49,7 @@ export class Product {
     sellingPrice,
     stock,
     stockMin,
+    imageCode,
     categoryId,
     supplierId,
     isActive = true,
@@ -61,6 +64,7 @@ export class Product {
     this._sellingPrice = sellingPrice;
     this._stock = stock;
     this._stockMin = stockMin;
+    this._imageCode = imageCode;
     this._categoryId = categoryId;
     this._supplierId = supplierId;
     this._isActive = isActive;
@@ -74,6 +78,7 @@ export class Product {
     this.validateName(this._name)
     this.validateDescription(this._description)
     this.validateImage(this._image)
+    this.validateImage(this._imageCode)
     this.validateCategoryId(this._categoryId)
     this.validateSupplierId(this._supplierId)
     this.validateStockConsistency( this._stock, this._stockMin )
@@ -135,6 +140,10 @@ export class Product {
     return this._image;
   }
 
+  get imageCode(): string {
+    return this._imageCode;
+  }
+
   get code(): ProductCode {
     return this._code;
   }
@@ -175,6 +184,7 @@ export class Product {
     name?: string;
     description?: string;
     image?: string;
+    imageCode?: string,
     code?: ProductCode;
     sellingPrice?: Money;
     stock?: Stock;
@@ -197,6 +207,11 @@ export class Product {
       this.validateImage(params.image)
       this._image = params.image
     }
+
+    if (params.imageCode !== undefined) {
+      this.validateImage(params.imageCode)
+      this._imageCode = params.imageCode
+    } 
 
     if (params.code !== undefined) {
       this._code = params.code;

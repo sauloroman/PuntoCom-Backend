@@ -8,7 +8,7 @@ export class SupplierController {
 
     constructor(private readonly supplierService: SupplierService){}
 
-    public getUniqueCompanies = async (req: Request, res: Response) => {
+    public getUniqueCompanies = async (_req: Request, res: Response) => {
         const companies = await this.supplierService.getUniqueCompanies()
         res.status(200).json({
             ok: true,
@@ -94,6 +94,14 @@ export class SupplierController {
         res.status(200).json({
             ok: true,
             supplier
+        })
+    }
+
+    public getAllSuppliers = async (_req: Request, res: Response) => {
+        const suppliers = await this.supplierService.getAllSuppliers();
+        res.status(200).json({
+            ok: true,
+            suppliers
         })
     }
 

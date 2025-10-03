@@ -26,16 +26,19 @@ export class UserRoutes {
     router.post('/login', this.controller.login )
     router.patch('/validate', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.validateUser )
     router.post('/forgot-password', this.controller.forgotPassword )
+    router.post('/forgot-password/mobile', this.controller.forgotPasswordMobile )
     router.post('/change-password', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.changePassword)
     router.post('/resend-verification-code', this.controller.resendVerificationCode )
     router.post('/', [ 
       // ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
     ], this.controller.createUser )
+    router.post('/create-mobile', [ 
+      // ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
+    ], this.controller.createUserMobile )
     
     // Private routes 
     router.use([ Auth.Logged ])
     
-
     router.post('/check-admin-password', [
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
     ], this.controller.checkAdminPassword)

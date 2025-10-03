@@ -60,12 +60,26 @@ export class UserController {
     const [dto, error] = CreateUserValidator.validate(req.body)
     if (error) throw new ValidationError(error, 'CREATE_USER_VALIDATION_ERROR')
 
-    const result = await this.userService.registerUser(dto!)
+    const result = await this.userService.registerUser(dto!, false)
     
     res.status(201).json({
       ok: true,
       message: `🚀 Se ha enviado un correo a ${result.user.email}. Revisa tu bandeja de entrada y valida tu cuenta`,
       user: result.user
+    })
+  }
+
+  public createUserMobile = async (req: Request, res: Response) => {
+    const [dto, error] = CreateUserValidator.validate(req.body)
+    if (error) throw new ValidationError(error, 'CREATE_USER_VALIDATION_ERROR')
+
+    const result = await this.userService.registerUser(dto!, true)
+    
+    res.status(201).json({
+      ok: true,
+      message: `🚀 Se ha enviado un correo a ${result.user.email}. Revisa tu bandeja de entrada y valida tu cuenta`,
+      user: result.user,
+      token: result.token,
     })
   }
 
@@ -90,12 +104,13 @@ export class UserController {
     const [dto, error] = ValidateUserValidator.validate(req.body)
     if (error) throw new ValidationError(error, 'VALIDATE_USER_VALIDATION_ERROR')
 
-    const user = await this.userService.validateUser(dto!.token, dto!.code)
+    const {user, token} = await this.userService.validateUser(dto!.token, dto!.code)
 
     res.status(200).json({
       ok: true,
       message: '✅ Usuario validado y activado correctamente',
-      user
+      user,
+      token
     })
   }
 
@@ -133,10 +148,22 @@ export class UserController {
   public forgotPassword = async(req: Request, res: Response) => {
     const [ dto, error ] = ForgotPasswordUserValidator.validate( req.body )
     if (error) throw new ValidationError(error, 'FORGOT_PASSWORD__USER_VALIDATION_ERROR')
-    await this.userService.forgotPassword( dto! )
+    await this.userService.forgotPassword( dto!, false )
     res.status(200).json({
       ok: true,
       message: `Se ha enviado un correo electrónico a ${dto?.email}. Revisa tu bandeja y sigue las instrucciones.`
+    })
+
+  }
+
+  public forgotPasswordMobile = async(req: Request, res: Response) => {
+    const [ dto, error ] = ForgotPasswordUserValidator.validate( req.body )
+    if (error) throw new ValidationError(error, 'FORGOT_PASSWORD__USER_VALIDATION_ERROR')
+    await this.userService.forgotPassword( dto!, true )
+    res.status(200).json({
+      ok: true,
+      email: dto?.email,
+      message: 'Cambia tu contraseña para acceder nuevamente a tu cuenta'
     })
 
   }

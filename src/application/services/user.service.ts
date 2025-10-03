@@ -16,6 +16,7 @@ import {
   SendChangePasswordEmailUseCase, 
   SendDeactivationAccountEmailUseCase, 
   SendForgotPasswordEmailUseCase, 
+  SendVerificationCodeEmailMobileUseCase, 
   SendVerificationCodeEmailUseCase } from '../usecases/email';
 import { ApplicationError } from '../errors/application.error';
 import { UpdateUserUseCase } from '../usecases/user/update-user.use-case';
@@ -49,6 +50,7 @@ interface UserServiceI {
   
   sendDeactivationEmailUC: SendDeactivationAccountEmailUseCase
   sendVerificationCodeEmailUC: SendVerificationCodeEmailUseCase
+  sendVerificationCodeEmailMobileUC: SendVerificationCodeEmailMobileUseCase
   sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
   sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
@@ -74,6 +76,7 @@ export class UserService {
   private readonly createVerificationCodeUC: CreateVerificationCodeUseCase
   private readonly getVerificationCodeUC: GetVerificationCodeUseCase
 
+  private readonly sendVerificationCodeEmailMobileUC: SendVerificationCodeEmailMobileUseCase
   private readonly sendDeactivationEmailUC: SendDeactivationAccountEmailUseCase
   private readonly sendVerificationCodeEmailUC: SendVerificationCodeEmailUseCase
   private readonly sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
@@ -99,6 +102,7 @@ export class UserService {
     getVerificationCodeUC,
     sendDeactivationEmailUC,
     sendVerificationCodeEmailUC,
+    sendVerificationCodeEmailMobileUC,
     sendForgotPasswordEmailUC,
     sendChangePasswordEmaiUC,
     uploadUserImageUC,
@@ -119,6 +123,7 @@ export class UserService {
     this.createVerificationCodeUC = createVerificationCodeUC
     this.getVerificationCodeUC = getVerificationCodeUC
     this.sendDeactivationEmailUC = sendDeactivationEmailUC
+    this.sendVerificationCodeEmailMobileUC = sendVerificationCodeEmailMobileUC
     this.sendVerificationCodeEmailUC = sendVerificationCodeEmailUC
     this.sendForgotPasswordEmailUC = sendForgotPasswordEmailUC
     this.sendChangePasswordEmaiUC = sendChangePasswordEmaiUC
@@ -155,17 +160,26 @@ export class UserService {
     return await this.listUsersUC.execute( dto )
   }
 
-  async registerUser(dto: CreateUserRequestDtoI) {
+  async registerUser(dto: CreateUserRequestDtoI, mobile: boolean ) {
     const user = await this.createUserUC.execute(dto)
     const verificationCode = await this.createVerificationCodeUC.execute({ userId: user.id })
     const token = await JwtAdapter.generateJWT({ id: user.id }) as string
-    
-    await this.sendVerificationCodeEmailUC.execute({
-      token,
-      userEmail: user.email,
-      username: `${user.name} ${user.lastname}`,
-      verificationCode: verificationCode.code
-    })
+
+    if ( mobile ) { 
+      await this.sendVerificationCodeEmailMobileUC.execute({
+        token,
+        userEmail: user.email,
+        username: `${user.name} ${user.lastname}`,
+        verificationCode: verificationCode.code
+      })
+    } else {
+      await this.sendVerificationCodeEmailUC.execute({
+        token,
+        userEmail: user.email,
+        username: `${user.name} ${user.lastname}`,
+        verificationCode: verificationCode.code
+      })
+    }
     
     return { user, token }
   }
@@ -202,7 +216,12 @@ export class UserService {
     }
 
     const user = await this.validateUserUC.execute({ userId })
-    return user
+    const tokenSession = await JwtAdapter.generateJWT({ id: user.id, email: user.email, role: user.role })
+
+    return {
+      user, 
+      token: tokenSession
+    }
   }
 
   async loginUser(email: string, password: string) {
@@ -221,15 +240,20 @@ export class UserService {
     return await this.changeStatusUC.execute({ userId }, true)
   }
 
-  async forgotPassword( dto: ForgotPasswordRequestI ) {
+  async forgotPassword( dto: ForgotPasswordRequestI, isMobile: boolean ) {
     const user = await this.getUserByEmail(dto?.email!)
     const token = await JwtAdapter.generateJWT({ id: user.id }) as string
 
-    await this.sendForgotPasswordEmailUC.execute({
-      userEmail: user.email, 
-      token,
-      username: user.name
-    })
+    if ( isMobile ) {
+      
+    } else {
+      await this.sendForgotPasswordEmailUC.execute({
+        userEmail: user.email, 
+        token,
+        username: user.name
+      })
+    }
+
   }
 
   async changePassword( dto: ChangePasswordRequestDtoI ) {

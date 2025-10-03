@@ -28,7 +28,7 @@ export class UpdateProductUseCase {
             description: data.description ? data.description : productToUpdate.description,
             code: new ProductCode(productToUpdate.code),
             imageCode: data.imageCode ? data.imageCode: productToUpdate.imageCode,
-            sellingPrice: new Money(data.sellingPrice ? data.sellingPrice : productToUpdate.sellingPrice),
+            sellingPrice: new Money(data.sellingPrice ? +data.sellingPrice : productToUpdate.sellingPrice),
             stock: new Stock(data.stock ? data.stock : productToUpdate.stock),
             stockMin: new Stock(data.stockMin ? data.stockMin : productToUpdate.stockMin),
             image: productToUpdate.image,

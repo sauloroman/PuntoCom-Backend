@@ -16,7 +16,7 @@ export class CreateUserUseCase {
   public async execute(data: CreateUserRequestDtoI): Promise<UserResponseDtoI> {
 
     const existingUser = await this.userRepository.findByEmail(new Email(data.email))
-    if (existingUser) throw new ApplicationError(`El email ${data.email} ya está registrado`, this.MESSAGE_ERROR)
+    if (existingUser) throw new ApplicationError(`El email ${data.email} ya está registrado. Intenta con otro correo`, this.MESSAGE_ERROR)
 
     const hashedPassword = HashAdapter.hash(data.password)
 

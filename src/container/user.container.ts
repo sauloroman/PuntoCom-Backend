@@ -3,7 +3,7 @@ import { EnvAdapter } from '../config/plugins';
 import { UserService } from '../application/services';
 import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
 import { ChangePasswordUseCase, ChangeStatusUserUseCase, CheckAdminPasswordUseCase, CreateUserUseCase, GetAllUsersUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
-import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase } from '../application/usecases/email';
+import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase, SendVerificationCodeEmailMobileUseCase } from '../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
 import { DestroyImageUseCase, UploadImageUseCase } from '../application/usecases/upload';
 
@@ -65,6 +65,7 @@ export class UserContainer {
     const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepository )
 
     const sendVerificationCodeEmailUseCase = new SendVerificationCodeEmailUseCase( emailService )
+    const sendVerificationCodeEmailMobileUseCase = new SendVerificationCodeEmailMobileUseCase(emailService)
     const sendDeactivationAccountUserUseCase = new SendDeactivationAccountEmailUseCase( emailService )
     const sendForgotPasswordEmailUseCase = new SendForgotPasswordEmailUseCase(emailService)
     const changePasswordEmailUseCase = new SendChangePasswordEmailUseCase(emailService)
@@ -91,6 +92,7 @@ export class UserContainer {
       validateUserUC: validateUserUseCase,
 
       sendDeactivationEmailUC: sendDeactivationAccountUserUseCase,
+      sendVerificationCodeEmailMobileUC: sendVerificationCodeEmailMobileUseCase,
       sendVerificationCodeEmailUC: sendVerificationCodeEmailUseCase,
       sendForgotPasswordEmailUC: sendForgotPasswordEmailUseCase,
       sendChangePasswordEmaiUC: changePasswordEmailUseCase,

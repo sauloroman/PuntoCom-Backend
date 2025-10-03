@@ -15,6 +15,7 @@ export class ValidateUserUseCase {
 
         const exitingUser = await this.userRepository.findById( userId )
         if (!exitingUser) throw new ApplicationError(`El usuario con ${userId} no existe`, this.MESSAGE_ERROR)
+        if ( exitingUser.isValidated ) throw new ApplicationError(`La cuenta ya está autenticada`)
 
         const user = new User({
             id: exitingUser.id,

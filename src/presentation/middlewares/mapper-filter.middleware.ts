@@ -48,8 +48,6 @@ export class MapperFilterMiddleware {
                 }
             }
 
-            console.log({mappedFilter, mappedSort});
-
             (req as any).sort = mappedSort;
             (req as any).filter = mappedFilter;
 
@@ -91,8 +89,6 @@ export class MapperFilterMiddleware {
                     return res.status(400).json({ message: "Filter no es un JSON válido" });
                 }
             }
-
-            console.log({ mappedFilter, mappedSort });
 
             (req as any).sort = mappedSort;
             (req as any).filter = mappedFilter;

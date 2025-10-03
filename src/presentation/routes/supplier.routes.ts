@@ -23,6 +23,8 @@ export class SupplierRoutes {
 
         router.use([Auth.Logged])
 
+        router.get('/all', this.controller.getAllSuppliers )
+
         router.get('/companies', this.controller.getUniqueCompanies )
 
         router.post('/', [

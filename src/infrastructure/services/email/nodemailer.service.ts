@@ -1,5 +1,5 @@
 import { EmailService, SendChangePasswordI, SendDeactivationAccountI, SendEmailI, SendForgotPasswordI, SendVerificationCodeI } from '../../../application/services/email.service';
-import { welcomeEmailTemplate, accountDeactivatedEmailTemplate, resetPasswordEmailTemplate, passwordChangedEmailTemplate } from '../../../config/templates/email';
+import { welcomeEmailTemplate, accountDeactivatedEmailTemplate, resetPasswordEmailTemplate, passwordChangedEmailTemplate, codeOnlyEmailTemplate } from '../../../config/templates/email';
 import { Transporter } from 'nodemailer';
 import nodemailer from 'nodemailer';
 
@@ -54,6 +54,20 @@ export class NodeMailerService implements EmailService {
   async sendValidateAccountEmail({ meta, token, username, verificationCode }: SendVerificationCodeI): Promise<void> {
     const { subject, to } = meta
     const htmlBody = welcomeEmailTemplate( username, token, verificationCode )
+
+    await this.sendEmail({
+      from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
+      to,
+      subject,
+      htmlBody: htmlBody,
+      attachments: [],
+    })
+
+  }
+
+  async sendValidateAccountEmailMobile({ meta, username, verificationCode }: SendVerificationCodeI): Promise<void> {
+    const { subject, to } = meta
+    const htmlBody = codeOnlyEmailTemplate( username, verificationCode )
 
     await this.sendEmail({
       from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,

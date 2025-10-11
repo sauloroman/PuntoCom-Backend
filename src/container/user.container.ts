@@ -3,7 +3,7 @@ import { EnvAdapter } from '../config/plugins';
 import { UserService } from '../application/services';
 import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
 import { ChangePasswordUseCase, ChangeStatusUserUseCase, CheckAdminPasswordUseCase, CreateUserUseCase, GetAllUsersUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
-import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase, SendVerificationCodeEmailMobileUseCase } from '../application/usecases/email';
+import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase, SendVerificationCodeEmailMobileUseCase, SendForgotPasswordEmailMobileUseCase } from '../application/usecases/email';
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
 import { DestroyImageUseCase, UploadImageUseCase } from '../application/usecases/upload';
 
@@ -20,6 +20,9 @@ import { UserController } from '../presentation/controllers/user.controller';
 import { UpdateUserUseCase } from '../application/usecases/user/update-user.use-case';
 import { PuppeteerPdfService } from '../infrastructure/services/pdf/puppeteer.service';
 import { LocalFileUploadService } from '../infrastructure/services/file-upload/local.service';
+import { CreateResetPassCodeUseCase, GetPasswordResetCodeUseCase } from '../application/usecases/reset-password-code';
+import { ResetPassCodeImpl } from '../infrastructure/repositories/reset-pass-code.repository.impl';
+import { PrismaResetPasswordCode } from '../infrastructure/datasource/prisma/prisma-reset-pass-code.datasource';
 
 export class UserContainer {
 
@@ -34,6 +37,10 @@ export class UserContainer {
 
     const verificationCodeRepository = new VerificationCodeRepositoryImpl(
       new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance() )
+    )
+
+    const resetPassCodeRepository = new ResetPassCodeImpl(
+      new PrismaResetPasswordCode( PrismaDatasource.getInstance() )
     )
 
     const emailService = new NodeMailerService({
@@ -61,6 +68,8 @@ export class UserContainer {
     const updateUserImageUseCase = new UpdateUserImageUseCase( userRepository )
     const checkAdminPassUseCase = new CheckAdminPasswordUseCase( userRepository )
 
+    const createResetPasswordCodeUseCase = new CreateResetPassCodeUseCase( resetPassCodeRepository )
+    const getResetPassCodeUseCase = new GetPasswordResetCodeUseCase( resetPassCodeRepository )
     const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepository )
     const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepository )
 
@@ -68,6 +77,7 @@ export class UserContainer {
     const sendVerificationCodeEmailMobileUseCase = new SendVerificationCodeEmailMobileUseCase(emailService)
     const sendDeactivationAccountUserUseCase = new SendDeactivationAccountEmailUseCase( emailService )
     const sendForgotPasswordEmailUseCase = new SendForgotPasswordEmailUseCase(emailService)
+    const sendForgotPasswordEmailMobileUseCase = new SendForgotPasswordEmailMobileUseCase(emailService)
     const changePasswordEmailUseCase = new SendChangePasswordEmailUseCase(emailService)
 
     const uploadUserImageUseCase = new UploadImageUseCase(uploadFileService)
@@ -77,11 +87,13 @@ export class UserContainer {
     const userService = new UserService({
       changeStatusUC: changeStatusUserUseCase,
       createUserUC: createUserUseCase,
+      createResetPassCodeUC: createResetPasswordCodeUseCase,
       createVerificationCodeUC: createVerificationCodeUseCase,
       getUserByIdUC: getUserByIdUseCase,
       getUserByEmailUC: getUserByEmailUseCase,
       getAllUsersUC: getAllUsersUseCase,
       getVerificationCodeUC: getVerificationCodeUseCase,
+      getResetPassCodeUC: getResetPassCodeUseCase,
       loginUserUC: loginUserUseCase,
       changePasswordUserUC: changePasswordUseCase,
       listUsersUC: listUsersUseCase,
@@ -95,6 +107,7 @@ export class UserContainer {
       sendVerificationCodeEmailMobileUC: sendVerificationCodeEmailMobileUseCase,
       sendVerificationCodeEmailUC: sendVerificationCodeEmailUseCase,
       sendForgotPasswordEmailUC: sendForgotPasswordEmailUseCase,
+      sendForgotPasswordEmaiMobileUC: sendForgotPasswordEmailMobileUseCase,
       sendChangePasswordEmaiUC: changePasswordEmailUseCase,
 
       uploadUserImageUC: uploadUserImageUseCase,

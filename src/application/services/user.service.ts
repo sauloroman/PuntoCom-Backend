@@ -15,21 +15,25 @@ import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../us
 import { 
   SendChangePasswordEmailUseCase, 
   SendDeactivationAccountEmailUseCase, 
+  SendForgotPasswordEmailMobileUseCase, 
   SendForgotPasswordEmailUseCase, 
   SendVerificationCodeEmailMobileUseCase, 
   SendVerificationCodeEmailUseCase } from '../usecases/email';
 import { ApplicationError } from '../errors/application.error';
 import { UpdateUserUseCase } from '../usecases/user/update-user.use-case';
 import { 
+  ChangePasswordMobileRequestDtoI,
   ChangePasswordRequestDtoI, 
   CheckAdminPasswordDtoI, 
   CreateUserRequestDtoI, 
   ForgotPasswordRequestI, 
   ResendVerificationCodeRequestI, 
   UpdateUserRequestDTOI } from '../dtos/user.dto';
-import { PaginationDTO } from '../dtos/pagination.dto';
-import { DestroyImageUseCase, UploadImageUseCase } from '../usecases/upload';
-import { UploadedFile } from 'express-fileupload';
+  import { PaginationDTO } from '../dtos/pagination.dto';
+  import { DestroyImageUseCase, UploadImageUseCase } from '../usecases/upload';
+  import { UploadedFile } from 'express-fileupload';
+  import { CreateResetPassCodeUseCase, GetPasswordResetCodeUseCase } from '../usecases/reset-password-code';
+import { ValidateResetPassCode } from '../dtos/reset-pass-code.dto';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
@@ -45,6 +49,8 @@ interface UserServiceI {
   listUsersUC: ListUsersUseCase
   checkAdminPasswordUC: CheckAdminPasswordUseCase,
 
+  createResetPassCodeUC: CreateResetPassCodeUseCase,
+  getResetPassCodeUC: GetPasswordResetCodeUseCase,
   createVerificationCodeUC: CreateVerificationCodeUseCase
   getVerificationCodeUC: GetVerificationCodeUseCase
   
@@ -52,6 +58,7 @@ interface UserServiceI {
   sendVerificationCodeEmailUC: SendVerificationCodeEmailUseCase
   sendVerificationCodeEmailMobileUC: SendVerificationCodeEmailMobileUseCase
   sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
+  sendForgotPasswordEmaiMobileUC: SendForgotPasswordEmailMobileUseCase
   sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
   uploadUserImageUC: UploadImageUseCase
@@ -72,14 +79,17 @@ export class UserService {
   private readonly changePasswordUserUC: ChangePasswordUseCase
   private readonly listUsersUC: ListUsersUseCase
   private readonly checkAdminPasswordUC: CheckAdminPasswordUseCase
-  
+
+  private readonly createResetPassCodeUC: CreateResetPassCodeUseCase
   private readonly createVerificationCodeUC: CreateVerificationCodeUseCase
   private readonly getVerificationCodeUC: GetVerificationCodeUseCase
+  private readonly getResetPassCodeUC: GetPasswordResetCodeUseCase
 
   private readonly sendVerificationCodeEmailMobileUC: SendVerificationCodeEmailMobileUseCase
   private readonly sendDeactivationEmailUC: SendDeactivationAccountEmailUseCase
   private readonly sendVerificationCodeEmailUC: SendVerificationCodeEmailUseCase
   private readonly sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
+  private readonly sendForgotPasswordEmaiMobileUC: SendForgotPasswordEmailMobileUseCase
   private readonly sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
   private readonly uploadUserImageUC: UploadImageUseCase
@@ -98,12 +108,15 @@ export class UserService {
     changePasswordUserUC,
     listUsersUC,
     checkAdminPasswordUC,
+    createResetPassCodeUC,
     createVerificationCodeUC,
     getVerificationCodeUC,
+    getResetPassCodeUC,
     sendDeactivationEmailUC,
     sendVerificationCodeEmailUC,
     sendVerificationCodeEmailMobileUC,
     sendForgotPasswordEmailUC,
+    sendForgotPasswordEmaiMobileUC,
     sendChangePasswordEmaiUC,
     uploadUserImageUC,
     destroyUserImageUC,
@@ -120,12 +133,15 @@ export class UserService {
     this.changePasswordUserUC = changePasswordUserUC
     this.listUsersUC = listUsersUC
     this.checkAdminPasswordUC = checkAdminPasswordUC
+    this.createResetPassCodeUC = createResetPassCodeUC
     this.createVerificationCodeUC = createVerificationCodeUC
     this.getVerificationCodeUC = getVerificationCodeUC
+    this.getResetPassCodeUC = getResetPassCodeUC
     this.sendDeactivationEmailUC = sendDeactivationEmailUC
     this.sendVerificationCodeEmailMobileUC = sendVerificationCodeEmailMobileUC
     this.sendVerificationCodeEmailUC = sendVerificationCodeEmailUC
     this.sendForgotPasswordEmailUC = sendForgotPasswordEmailUC
+    this.sendForgotPasswordEmaiMobileUC = sendForgotPasswordEmaiMobileUC
     this.sendChangePasswordEmaiUC = sendChangePasswordEmaiUC
     this.uploadUserImageUC = uploadUserImageUC
     this.destroyUserImageUC = destroyUserImageUC
@@ -242,11 +258,16 @@ export class UserService {
 
   async forgotPassword( dto: ForgotPasswordRequestI, isMobile: boolean ) {
     const user = await this.getUserByEmail(dto?.email!)
-    const token = await JwtAdapter.generateJWT({ id: user.id }) as string
-
+    const {code} = await this.createResetPassCodeUC.execute({ userId: user.id! })
+    
     if ( isMobile ) {
-      
+      await this.sendForgotPasswordEmaiMobileUC.execute({
+        code: code,
+        userEmail: user.email,
+        userName: user.name
+      })
     } else {
+      const token = await JwtAdapter.generateJWT({ id: user.id }) as string
       await this.sendForgotPasswordEmailUC.execute({
         userEmail: user.email, 
         token,
@@ -260,13 +281,38 @@ export class UserService {
     const payload = await JwtAdapter.validateToken<{ id: string }>( dto.token )
     const userId = payload!.id
 
-    await this.changePasswordUserUC.execute({ id: userId, newPassword: dto.newPassword })
-    const user = await this.getUserById(userId)
-  
+    const user = await this.changePasswordUserUC.execute({ id: userId, newPassword: dto.newPassword })
+
     await this.sendChangePasswordEmaiUC.execute({
       userEmail: user.email,
       username: user.name
     })
+  }
+
+  // async changePasswordMobile( dto: ChangePasswordMobileRequestDtoI ) {
+  //   // const { userId } = await this.getResetPassCodeUC.execute({ code: dto.code })
+  //   const user = await this.changePasswordUserUC.execute({ id: userId, newPassword: dto.newPassword })
+  //   await this.sendChangePasswordEmaiUC.execute({
+  //     userEmail: user.email,
+  //     username: user.name
+  //   })
+  // }
+
+  async validateResetPasswordCode( dto: ValidateResetPassCode ): Promise<boolean> {
+    const { code, email } = dto
+
+    const user = await this.getUserByEmailUC.execute({ email })
+    const resetPassCodse = await this.getResetPassCodeUC.execute({ code })
+
+    if ( resetPassCodse.userId !== user.id ) {
+      throw new ApplicationError('El código no coincide con el usuario')
+    } 
+
+    if (DatesAdapter.isExpired(new Date(resetPassCodse.expiresAt), 15)) {
+      throw new ApplicationError("El código ha expirado. Solicita uno nuevo.")
+    }
+
+    return true
   }
 
   async getUserById(userId: string) {

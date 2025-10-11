@@ -1,6 +1,6 @@
 import { DomainError } from '../errors/domain.error';
 
-export class VerificationCodeValue {
+export class CodeValue {
   private readonly _value: string;
   private static readonly CODE_LENGTH = 6;
   private readonly MESSAGE_ERROR = 'VERIFICATION_CODE_VALUE_ERROR';
@@ -12,10 +12,10 @@ export class VerificationCodeValue {
         'El código de verificación debe contener solo números'
       );
     }
-    if (value.length !== VerificationCodeValue.CODE_LENGTH) {
+    if (value.length !== CodeValue.CODE_LENGTH) {
       throw new DomainError(
         this.MESSAGE_ERROR,
-        `El código de verificación debe tener exactamente ${VerificationCodeValue.CODE_LENGTH} dígitos`
+        `El código de verificación debe tener exactamente ${CodeValue.CODE_LENGTH} dígitos`
       );
     }
 
@@ -26,7 +26,7 @@ export class VerificationCodeValue {
     return this._value;
   }
 
-  public equals(other: VerificationCodeValue): boolean {
+  public equals(other: CodeValue): boolean {
     return this._value === other.value;
   }
 }

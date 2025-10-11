@@ -2,7 +2,7 @@ import { VerificationCodeDatasource } from "../../../domain/datasources/verifica
 import { VerificationCode } from '../../../domain/entities/VerificationCode';
 import { PrismaClient, VerificationCode as PrismaVerificationCode} from "../../../../generated/prisma";
 import { InfrastructureError } from '../../errors/infrastructure-error';
-import { VerificationCodeValue } from "../../../domain/value-objects/VerificationCodeValue";
+import { CodeValue } from "../../../domain/value-objects/CodeValue";
 
 export class PrismaVerificationCodeDatasource implements VerificationCodeDatasource {
 
@@ -28,7 +28,7 @@ export class PrismaVerificationCodeDatasource implements VerificationCodeDatasou
     } catch( error ) {
       throw new InfrastructureError(
         `[Prisma]: Error al eliminar código de verificación asociados al usuario: ${userId}`,
-        'PRISMA_CREATE_VERIFICATION_CODE',
+        'PRISMA_DELETE_VERIFICATION_CODES',
         error
       )
     }
@@ -49,7 +49,7 @@ export class PrismaVerificationCodeDatasource implements VerificationCodeDatasou
   private toDomain( verificationCode: PrismaVerificationCode ): VerificationCode {
     return new VerificationCode({
       id: verificationCode.verification_id,
-      code: new VerificationCodeValue(verificationCode.code),
+      code: new CodeValue(verificationCode.code),
       createdAt: verificationCode.createdAt,
       expiresAt: verificationCode.expiresAt,
       userId: verificationCode.user_id

@@ -29,6 +29,12 @@ export interface SendForgotPasswordI {
   token: string
 }
 
+export interface SendForgotPasswordMobileI {
+  meta: SendEmailI,
+  username: string,
+  code: string
+}
+
 export interface SendChangePasswordI {
   meta: SendEmailI,
   username: string
@@ -41,6 +47,7 @@ export abstract class EmailService {
   abstract sendValidateAccountEmailMobile( data: SendVerificationCodeI ): Promise<void>
   abstract sendDeactivationAccountEmail( data: SendDeactivationAccountI ): Promise<void>
   abstract sendForgotPasswordEmail( data: SendForgotPasswordI ): Promise<void>
+  abstract sendForgotPasswordEmailMobile( data: SendForgotPasswordMobileI ): Promise<void>
   abstract sendChangePasswordEmail( data: SendChangePasswordI ): Promise<void>
 
 }

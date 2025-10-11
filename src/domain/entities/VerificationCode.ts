@@ -1,10 +1,10 @@
-import { VerificationCodeValue } from '../value-objects/VerificationCodeValue';
+import { CodeValue } from '../value-objects/CodeValue';
 import { DomainError } from '../errors/domain.error';
 
 interface VerificationCodeProps {
   id: string;
   userId: string;
-  code: VerificationCodeValue;
+  code: CodeValue;
   expiresAt: Date;
   createdAt: Date;
 }
@@ -12,7 +12,7 @@ interface VerificationCodeProps {
 export class VerificationCode {
   private readonly _id: string;
   private readonly _userId: string;
-  private readonly _code: VerificationCodeValue;
+  private readonly _code: CodeValue;
   private readonly _expiresAt: Date;
   private readonly _createdAt: Date;
 
@@ -48,7 +48,7 @@ export class VerificationCode {
     return this._userId;
   }
 
-  get code(): VerificationCodeValue {
+  get code(): CodeValue {
     return this._code;
   }
 

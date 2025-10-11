@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ChangePasswordValidator, CreateUserValidator, LoginUserValidator, ResendVerificationCodeValidator, UpdateUserValidator, ValidateUserValidator } from '../validators/user';
+import { ChangePasswordMobileValidator, ChangePasswordValidator, CreateUserValidator, LoginUserValidator, PasswordResetCodeValidator, ResendVerificationCodeValidator, UpdateUserValidator, ValidateUserValidator } from '../validators/user';
 import { ValidationError } from '../../application/errors/validation.error';
 import { UserService } from '../../application/services';
 import { ForgotPasswordUserValidator } from '../validators/user/forgot-password-user.validator';
@@ -163,14 +163,25 @@ export class UserController {
     res.status(200).json({
       ok: true,
       email: dto?.email,
-      message: 'Cambia tu contraseña para acceder nuevamente a tu cuenta'
+      message: `Se ha enviado un código de recuperación al correo ${dto?.email}`
     })
 
   }
 
+  public validatePasswordResetCode = async (req: Request, res: Response) => {
+    const [ dto, error ] = PasswordResetCodeValidator.validate(req.body)
+    if (error) throw new ValidationError(error, 'RESET_PASSWORD_CODE_VALIDATION_ERROR')
+    const isCodeValidated = await this.userService.validateResetPasswordCode(dto!)
+    res.status(200).json({
+      ok: true,
+      message: 'Ingresa tu nueva contraseña',
+      isCodeValidated
+    })
+   }
+
   public changePassword = async (req: Request, res: Response) => {
     const [ dto, error ] = ChangePasswordValidator.validate( req.body )
-    if (error) throw new ValidationError(error, 'CHANGE_PASSWORD__USER_VALIDATION_ERROR')
+    if (error) throw new ValidationError(error, 'CHANGE_PASSWORD_USER_VALIDATION_ERROR')
     
     await this.userService.changePassword(dto!)
 
@@ -179,6 +190,18 @@ export class UserController {
       message: 'Se ha actualizado la contraseña correctamente'
     })
   }
+
+  // public changePasswordMobile = async (req: Request, res: Response) => {
+  //   const [ dto, error ] = ChangePasswordMobileValidator.validate( req.body )
+  //   if (error) throw new ValidationError(error, 'CHANGE_PASSWORD_USER_VALIDATION_ERROR')
+    
+  //   await this.userService.changePasswordMobile(dto!)
+
+  //   res.status(200).json({
+  //     ok: true,
+  //     message: 'Se ha actualizado la contraseña correctamente'
+  //   })
+  // }
 
   public resendVerificationCode = async (req: Request, res: Response) => {
     const [ dto, error ] = ResendVerificationCodeValidator.validate( req.body )

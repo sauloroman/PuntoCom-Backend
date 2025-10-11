@@ -19,7 +19,7 @@ export function resetPasswordEmailTemplate(
       <div style="max-width:600px; margin:40px auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
         
         <div style="background-color:#1e3a8a; padding:20px; text-align:center; color:white;">
-          <img src="https://via.placeholder.com/120x40?text=LOGO" alt="Logo" style="max-width:120px; margin-bottom:10px;">
+          <img src="https://res.cloudinary.com/dlamufioy/image/upload/v1755733945/puntocom/2_ioikmu.png" alt="Logo" style="max-width:120px; margin-bottom:10px;">
           <h2 style="margin:0; font-size:20px;">Restablece tu contraseña ☕</h2>
         </div>
         

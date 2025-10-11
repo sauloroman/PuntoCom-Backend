@@ -3,7 +3,7 @@ import { DatesAdapter, IDAdapter, CodeGeneratorAdapter } from '../../../config/p
 
 import { VerificationCodeRepository } from '../../../domain/repositories/verification-code.repository';
 import { VerificationCode } from '../../../domain/entities/VerificationCode';
-import { VerificationCodeValue } from '../../../domain/value-objects/VerificationCodeValue';
+import { CodeValue } from '../../../domain/value-objects/CodeValue';
 
 export class CreateVerificationCodeUseCase {
 
@@ -24,7 +24,7 @@ export class CreateVerificationCodeUseCase {
 
     const verificationCode = new VerificationCode({
       id: IDAdapter.generate(),
-      code: new VerificationCodeValue( verificationCodeValue ),
+      code: new CodeValue( verificationCodeValue ),
       createdAt: createdAt,
       expiresAt: expiresAt, 
       userId: userId

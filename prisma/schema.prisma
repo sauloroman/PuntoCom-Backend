@@ -9,25 +9,25 @@ datasource db {
 }
 
 model Product {
-  product_id         String   @id @default(uuid())
-  product_name       String   @unique
-  product_description String  @default("Producto sin descripción")
-  product_image      String   @default("Producto sin imagen")
-  product_code       String   @unique
-  product_image_code String
+  product_id           String   @id @default(uuid())
+  product_name         String   @unique
+  product_description  String   @default("Producto sin descripción")
+  product_image        String   @default("Producto sin imagen")
+  product_code         String   @unique
+  product_image_code   String
   product_selling_price Decimal @db.Decimal(11, 2)
-  product_stock      Int
-  product_stock_min  Int
-  product_createdAt  DateTime @default(now())
-  product_updatedAt  DateTime @updatedAt
-  product_is_active  Boolean  @default(true)
-  category_id        String
-  supplier_id        String
+  product_stock        Int
+  product_stock_min    Int
+  product_createdAt    DateTime @default(now())
+  product_updatedAt    DateTime @updatedAt
+  product_is_active    Boolean  @default(true)
+  category_id          String
+  supplier_id          String
 
-  Category           Category @relation(fields: [category_id], references: [category_id])
-  Supplier           Supplier @relation(fields: [supplier_id], references: [supplier_id])
-  PurchaseDetails    Purchase_Detail[]
-  SaleProductDetails Sale_Product_Detail[]
+  Category             Category @relation(fields: [category_id], references: [category_id])
+  Supplier             Supplier @relation(fields: [supplier_id], references: [supplier_id])
+  PurchaseDetails      Purchase_Detail[]
+  SaleProductDetails   Sale_Product_Detail[]
   InventoryAdjustments Inventory_Adjustment[]
 }
 
@@ -60,9 +60,9 @@ model Supplier {
 }
 
 model Purchase {
-  purchase_id     String  @id @default(uuid())
+  purchase_id     String   @id @default(uuid())
   purchase_date   DateTime @default(now())
-  purchase_total  Decimal @db.Decimal(11, 2)
+  purchase_total  Decimal  @db.Decimal(11, 2)
   supplier_id     String
   user_id         String
 
@@ -72,20 +72,20 @@ model Purchase {
 }
 
 model Purchase_Detail {
-  purchase_detail_id  String  @id @default(uuid())
-  purchase_quantity   Int
-  purchase_unit_price Decimal @db.Decimal(11, 2)
-  product_id         String
-  purchase_id        String
+  purchase_detail_id   String  @id @default(uuid())
+  purchase_quantity    Int
+  purchase_unit_price  Decimal @db.Decimal(11, 2)
+  product_id           String
+  purchase_id          String
 
-  Product            Product  @relation(fields: [product_id], references: [product_id])
-  Purchase           Purchase @relation(fields: [purchase_id], references: [purchase_id])
+  Product              Product  @relation(fields: [product_id], references: [product_id])
+  Purchase             Purchase @relation(fields: [purchase_id], references: [purchase_id])
 }
 
 model Sale {
-  sale_id       String  @id @default(uuid())
+  sale_id       String   @id @default(uuid())
   sale_date     DateTime @default(now())
-  sale_total    Decimal @db.Decimal(11, 2)
+  sale_total    Decimal  @db.Decimal(11, 2)
   user_id       String
 
   User          User     @relation(fields: [user_id], references: [user_id])
@@ -93,45 +93,56 @@ model Sale {
 }
 
 model Sale_Product_Detail {
-  sale_product_detail_id String  @id @default(uuid())
-  sale_product_detail_quantity Int
-  sale_product_detail_unit_price Decimal @db.Decimal(11, 2)
-  sale_product_discount Decimal @db.Decimal(11, 2) @default(0.0)
-  sale_id       String
-  product_id    String
+  sale_product_detail_id          String  @id @default(uuid())
+  sale_product_detail_quantity    Int
+  sale_product_detail_unit_price  Decimal @db.Decimal(11, 2)
+  sale_product_discount           Decimal @db.Decimal(11, 2) @default(0.0)
+  sale_id                         String
+  product_id                      String
 
   Sale          Sale    @relation(fields: [sale_id], references: [sale_id])
   Product       Product @relation(fields: [product_id], references: [product_id])
 }
 
 model User {
-  user_id         String   @id @default(uuid())
-  user_name       String
-  user_lastname   String
-  user_image      String   @default("Usuario sin imagen")
-  user_email      String   @unique
-  user_password   String
-  user_is_active  Boolean  @default(true)
-  user_createdAt  DateTime @default(now())
-  user_updatedAt  DateTime @updatedAt
-  user_is_validated Boolean @default(false)
-  user_phone      String  @default("Usuario sin numero")
-  role            RoleEnum
+  user_id            String   @id @default(uuid())
+  user_name          String
+  user_lastname      String
+  user_image         String   @default("Usuario sin imagen")
+  user_email         String   @unique
+  user_password      String
+  user_is_active     Boolean  @default(true)
+  user_createdAt     DateTime @default(now())
+  user_updatedAt     DateTime @updatedAt
+  user_is_validated  Boolean  @default(false)
+  user_phone         String   @default("Usuario sin numero")
+  role               RoleEnum
 
-  Purchases       Purchase[]
-  Sales           Sale[]
+  Purchases          Purchase[]
+  Sales              Sale[]
   InventoryAdjustments Inventory_Adjustment[]
-  VerificationCodes     VerificationCode[]
+  VerificationCodes  VerificationCode[]
+  PasswordResetCodes PasswordResetCode[]
 }
 
 model VerificationCode {
   verification_id String   @id @default(uuid())
-  code            String @unique
+  code            String   @unique
   expiresAt       DateTime
   createdAt       DateTime @default(now())
+  user_id         String
 
-  user_id String
-  user    User     @relation(fields: [user_id], references: [user_id])
+  user            User     @relation(fields: [user_id], references: [user_id])
+}
+
+model PasswordResetCode {
+  reset_id     String   @id @default(uuid())
+  code         String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  user_id      String
+
+  user         User     @relation(fields: [user_id], references: [user_id])
 }
 
 enum RoleEnum {

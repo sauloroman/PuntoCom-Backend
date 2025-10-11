@@ -1,7 +1,8 @@
-import { EmailService, SendChangePasswordI, SendDeactivationAccountI, SendEmailI, SendForgotPasswordI, SendVerificationCodeI } from '../../../application/services/email.service';
+import { EmailService, SendChangePasswordI, SendDeactivationAccountI, SendEmailI, SendForgotPasswordI, SendForgotPasswordMobileI, SendVerificationCodeI } from '../../../application/services/email.service';
 import { welcomeEmailTemplate, accountDeactivatedEmailTemplate, resetPasswordEmailTemplate, passwordChangedEmailTemplate, codeOnlyEmailTemplate } from '../../../config/templates/email';
 import { Transporter } from 'nodemailer';
 import nodemailer from 'nodemailer';
+import { mobileResetPasswordEmailTemplate } from '../../../config/templates/email/forgot-email-mobile.template';
 
 interface NodemailerServiceOptions {
   mailerService: string,
@@ -82,6 +83,19 @@ export class NodeMailerService implements EmailService {
   async sendForgotPasswordEmail({ meta, token, username }: SendForgotPasswordI): Promise<void> {
     const { subject, to } = meta  
     const htmlBody = resetPasswordEmailTemplate( username, token )
+
+    await this.sendEmail({
+      from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,
+      to,
+      subject,
+      htmlBody: htmlBody,
+      attachments: [],
+    })
+  }
+
+  async sendForgotPasswordEmailMobile({ meta, code, username }: SendForgotPasswordMobileI): Promise<void> {
+    const { subject, to } = meta  
+    const htmlBody = mobileResetPasswordEmailTemplate( username, code )
 
     await this.sendEmail({
       from: `PuntoCom - <${this.transporter.options.from?.toString()}>`,

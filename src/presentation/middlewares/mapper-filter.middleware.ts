@@ -16,7 +16,8 @@ const fieldMap: Record<string, Record<string, string>> = {
         productName: 'product_name',
         productStatus: 'product_is_active',
         productCreatedAt: 'product_createdAt',
-        productCategory: 'category_id'
+        productCategory: 'category_id',
+        productSupplier: 'supplier_id'
     }
 };
 

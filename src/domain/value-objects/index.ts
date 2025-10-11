@@ -8,3 +8,4 @@ export { Phone } from './Phone';
 export { Stock } from './Stock'
 export { Discount } from './Discount'
 export { AdjustmentType } from './Adjustment'
+export { CodeValue } from './CodeValue'

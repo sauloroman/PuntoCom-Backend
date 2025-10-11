@@ -22,12 +22,13 @@ export class UserRoutes {
     const router = Router()
 
     // Public routes
-
     router.post('/login', this.controller.login )
     router.patch('/validate', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.validateUser )
     router.post('/forgot-password', this.controller.forgotPassword )
     router.post('/forgot-password/mobile', this.controller.forgotPasswordMobile )
+    router.post('/validate-reset-password-code/mobile', this.controller.validatePasswordResetCode)
     router.post('/change-password', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.changePassword)
+    // router.post('/change-password/mobile', this.controller.changePasswordMobile)
     router.post('/resend-verification-code', this.controller.resendVerificationCode )
     router.post('/', [ 
       // ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )

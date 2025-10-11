@@ -3,3 +3,4 @@ export { SendDeactivationAccountEmailUseCase } from './send-deactivation-account
 export { SendForgotPasswordEmailUseCase } from './send-forgot-password-email.use-case'
 export { SendChangePasswordEmailUseCase } from './send-change-password-email.use-case'
 export { SendVerificationCodeEmailMobileUseCase } from './send-verification-code-email-mobile.use-case'
+export { SendForgotPasswordEmailMobileUseCase } from './send-forgot-password-email-mobile.use-case'

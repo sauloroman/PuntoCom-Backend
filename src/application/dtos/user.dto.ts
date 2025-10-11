@@ -41,6 +41,10 @@ export interface ChangePasswordRequestDtoI {
   newPassword: string,
 }
 
+export interface ChangePasswordMobileRequestDtoI {
+  newPassword: string,
+}
+
 export interface GetUserRequestDtoI {
   id?: string,
   email?: string

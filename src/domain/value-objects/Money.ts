@@ -7,7 +7,7 @@ export class Money {
   private readonly MESSAGE_ERROR: string = "MONEY_VALIDATION_ERROR"
 
   constructor( amount: number ) {
-    if ( isNaN(amount) || amount <= 0 ) {
+    if ( isNaN(amount) || amount < 0 ) {
       throw new DomainError( this.MESSAGE_ERROR, 'El precio debe ser un número positivo')
     }
     this._amount = parseFloat(amount.toFixed(Money.QUANTITY_DECIMALS))

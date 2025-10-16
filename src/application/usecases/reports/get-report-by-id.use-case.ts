@@ -4,7 +4,7 @@ import { ApplicationError } from "../../errors/application.error";
 
 export class GetReportByIdUseCase {
 
-    private readonly uploadsDir = path.join(__dirname, '../../../uploads/reports')
+    public readonly uploadsDir = path.join(__dirname, '../../../uploads/reports')
 
     public async execute( entity: string, pdfId: string ) {
 

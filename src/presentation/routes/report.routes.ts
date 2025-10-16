@@ -33,6 +33,10 @@ export class ReportRoutes {
             ValidateEntityReportMiddleware.validate()
         ], this.controller.getReport )
 
+        router.get('/all', [
+            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador),
+        ], this.controller.getAllReports)
+
         return router
     }
 

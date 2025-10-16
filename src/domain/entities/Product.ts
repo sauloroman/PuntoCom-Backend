@@ -81,7 +81,6 @@ export class Product {
     this.validateImage(this._imageCode)
     this.validateCategoryId(this._categoryId)
     this.validateSupplierId(this._supplierId)
-    this.validateStockConsistency( this._stock, this._stockMin )
   }
 
   private validateName(name: string) {
@@ -116,13 +115,6 @@ export class Product {
       throw new DomainError(this.MESSAGE_ERROR, 'El ID de proveedor es obligatorio');
     }
   }
-
-  private validateStockConsistency( stock: Stock, stockMin: Stock ) {
-    if ( stockMin.value > stock.value ) {
-      throw new Error('El stock mínimo no puede ser mayor que el stock actual');
-    }
-  }
-
 
   get id(): string {
     return this._id ?? '';

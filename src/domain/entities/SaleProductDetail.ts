@@ -2,10 +2,10 @@ import { Money, Quantity, Discount } from '../value-objects';
 import { DomainError } from '../errors/domain.error';
 
 interface SaleProductDetailProps {
-  id: string;
+  id?: string;
   saleQuantity: Quantity;
   saleUnitPrice: Money;
-  saleDiscount?: Discount;
+  saleDiscount: Discount;
   productId: string;
   saleId: string;
   createdAt?: Date;
@@ -16,7 +16,7 @@ export class SaleProductDetail {
   private readonly _id: string;
   private _saleQuantity: Quantity;
   private _saleUnitPrice: Money;
-  private _saleDiscount?: Discount;
+  private _saleDiscount: Discount;
   private _productId: string;
   private _saleId: string;
   private _createdAt: Date;
@@ -25,7 +25,7 @@ export class SaleProductDetail {
   private readonly MESSAGE_ERROR: string = "SALE_PRODUCT_DETAIL_VALIDATION_ERROR"
 
   constructor({
-    id,
+    id = '', 
     saleQuantity,
     saleUnitPrice,
     saleDiscount,
@@ -85,7 +85,7 @@ export class SaleProductDetail {
   }
 
   get id(): string {
-    return this._id;
+    return this._id ?? '';
   }
 
   get saleQuantity(): Quantity {
@@ -96,7 +96,7 @@ export class SaleProductDetail {
     return this._saleUnitPrice;
   }
 
-  get saleDiscount(): Discount | undefined {
+  get saleDiscount(): Discount {
     return this._saleDiscount;
   }
 
@@ -119,7 +119,7 @@ export class SaleProductDetail {
   public update(params: {
     saleQuantity?: Quantity;
     saleUnitPrice?: Money;
-    saleDiscount?: Discount | null;
+    saleDiscount?: Discount;
     productId?: string;
     saleId?: string;
   }) {
@@ -134,12 +134,8 @@ export class SaleProductDetail {
     }
 
     if (params.saleDiscount !== undefined) {
-      if (params.saleDiscount === null) {
-        this._saleDiscount = undefined;
-      } else {
-        this.validateDiscount(params.saleDiscount);
-        this._saleDiscount = params.saleDiscount;
-      }
+      this.validateDiscount(params.saleDiscount);
+      this._saleDiscount = params.saleDiscount;
     }
 
     if (params.productId !== undefined) {

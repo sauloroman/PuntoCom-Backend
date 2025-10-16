@@ -86,6 +86,7 @@ model Sale {
   sale_id       String   @id @default(uuid())
   sale_date     DateTime @default(now())
   sale_total    Decimal  @db.Decimal(11, 2)
+  sale_code     String   @unique
   user_id       String
 
   User          User     @relation(fields: [user_id], references: [user_id])

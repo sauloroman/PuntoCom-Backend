@@ -30,4 +30,12 @@ export class ReportController {
         res.sendFile(filePath)
     }
 
+    public getAllReports = async(_req: Request, res: Response) => {
+        const reports = await this.reportService.getAllDateReports()
+        res.status(200).json({
+            ok: true,
+            reports
+        })
+    }
+
 }

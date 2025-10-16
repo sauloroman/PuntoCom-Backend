@@ -1,13 +1,13 @@
 import { Money } from '../value-objects/Money';
 import { DomainError } from '../errors/domain.error';
+import { SaleCode } from '../value-objects';
 
 interface SaleProps {
-  id: string;
-  date?: Date;
+  id?: string;
+  date: Date;
+  code: SaleCode,
   total: Money;
   userId: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export class Sale {
@@ -15,25 +15,22 @@ export class Sale {
   private _date: Date;
   private _total: Money;
   private _userId: string;
-  private _createdAt: Date;
-  private _updatedAt: Date;
+  private _code: SaleCode;
 
   private readonly MESSAGE_ERROR: string = "SALE_VALIDATION_ERROR"
 
   constructor({
-    id,
-    date = new Date(),
+    id = '',
+    date,
     total,
+    code,
     userId,
-    createdAt = new Date(),
-    updatedAt = new Date(),
   }: SaleProps) {
     this._id = id;
     this._date = date;
+    this._code = code;
     this._total = total;
     this._userId = userId;
-    this._createdAt = createdAt;
-    this._updatedAt = updatedAt;
 
     this.validate();
   }
@@ -63,7 +60,7 @@ export class Sale {
   }
 
   get id(): string {
-    return this._id;
+    return this._id && '';
   }
 
   get date(): Date {
@@ -74,21 +71,18 @@ export class Sale {
     return this._total;
   }
 
+  get code(): SaleCode {
+    return this._code
+  }
+
   get userId(): string {
     return this._userId;
-  }
-
-  get createdAt(): Date {
-    return this._createdAt;
-  }
-
-  get updatedAt(): Date {
-    return this._updatedAt;
   }
 
   public update(params: {
     date?: Date;
     total?: Money;
+    code?: SaleCode;
     userId?: string;
   }) {
     if (params.date !== undefined) {
@@ -101,15 +95,13 @@ export class Sale {
       this._total = params.total;
     }
 
+    if (params.code !== undefined) {
+      this._code = params.code;
+    }
+
     if (params.userId !== undefined) {
       this.validateUserId(params.userId);
       this._userId = params.userId;
     }
-
-    this.touchUpdatedAt();
-  }
-
-  private touchUpdatedAt() {
-    this._updatedAt = new Date();
   }
 }

@@ -1,0 +1,1 @@
+export { SaveSaleUseCase } from './save-sale.use-case'

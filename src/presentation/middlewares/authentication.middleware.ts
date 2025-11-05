@@ -16,7 +16,7 @@ export class AuthMiddleware {
   public static validateLoggedUser ( userRepository: UserRepository ) {
       return async( req: Request, res: Response, next: NextFunction ): Promise<any> => {
         
-        if ( req.method === 'GET' || req.method === 'PATCH') {
+        if ( req.method === 'GET' || req.method === 'PATCH' || req.method === 'DELETE') {
           req.body = {}
         }
         

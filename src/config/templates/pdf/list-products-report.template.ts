@@ -166,7 +166,7 @@ export function buildProductsHtml(products: ProductResponseIncludeDto[]) {
         <tbody>
           ${products.map(p => `
             <tr>
-              <td><img src="${p.name}" alt="Producto" class="product-img" /></td>
+              <td><img src=${p.image ? p.image : 'https://res.cloudinary.com/dlamufioy/image/upload/v1760635222/puntocom/box_g67qzb.png' } alt="Producto" class="product-img" /></td>
               <td>${p.name}</td>
               <td>${p.code}</td>
               <td>$${p.sellingPrice.toFixed(2)}</td>

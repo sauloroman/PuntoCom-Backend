@@ -21,21 +21,12 @@ export class ReportRoutes {
     private initRoutes(): Router {
         const router = Router()
 
-        router.use([Auth.Logged])
+        router.use([Auth.Logged, ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)])
 
-        router.get('/list/:entity', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador),
-            ValidateEntityReportMiddleware.validate()
-        ], this.controller.createListPdfReport )
-        
-        router.get('/:entity/:id', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador),
-            ValidateEntityReportMiddleware.validate()
-        ], this.controller.getReport )
-
-        router.get('/all', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador),
-        ], this.controller.getAllReports)
+        router.get('/list/:entity', [ ValidateEntityReportMiddleware.validate() ], this.controller.createListPdfReport )
+        router.get('/:entity/:id', [ ValidateEntityReportMiddleware.validate() ], this.controller.getReport )
+        router.get('/all', this.controller.getAllReports)
+        router.delete('/:entity/:id', [ ValidateEntityReportMiddleware.validate() ], this.controller.deleteReport)
 
         return router
     }

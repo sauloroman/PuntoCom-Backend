@@ -7,8 +7,6 @@ const prisma = PrismaDatasource.getInstance();
 
 export const Auth = {
   Logged: AuthMiddleware.validateLoggedUser(
-    new UserRepositoryImpl(
-      new PrismaUserDatasource(prisma)
-    )
+    new UserRepositoryImpl( new PrismaUserDatasource(prisma) )
   )
 }

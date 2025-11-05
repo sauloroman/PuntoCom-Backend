@@ -30,6 +30,18 @@ export class ReportController {
         res.sendFile(filePath)
     }
 
+    public deleteReport = async (req: Request, res: Response ) => {
+        const { entity, id } = req.params
+        
+        await this.reportService.deteleReportById(entity, id)
+
+        res.status(202).json({
+            ok: true,
+            message: 'El reporte ha sido eliminado correctamente'
+        })
+        
+    }
+
     public getAllReports = async(_req: Request, res: Response) => {
         const reports = await this.reportService.getAllDateReports()
         res.status(200).json({

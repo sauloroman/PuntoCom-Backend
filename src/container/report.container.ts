@@ -15,7 +15,7 @@ import { PrismaSupplierDatasource } from "../infrastructure/datasource/prisma/pr
 import { GetAllProductsUseCase } from "../application/usecases/product";
 import { ReportController } from "../presentation/controllers/report.controller";
 import { GetReportByIdUseCase } from "../application/usecases/reports/get-report-by-id.use-case";
-import { GetAllReportsUseCase } from "../application/usecases/reports";
+import { DeleteReportUseCase, GetAllReportsUseCase } from "../application/usecases/reports";
 
 const prismaClient = PrismaDatasource.getInstance() 
 
@@ -45,11 +45,12 @@ export class ReportContainer {
         const getAllSuppliersUC = new GetAllSuppliersUseCase(supplierRepository)
         const getAllProductsUC = new GetAllProductsUseCase(productRepository)
         const getAllReportsUC = new GetAllReportsUseCase()
+        const deleteReportByIdUC = new DeleteReportUseCase()
 
         const reportService = new ReportService({
             uploadReportUC: uploadPdfUC,
             getReportByIdUC: getReportByIdUC,
-
+            deleteReportByIdUC: deleteReportByIdUC,
             getAllProductsUC: getAllProductsUC,
             getAllSuppliersUC: getAllSuppliersUC,
             getAllUsersUC: getAllUsersUC,

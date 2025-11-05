@@ -4,6 +4,7 @@ import { SupplierResponseDto } from "../dtos/supplier.dto";
 import { UserResponseDtoI } from "../dtos/user.dto";
 import { GetAllProductsUseCase } from "../usecases/product";
 import { GetAllReportsUseCase } from "../usecases/reports";
+import { DeleteReportUseCase } from "../usecases/reports/delete-report.use-case";
 import { GetReportByIdUseCase } from "../usecases/reports/get-report-by-id.use-case";
 import { GetAllSuppliersUseCase } from "../usecases/suppliers";
 import { UploadPdfUseCase } from "../usecases/upload";
@@ -12,6 +13,7 @@ import { GetAllUsersUseCase } from "../usecases/user";
 interface ReportServiceI {
     uploadReportUC: UploadPdfUseCase,
     getReportByIdUC: GetReportByIdUseCase,
+    deleteReportByIdUC: DeleteReportUseCase,
 
     getAllUsersUC: GetAllUsersUseCase,
     getAllSuppliersUC: GetAllSuppliersUseCase,
@@ -28,10 +30,12 @@ export class ReportService {
     private readonly getAllSuppliersUC: GetAllSuppliersUseCase
     private readonly getAllProductsUC: GetAllProductsUseCase
     private readonly getAllReports: GetAllReportsUseCase
+    private readonly deleteReportByIdUC: DeleteReportUseCase
 
     constructor({ 
         uploadReportUC,
         getReportByIdUC,
+        deleteReportByIdUC,
         
         getAllProductsUC,
         getAllSuppliersUC,
@@ -40,7 +44,7 @@ export class ReportService {
     }: ReportServiceI){
         this.uploadReportUC = uploadReportUC
         this.getReportByIdUC = getReportByIdUC
-
+        this.deleteReportByIdUC = deleteReportByIdUC
         this.getAllProductsUC = getAllProductsUC
         this.getAllSuppliersUC = getAllSuppliersUC
         this.getAllUsersUC = getAllUsersUC
@@ -49,6 +53,10 @@ export class ReportService {
 
     public async getReportById( entity: string, id: string ) {
         return await this.getReportByIdUC.execute(entity, id)
+    }
+
+    public async deteleReportById( entity: string, id: string ) {
+        return await this.deleteReportByIdUC.execute(entity, id)   
     }
 
     public async generateReport( entity: string ): Promise<string> {

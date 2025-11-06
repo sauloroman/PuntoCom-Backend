@@ -1,10 +1,11 @@
 import { UploadedFile } from "express-fileupload";
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { ChangeStatusDto, CreateProduct, UpdateProductRequest } from "../dtos/product.dto";
+import { ChangeStatusDto, CreateProduct, StockCriteria, UpdateProductRequest } from "../dtos/product.dto";
 import { 
     ChangeStatusProductUseCase, 
     CreateProductUseCase, 
     GetAllProductsUseCase, 
+    GetProductsByStock, 
     ListProductsUseCase, 
     UpdateProductImageUseCase, 
     UpdateProductUseCase 
@@ -17,6 +18,7 @@ import { UploadBarCodeUseCase } from "../usecases/upload/upload-bar-code.use-cas
 interface ProductServiceOptions {
     getProductByIdUC: GetProductByIdUseCase,
     getAllProductsUC: GetAllProductsUseCase,
+    getProductByStockUC: GetProductsByStock,
     createProductUC: CreateProductUseCase,
     updateProductUC: UpdateProductUseCase,
     updateProductImageUC: UpdateProductImageUseCase,
@@ -32,6 +34,7 @@ export class ProductService {
 
     private readonly getProductByIdUC: GetProductByIdUseCase
     private readonly getAllProductsUC: GetAllProductsUseCase
+    private readonly getProductByStockUC: GetProductsByStock
     private readonly createProductUC: CreateProductUseCase
     private readonly updateProductUC: UpdateProductUseCase 
     private readonly updateProductImageUC: UpdateProductImageUseCase
@@ -45,6 +48,7 @@ export class ProductService {
     constructor({ 
         getProductByIdUC, 
         getAllProductsUC,
+        getProductByStockUC,
         createProductUC, 
         updateProductUC,
         updateProductImageUC,
@@ -57,6 +61,7 @@ export class ProductService {
     }: ProductServiceOptions){
         this.getProductByIdUC = getProductByIdUC
         this.getAllProductsUC = getAllProductsUC
+        this.getProductByStockUC = getProductByStockUC
         this.createProductUC = createProductUC
         this.updateProductUC = updateProductUC
         this.updateProductImageUC = updateProductImageUC
@@ -92,6 +97,10 @@ export class ProductService {
 
     public async getAllProducts() {
         return await this.getAllProductsUC.execute()
+    }
+
+    public async getProductsByStock( stockCriteria: StockCriteria ) {
+        return await this.getProductByStockUC.execute( stockCriteria )
     }
 
     public async listSuppliers( pagination: PaginationDTO ) {

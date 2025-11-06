@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ProductService } from "../../application/services/product.service";
 import { CreateProductValidator, UpdateProductValidator } from "../validators/product";
 import { ApplicationError } from "../../application/errors/application.error";
+import { StockCriteria } from "../../application/dtos/product.dto";
 
 export class ProductController {
 
@@ -18,6 +19,16 @@ export class ProductController {
             ok: true,
             message: 'La imagen del producto ha sido actualizada correctamente',
             product
+        })
+    }
+
+    public getProductsByStock = async (req: Request, res: Response) => {
+        const { criteria } = req.params
+        const products = await this.productService.getProductsByStock(criteria as StockCriteria)
+        res.status(200).json({
+            ok: true,
+            filterStock: criteria,
+            products
         })
     }
 

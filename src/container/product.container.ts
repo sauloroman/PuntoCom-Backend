@@ -1,5 +1,5 @@
 import { ProductService } from "../application/services/product.service";
-import { ChangeStatusProductUseCase, GetAllProductsUseCase, ListProductsUseCase, UpdateProductImageUseCase, UpdateProductUseCase } from "../application/usecases/product";
+import { ChangeStatusProductUseCase, GetAllProductsUseCase, GetProductsByStock, ListProductsUseCase, UpdateProductImageUseCase, UpdateProductUseCase } from "../application/usecases/product";
 import { CreateProductUseCase } from "../application/usecases/product/create-product.use-case";
 import { GetProductByIdUseCase } from "../application/usecases/product/get-product-by-id.use-case";
 import { DestroyImageUseCase, UploadBarCodeUseCase, UploadImageUseCase } from "../application/usecases/upload";
@@ -24,6 +24,7 @@ export class ProductContainer {
 
         const getProductByIdUC = new GetProductByIdUseCase( productRepository )
         const getAllProducts = new GetAllProductsUseCase( productRepository )
+        const getProductsByStock = new GetProductsByStock( productRepository )
         const createProductUC = new CreateProductUseCase( productRepository )
         const updateProductUC = new UpdateProductUseCase( productRepository )
         const updateProductImageUC = new UpdateProductImageUseCase( productRepository )
@@ -37,6 +38,7 @@ export class ProductContainer {
         const productService = new ProductService({
             getProductByIdUC: getProductByIdUC,
             getAllProductsUC: getAllProducts,
+            getProductByStockUC: getProductsByStock,
             createProductUC: createProductUC,
             updateProductUC: updateProductUC,
             updateProductImageUC: updateProductImageUC,

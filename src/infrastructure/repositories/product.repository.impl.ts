@@ -1,5 +1,5 @@
 import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
-import { ProductResponseIncludeDto } from "../../application/dtos/product.dto";
+import { ProductResponseIncludeDto, StockCriteria } from "../../application/dtos/product.dto";
 import { ProductDatasource } from "../../domain/datasources/product.datasource";
 import { Product } from "../../domain/entities";
 import { ProductRepository } from "../../domain/repositories/product.repository";
@@ -7,6 +7,10 @@ import { ProductRepository } from "../../domain/repositories/product.repository"
 export class ProductRepositoryImp implements ProductRepository {
 
     constructor(private readonly productDatasource: ProductDatasource){}
+    
+    async getProductsByStock(stockCriteria: StockCriteria): Promise<ProductResponseIncludeDto[]> {
+        return await this.productDatasource.getProductsByStock(stockCriteria)
+    }
 
     async findById(productId: string): Promise<ProductResponseIncludeDto | null> {
         return await this.productDatasource.findById(productId)

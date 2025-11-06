@@ -1,10 +1,13 @@
 import { PrismaClient, Sale as PrismaSale, User as PrismaUser, Sale_Product_Detail as PrismaSaleDetail } from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
-import { SaleDetail, SaleProductDetailResponse, SaleResponse } from "../../../application/dtos/sale.dto";
+import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
+import { SaleDetailsResponse, SaleProductDetailResponse, SaleResponse } from "../../../application/dtos/sale.dto";
+import { DatesAdapter } from "../../../config/plugins";
 import { SalesDatasource } from "../../../domain/datasources/sales.datasource";
 import { Sale, SaleProductDetail } from "../../../domain/entities";
 import { Money, Quantity } from "../../../domain/value-objects";
 import { InfrastructureError } from "../../errors/infrastructure-error";
+import { buildPaginationOptions } from "./utils/pagination-options";
 
 export class PrismaSalesDatasource implements SalesDatasource {
     
@@ -12,6 +15,63 @@ export class PrismaSalesDatasource implements SalesDatasource {
 
     constructor( prisma: PrismaClient ) {
         this.prisma = prisma
+    }
+
+    async findByUser(userId: string, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        try {
+            const {items, ...restSales} = await this.getSales(pagination)
+            const salesOfUser: SaleDetailsResponse[] = items.filter( sale => sale.User?.id === userId )
+
+            return {
+                items: salesOfUser,
+                ...restSales
+            }
+        } catch(error) {
+            throw new InfrastructureError(
+                '[PRISMA]: ',
+                'PRISMA_GET_SALES_BY_USER_ERROR'
+            )
+        }
+    }
+
+    async getSales(pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        try {
+            
+            const { limit, orderBy, page, skip, take, where } = buildPaginationOptions(pagination)
+
+            const [ sales, total ] = await Promise.all([
+                this.prisma.sale.findMany({ where, skip, take, orderBy, include: { User: true, SaleProductDetails: true }}),
+                this.prisma.sale.count({ where })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            const salesWithDetails: SaleDetailsResponse[] = sales.map( sale => ({
+                id: sale.sale_id,
+                total: new Money(parseFloat(`${sale.sale_total}`)).value,
+                date: DatesAdapter.formatLocal(sale.sale_date),
+                code: sale.sale_code,
+                User: sale.User && {
+                    id: sale.User.user_id,
+                    name: `${sale.User.user_name} ${sale.User.user_lastname}`,
+                    role: sale.User.role
+                },
+                details: sale.SaleProductDetails.map(this.toDomainSaleDetail)
+            }))
+
+            return {
+                items: salesWithDetails,
+                page,
+                total, 
+                totalPages
+            }
+
+        } catch(error) {
+            throw new InfrastructureError(
+                '[PRISMA]: Error al listar las ventas',
+                'PRISMA_GET_ALL_SALES_ERROR'
+            )
+        }
     }
 
     async saveSaleDetails(data: SaleProductDetail): Promise<SaleProductDetailResponse> {

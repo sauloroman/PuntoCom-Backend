@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { SalesController } from "../controllers/sales.controller";
 import { Auth } from "../middlewares/auth";
+import { MapperFilterMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { RoleEnum } from "../../../generated/prisma";
 
 interface SaleRoutesI {
     controller: SalesController
@@ -18,6 +20,16 @@ export class SaleRoutes {
     private initRoutes(): Router {
         const router = Router()
         router.use([Auth.Logged])
+
+        router.get('/', [
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
+            MapperFilterMiddleware.ToPrisma()
+        ], this.controller.getSales )
+
+        router.get('/user/:id', [
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
+            MapperFilterMiddleware.ToPrisma()
+        ], this.controller.getSalesByUser )
 
         router.post('/', this.controller.saveSale )
 

@@ -24,7 +24,7 @@ export interface SaleResponse {
 
 export interface SaleDetailsResponse {
     id: string
-    date: Date,
+    date: Date | string,
     total: number,
     code: string,
     User?: {

@@ -1,5 +1,5 @@
 import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
-import { ProductResponseIncludeDto } from "../../application/dtos/product.dto";
+import { ProductResponseIncludeDto, StockCriteria } from "../../application/dtos/product.dto";
 import { Product } from "../entities";
 
 export abstract class ProductRepository {
@@ -10,4 +10,5 @@ export abstract class ProductRepository {
     abstract changeStatus( productId: string, status: boolean ): Promise<ProductResponseIncludeDto>
     abstract getProducts( pagination: PaginationDTO ): Promise<PaginationResponseDto<ProductResponseIncludeDto>> 
     abstract getAllProducts(): Promise<ProductResponseIncludeDto[]>
+    abstract getProductsByStock( stockCriteria: StockCriteria ): Promise<ProductResponseIncludeDto[]>
 }

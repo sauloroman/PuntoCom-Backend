@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ProductController } from "../controllers/product.controller";
 import { Auth } from "../middlewares/auth";
-import { FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware, ValidateStockCriteriaMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
 
 interface ProductRoutesI {
@@ -59,6 +59,11 @@ export class ProductRoutes {
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
             FileUploadMiddleware.validateContainFiles
         ], this.controller.uploadProductImage )
+
+        router.get('/stock/:criteria', [
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor),
+            ValidateStockCriteriaMiddleware.validate(),
+        ], this.controller.getProductsByStock)
 
         return router
     }

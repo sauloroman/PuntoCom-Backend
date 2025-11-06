@@ -6,7 +6,7 @@ import { Product } from "../../../domain/entities";
 import { Money, ProductCode, Stock } from "../../../domain/value-objects";
 import { InfrastructureError } from "../../errors/infrastructure-error";
 import { buildPaginationOptions } from "./utils/pagination-options";
-import { ProductResponseIncludeDto } from "../../../application/dtos/product.dto";
+import { ProductResponseIncludeDto, StockCriteria } from "../../../application/dtos/product.dto";
 
 export class PrismaProductDatasource implements ProductDatasource {
 
@@ -16,9 +16,44 @@ export class PrismaProductDatasource implements ProductDatasource {
         this.prisma = prisma
     }
 
+    async getProductsByStock(stockCriteria: StockCriteria): Promise<ProductResponseIncludeDto[]> {
+        try {
+
+            const allProducts = await this.prisma.product.findMany({
+                include: {
+                    Category: true,
+                    Supplier: true
+                }
+            })
+
+            const filteredProducts = allProducts.filter( product => {
+                const stockPercentage = (product.product_stock / product.product_stock_min) * 100
+
+                switch(stockCriteria) {
+                    case StockCriteria.low: 
+                        return stockPercentage <= 20
+                    case StockCriteria.warning:
+                        return stockPercentage > 20 && stockPercentage <= 60
+                    case StockCriteria.normal:
+                        return stockPercentage > 60
+                    default:
+                        return false
+                }
+            })
+
+            return filteredProducts.map( this.toDomain ) 
+
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[PRISMA]: Error al obtener los productos por criterio de stock',
+                'PRISMA_FIND_PRODUCTS_BY_STOCK',
+                error
+            )
+        }
+    }
+
     async findById(productId: string): Promise<ProductResponseIncludeDto | null> {
         try {
-        
             const product = await this.prisma.product.findUnique({ 
                 where: { product_id: productId },
                 include: {

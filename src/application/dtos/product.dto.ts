@@ -89,3 +89,9 @@ export interface ProductResponseIncludeDto {
         isActive: boolean,
     }
 }
+
+export enum StockCriteria {
+    low = 'low',
+    warning = 'warning',
+    normal = 'normal'
+}

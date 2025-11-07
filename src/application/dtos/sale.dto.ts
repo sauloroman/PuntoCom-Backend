@@ -42,6 +42,11 @@ export interface SaleProductDetailResponse {
     saleDiscount: number,
     productId: string,
     saleId: string,
+    Product?: {
+        id: string,
+        name: string,
+        code: string
+    }
 }
 
 export interface SaleProductDetail {

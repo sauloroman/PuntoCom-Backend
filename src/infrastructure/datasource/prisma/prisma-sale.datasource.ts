@@ -1,4 +1,4 @@
-import { PrismaClient, Sale as PrismaSale, User as PrismaUser, Sale_Product_Detail as PrismaSaleDetail } from "../../../../generated/prisma";
+import { PrismaClient, Sale as PrismaSale, User as PrismaUser, Sale_Product_Detail as PrismaSaleDetail, Product as PrismaProduct } from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
 import { SaleDetailsResponse, SaleProductDetailResponse, SaleResponse } from "../../../application/dtos/sale.dto";
@@ -40,7 +40,19 @@ export class PrismaSalesDatasource implements SalesDatasource {
             const { limit, orderBy, page, skip, take, where } = buildPaginationOptions(pagination)
 
             const [ sales, total ] = await Promise.all([
-                this.prisma.sale.findMany({ where, skip, take, orderBy, include: { User: true, SaleProductDetails: true }}),
+                this.prisma.sale.findMany({ 
+                    where, 
+                    skip, 
+                    take, 
+                    orderBy, 
+                    include: { 
+                        User: true, 
+                        SaleProductDetails: {
+                            include: {
+                                Product: true
+                            }
+                        }  
+                    }}),
                 this.prisma.sale.count({ where })
             ])
 
@@ -54,7 +66,8 @@ export class PrismaSalesDatasource implements SalesDatasource {
                 User: sale.User && {
                     id: sale.User.user_id,
                     name: `${sale.User.user_name} ${sale.User.user_lastname}`,
-                    role: sale.User.role
+                    role: sale.User.role,
+                    image: sale.User.user_image,
                 },
                 details: sale.SaleProductDetails.map(this.toDomainSaleDetail)
             }))
@@ -77,7 +90,10 @@ export class PrismaSalesDatasource implements SalesDatasource {
     async saveSaleDetails(data: SaleProductDetail): Promise<SaleProductDetailResponse> {
         try {
             const detail = await this.prisma.sale_Product_Detail.create({
-                data: this.toPrismaSaleDetail( data )
+                data: this.toPrismaSaleDetail( data ),
+                include: {
+                    Product: true 
+                },
             })
             return this.toDomainSaleDetail(detail)
         } catch(error) {
@@ -139,14 +155,19 @@ export class PrismaSalesDatasource implements SalesDatasource {
         }
     }
 
-    private toDomainSaleDetail( saleDetailData: PrismaSaleDetail ): SaleProductDetailResponse {
+    private toDomainSaleDetail( saleDetailData: PrismaSaleDetail & {Product: PrismaProduct} ): SaleProductDetailResponse {
         return {
             id: saleDetailData.sale_product_detail_id,
             saleQuantity: saleDetailData.sale_product_detail_quantity,
             saleUnitPrice: new Money(parseFloat(`${saleDetailData.sale_product_detail_unit_price}`)).value,
             saleDiscount: new Money(parseFloat(`${saleDetailData.sale_product_discount}`)).value,
             productId: saleDetailData.product_id,
-            saleId: saleDetailData.sale_id
+            saleId: saleDetailData.sale_id,
+            Product: saleDetailData.Product && {
+                id: saleDetailData.Product.product_id,
+                name: saleDetailData.Product.product_name,
+                code: saleDetailData.Product.product_code
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 import { PrismaClient, Sale as PrismaSale, User as PrismaUser, Sale_Product_Detail as PrismaSaleDetail, Product as PrismaProduct } from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { SaleDetailsResponse, SaleProductDetailResponse, SaleResponse } from "../../../application/dtos/sale.dto";
+import { SaleDetailsResponse, SaleFilters, SaleProductDetailResponse, SaleResponse } from "../../../application/dtos/sale.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { SalesDatasource } from "../../../domain/datasources/sales.datasource";
 import { Sale, SaleProductDetail } from "../../../domain/entities";
@@ -19,17 +19,170 @@ export class PrismaSalesDatasource implements SalesDatasource {
 
     async findByUser(userId: string, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
         try {
-            const {items, ...restSales} = await this.getSales(pagination)
-            const salesOfUser: SaleDetailsResponse[] = items.filter( sale => sale.User?.id === userId )
+
+            const { page, take, skip, orderBy, where, limit } = buildPaginationOptions( pagination )
+
+            const userWhere = {
+                ...where,
+                user_id: userId
+            }
+
+            const [ sales, total ] = await Promise.all([
+                this.prisma.sale.findMany({
+                    where: userWhere,
+                    skip,
+                    take,
+                    orderBy,
+                    include: {
+                        User: true,
+                        SaleProductDetails: {
+                            include: {
+                                Product: true
+                            }
+                        }
+                    }
+                }),
+                this.prisma.sale.count({ where: userWhere })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            const salesWithDetails: SaleDetailsResponse[] = sales.map( sale => ({
+                id: sale.sale_id,
+                total: new Money(parseFloat(`${sale.sale_total}`)).value,
+                date: DatesAdapter.formatLocal(sale.sale_date),
+                code: sale.sale_code,
+                User: sale.User && {
+                    id: sale.User.user_id,
+                    name: `${sale.User.user_name} ${sale.User.user_lastname}`,
+                    role: sale.User.role,
+                    image: sale.User.user_image,
+                },
+                details: sale.SaleProductDetails.map(this.toDomainSaleDetail)
+            }))
 
             return {
-                items: salesOfUser,
-                ...restSales
+                items: salesWithDetails,
+                page,
+                total,
+                totalPages
             }
+
+        } catch( erorr ) {
+            throw new InfrastructureError(
+                '[PRISMA]: Error al obtener ventas del usuario',
+                'PRISMA_GET_SALES_BY_USER_ERROR'
+            )
+        }
+    }
+
+    async getFilteredSales(filter: SaleFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        try {
+             
+            const { page, limit, orderBy, where, skip, take } = buildPaginationOptions(pagination)
+            const filterWhere = this.buildWhereClause(where, filter)
+
+            const [sales, total] = await Promise.all([
+                this.prisma.sale.findMany({
+                    where: filterWhere,
+                    skip,
+                    take,
+                    orderBy,
+                    include: {
+                        User: true,
+                        SaleProductDetails: {
+                            include: {
+                                Product: true
+                            }
+                        }
+                    }
+                }),
+                this.prisma.sale.count({ where: filterWhere })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            const salesWithDetails: SaleDetailsResponse[] = sales.map( sale => ({
+                id: sale.sale_id,
+                total: new Money(parseFloat(`${sale.sale_total}`)).value,
+                date: DatesAdapter.formatLocal(sale.sale_date),
+                code: sale.sale_code,
+                User: sale.User && {
+                    id: sale.User.user_id,
+                    name: `${sale.User.user_name} ${sale.User.user_lastname}`,
+                    role: sale.User.role,
+                    image: sale.User.user_image,
+                },
+                details: sale.SaleProductDetails.map(this.toDomainSaleDetail)
+            }))
+
+            return {
+                items: salesWithDetails,
+                page,
+                total,
+                totalPages
+            }
+
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: ',
-                'PRISMA_GET_SALES_BY_USER_ERROR'
+                '[PRISMA]: Error al filtrar las ventas',
+                'PRISMA_FILTER_SALES_ERROR'
+            ) 
+        }
+    }
+
+    async getFilteredSalesByUser(userId: string, filter: SaleFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        try {
+
+            const { page, limit, orderBy, where, skip, take } = buildPaginationOptions(pagination)
+
+            const filterWhere = this.buildWhereClause({ ...where, user_id: userId }, filter)
+
+            const [ sales, total ] = await Promise.all([
+                this.prisma.sale.findMany({
+                    where: filterWhere,
+                    skip,
+                    take,
+                    orderBy,
+                    include: {
+                        User: true,
+                        SaleProductDetails: {
+                            include: {
+                                Product: true
+                            }
+                        }
+                    }
+                }),
+                this.prisma.sale.count({ where: filterWhere })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            const salesWithDetails: SaleDetailsResponse[] = sales.map( sale => ({
+                id: sale.sale_id,
+                total: new Money(parseFloat(`${sale.sale_total}`)).value,
+                date: DatesAdapter.formatLocal(sale.sale_date),
+                code: sale.sale_code,
+                User: sale.User && {
+                    id: sale.User.user_id,
+                    name: `${sale.User.user_name} ${sale.User.user_lastname}`,
+                    role: sale.User.role,
+                    image: sale.User.user_image,
+                },
+                details: sale.SaleProductDetails.map(this.toDomainSaleDetail)
+            }))
+
+            return {
+                items: salesWithDetails,
+                page,
+                total,
+                totalPages
+            }
+
+        } catch( error ){
+            throw new InfrastructureError(
+                '[PRISMA]: Error al filtrar las ventas por usuario',
+                'PRISMA_FILTER_SALES_BY_USER_ERROR'
             )
         }
     }
@@ -188,6 +341,29 @@ export class PrismaSalesDatasource implements SalesDatasource {
             product_id: saleDetail.productId,
             sale_id: saleDetail.saleId
         };
+    }
+
+    private buildWhereClause( baseWhere: any, filters: SaleFilters ) {
+        const where = { ...baseWhere }
+
+        if ( filters.prices ) {
+            where.sale_total = {
+                gte: filters.prices.priceMin,
+                lte: filters.prices.priceMax
+            }
+        }
+
+        if ( filters.dates ) {
+            const adjustedDateTo = new Date( filters.dates.dateTo )
+            adjustedDateTo.setHours(23, 59, 59, 999)
+            
+            where.sale_date = {
+                gte: filters.dates.dateFrom,
+                lte: adjustedDateTo
+            }
+        }
+
+        return where
     }
 
 }

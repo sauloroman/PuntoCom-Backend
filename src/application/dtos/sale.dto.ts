@@ -22,6 +22,21 @@ export interface SaleResponse {
     }
 }
 
+export interface SalePriceRange {
+    priceMin: number,
+    priceMax: number
+}
+
+export interface SaleDateRange {
+    dateFrom: Date,
+    dateTo: Date
+}
+
+export interface SaleFilters {
+    prices?: SalePriceRange,
+    dates?: SaleDateRange
+}
+
 export interface SaleDetailsResponse {
     id: string
     date: Date | string,

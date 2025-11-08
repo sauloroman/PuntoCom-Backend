@@ -1,7 +1,7 @@
 import { SalesRepository } from "../../../domain/repositories/sale.repository";
 import { UserRepository } from "../../../domain/repositories/user.repository";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
-import { SaleDetailsResponse } from "../../dtos/sale.dto";
+import { SaleDetailsResponse, SaleFilters } from "../../dtos/sale.dto";
 import { ApplicationError } from "../../errors/application.error";
 
 export class GetSalesByUserUseCase {

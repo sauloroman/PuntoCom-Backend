@@ -1,0 +1,1 @@
+export { SaveSaleValidator } from './save-sale.validator'

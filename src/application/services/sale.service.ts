@@ -1,14 +1,23 @@
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { SaleDetail, SaleDetailsResponse, SaveSale } from "../dtos/sale.dto";
+import { SaleDetail, SaleDetailsResponse, SaleFilters, SalePriceRange, SaveSale } from "../dtos/sale.dto";
 import { ReduceStockUseCase } from "../usecases/product/reduce-stock.use-case";
-import { GetSalesByUserUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../usecases/sale";
+import { 
+    GetFilteredSalesByUserUseCase, 
+    GetFilteredSalesUseCase, 
+    GetSalesByUserUseCase, 
+    ListSalesUseCase, 
+    SaveDetailSaleUseCase, 
+    SaveSaleUseCase 
+} from "../usecases/sale";
 
 interface SaleServiceOptions {
     saveSaleUC: SaveSaleUseCase   
     saveSaleDetailUC: SaveDetailSaleUseCase,
     reduceStockUC: ReduceStockUseCase
     listSalesUC: ListSalesUseCase
-    getSalesByUserUC: GetSalesByUserUseCase
+    getSalesByUserUC: GetSalesByUserUseCase,
+    getFilteredSalesUC: GetFilteredSalesUseCase,
+    getFilteredSalesByUserUC: GetFilteredSalesByUserUseCase
 }
 
 export class SaleService {
@@ -18,24 +27,38 @@ export class SaleService {
     private readonly reduceStockUC: ReduceStockUseCase
     private readonly listSalesUC: ListSalesUseCase
     private readonly getSalesByUserUC: GetSalesByUserUseCase
+    private readonly getFilteredSalesUC: GetFilteredSalesUseCase
+    private readonly getFilteredSalesByUserUC: GetFilteredSalesByUserUseCase
 
     constructor({
         saveSaleUC,
         saveSaleDetailUC,
         reduceStockUC,
         listSalesUC,
-        getSalesByUserUC
+        getSalesByUserUC,
+        getFilteredSalesUC,
+        getFilteredSalesByUserUC
     }: SaleServiceOptions){
         this.saveSaleUC = saveSaleUC
         this.saveSaleDetailUC = saveSaleDetailUC
         this.reduceStockUC = reduceStockUC
         this.listSalesUC = listSalesUC
         this.getSalesByUserUC = getSalesByUserUC
+        this.getFilteredSalesUC = getFilteredSalesUC
+        this.getFilteredSalesByUserUC = getFilteredSalesByUserUC
     }
 
     async getSalesByUser( userId: string, pagination: PaginationDTO ) {
         return await this.getSalesByUserUC.execute(userId, pagination)
     }
+
+    async getFilteredSales( filter: SaleFilters, pagination: PaginationDTO ) {
+        return await this.getFilteredSalesUC.execute(filter, pagination)
+    }
+    
+    async getFilteredSalesByUser( userId: string, filter: SaleFilters, pagination: PaginationDTO ) {
+        return await this.getFilteredSalesByUserUC.execute(userId, filter, pagination)
+    } 
 
     async listSales( pagination: PaginationDTO ) {
         return await this.listSalesUC.execute( pagination )

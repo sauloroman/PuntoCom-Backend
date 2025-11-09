@@ -2,41 +2,35 @@ import { DomainError } from '../errors/domain.error';
 import { Quantity, AdjustmentType } from '../value-objects';
 
 interface InventoryAdjustmentProps {
-  id: string;
+  id?: string;
   productId: string;
   adjustmentType: AdjustmentType;
   adjustmentQuantity: Quantity;
   adjustmentReason: string;
   userId: string;
   adjustmentDate?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export class InventoryAdjustment {
-  private readonly _id: string;
+  private readonly _id?: string;
   private _productId: string;
   private _adjustmentType: AdjustmentType;
   private _adjustmentQuantity: Quantity;
   private _adjustmentReason: string;
   private _userId: string;
   private _adjustmentDate: Date;
-  private _createdAt: Date;
-  private _updatedAt: Date;
 
   private static readonly MAX_REASON_LENGTH: number = 255;
   private readonly MESSAGE_ERROR: string = "INVENTORY_ADJUSTMENT_VALIDATION_ERROR"
 
   constructor({
-    id,
+    id = "",
     productId,
     adjustmentType,
     adjustmentQuantity,
     adjustmentReason,
     userId,
     adjustmentDate = new Date(),
-    createdAt = new Date(),
-    updatedAt = new Date()
   }: InventoryAdjustmentProps) {
     this._id = id;
     this._productId = productId;
@@ -45,8 +39,6 @@ export class InventoryAdjustment {
     this._adjustmentReason = adjustmentReason;
     this._userId = userId;
     this._adjustmentDate = adjustmentDate;
-    this._createdAt = createdAt;
-    this._updatedAt = updatedAt;
 
     this.validate();
   }
@@ -93,7 +85,7 @@ export class InventoryAdjustment {
   }
 
   get id(): string {
-    return this._id;
+    return this._id ?? '';
   }
 
   get productId(): string {
@@ -118,14 +110,6 @@ export class InventoryAdjustment {
 
   get adjustmentDate(): Date {
     return this._adjustmentDate;
-  }
-
-  get createdAt(): Date {
-    return this._createdAt;
-  }
-
-  get updatedAt(): Date {
-    return this._updatedAt;
   }
 
   public update(params: {
@@ -159,10 +143,5 @@ export class InventoryAdjustment {
     if (params.adjustmentDate !== undefined) {
       this._adjustmentDate = params.adjustmentDate;
     }
-    this.touchUpdatedAt();
-  }
-
-  private touchUpdatedAt() {
-    this._updatedAt = new Date();
   }
 }

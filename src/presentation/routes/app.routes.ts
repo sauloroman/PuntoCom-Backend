@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { UserRoutes, CategoryRoutes, SupplierRoutes, SaleRoutes, ProductRoutes, ReportRoutes } from './';
+import { UserRoutes, CategoryRoutes, SupplierRoutes, SaleRoutes, ProductRoutes, ReportRoutes, InventoryAdjustmentRoutes } from './';
 import { ErrorHandlerMiddleware } from '../middlewares/error-handler.middleware';
 
 interface AppRoutesOptions {
@@ -8,7 +8,8 @@ interface AppRoutesOptions {
   supplierRoutes: SupplierRoutes,
   productRoutes: ProductRoutes,
   reportRoutes: ReportRoutes
-  saleRoutes: SaleRoutes
+  saleRoutes: SaleRoutes,
+  inventoryAdjustmentRoutes: InventoryAdjustmentRoutes
 }
 
 export class AppRoutes {
@@ -20,6 +21,7 @@ export class AppRoutes {
   private readonly productRoutes: ProductRoutes
   private readonly reportRoutes: ReportRoutes
   private readonly saleRoutes: SaleRoutes
+  private readonly inventoryAdjustmentRoutes: InventoryAdjustmentRoutes
 
   constructor({ 
     userRoutes, 
@@ -27,7 +29,8 @@ export class AppRoutes {
     supplierRoutes,
     productRoutes,
     reportRoutes,
-    saleRoutes
+    saleRoutes,
+    inventoryAdjustmentRoutes
   }: AppRoutesOptions) {
     this.userRoutes = userRoutes
     this.categoryRoutes = categoryRoutes
@@ -35,6 +38,7 @@ export class AppRoutes {
     this.productRoutes = productRoutes
     this.reportRoutes = reportRoutes
     this.saleRoutes = saleRoutes
+    this.inventoryAdjustmentRoutes = inventoryAdjustmentRoutes
     this.routes = this.initRoutes()
   }
 
@@ -47,6 +51,7 @@ export class AppRoutes {
     router.use('/api/product', this.productRoutes.routes)
     router.use('/api/report', this.reportRoutes.routes)
     router.use('/api/sale', this.saleRoutes.routes )
+    router.use('/api/inventory-adjustment', this.inventoryAdjustmentRoutes.routes )
 
     router.use( ErrorHandlerMiddleware.getHandler() )
     

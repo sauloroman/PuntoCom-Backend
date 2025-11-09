@@ -7,6 +7,6 @@ export { ProductCode } from './ProductCode';
 export { Phone } from './Phone';
 export { Stock } from './Stock'
 export { Discount } from './Discount'
-export { AdjustmentType } from './Adjustment'
+export { AdjustmentType, AdjustmentEnum } from './Adjustment'
 export { CodeValue } from './CodeValue'
 export { SaleCode } from './SaleCode'

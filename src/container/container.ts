@@ -1,5 +1,6 @@
 import { AppRoutes } from '../presentation/routes/app.routes';
 import { CategoryContainer } from './category.container';
+import { InventoryAdjustmentContainer } from './inventory-adjustment.container';
 import { ProductContainer } from './product.container';
 import { ReportContainer } from './report.container';
 import { SaleContainer } from './sale.container';
@@ -18,6 +19,7 @@ export class Container {
     const productContainer = new ProductContainer()
     const reportContainer = new ReportContainer()
     const saleContainer = new SaleContainer()
+    const inventoryAdjustmentContainer = new InventoryAdjustmentContainer()
 
     this.appRoutes = new AppRoutes({
       userRoutes: userContainer.userRoutes,
@@ -25,7 +27,8 @@ export class Container {
       supplierRoutes: supplierContainer.supplierRoutes,
       productRoutes: productContainer.productRoutes,
       reportRoutes: reportContainer.reportRoutes,
-      saleRoutes: saleContainer.saleRoutes
+      saleRoutes: saleContainer.saleRoutes,
+      inventoryAdjustmentRoutes: inventoryAdjustmentContainer.inventoryAdjustmentRoutes
     })
 
   }

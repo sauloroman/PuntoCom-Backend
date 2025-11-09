@@ -1,8 +1,8 @@
 import { DomainError } from '../errors/domain.error';
 
 export enum AdjustmentEnum {
-  ENTRADA = 'entrada',
-  SALIDA = 'salida'
+  entrada = 'entrada',
+  salida = 'salida',
 }
 
 export class AdjustmentType {

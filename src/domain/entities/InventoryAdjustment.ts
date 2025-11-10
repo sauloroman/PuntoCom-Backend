@@ -5,6 +5,7 @@ interface InventoryAdjustmentProps {
   id?: string;
   productId: string;
   adjustmentType: AdjustmentType;
+  adjustmentPrevQuantity: Quantity;
   adjustmentQuantity: Quantity;
   adjustmentReason: string;
   userId: string;
@@ -15,6 +16,7 @@ export class InventoryAdjustment {
   private readonly _id?: string;
   private _productId: string;
   private _adjustmentType: AdjustmentType;
+  private _adjustmentPrevQuantity: Quantity;
   private _adjustmentQuantity: Quantity;
   private _adjustmentReason: string;
   private _userId: string;
@@ -27,6 +29,7 @@ export class InventoryAdjustment {
     id = "",
     productId,
     adjustmentType,
+    adjustmentPrevQuantity,
     adjustmentQuantity,
     adjustmentReason,
     userId,
@@ -35,6 +38,7 @@ export class InventoryAdjustment {
     this._id = id;
     this._productId = productId;
     this._adjustmentType = adjustmentType;
+    this._adjustmentPrevQuantity = adjustmentPrevQuantity;
     this._adjustmentQuantity = adjustmentQuantity;
     this._adjustmentReason = adjustmentReason;
     this._userId = userId;
@@ -46,6 +50,7 @@ export class InventoryAdjustment {
   private validate() {
     this.validateProductId(this._productId);
     this.validateAdjustmentType(this._adjustmentType);
+    this.validateAdjustmentPrevQuantity(this._adjustmentPrevQuantity);
     this.validateAdjustmentQuantity(this._adjustmentQuantity);
     this.validateAdjustmentReason(this._adjustmentReason);
     this.validateUserId(this._userId);
@@ -60,6 +65,12 @@ export class InventoryAdjustment {
   private validateAdjustmentType(adjustmentType: AdjustmentType) {
     if (!adjustmentType) {
       throw new DomainError(this.MESSAGE_ERROR, 'El tipo de ajuste es obligatorio');
+    }
+  }
+
+  private validateAdjustmentPrevQuantity(prevQuantity: Quantity) {
+    if (!prevQuantity) {
+      throw new DomainError(this.MESSAGE_ERROR, 'La cantidad origial es obligatoria');
     }
   }
 
@@ -98,6 +109,10 @@ export class InventoryAdjustment {
 
   get adjustmentQuantity(): Quantity {
     return this._adjustmentQuantity;
+  }
+
+  get adjustmentPrevQuantity(): Quantity {
+    return this._adjustmentPrevQuantity;
   }
 
   get adjustmentReason(): string {

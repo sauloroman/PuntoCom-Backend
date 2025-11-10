@@ -11,6 +11,7 @@ export interface SaveInventoryAdjustment {
 export interface InventoryAdjustmentResponse {
     adjustmentId: string,
     adjustmentType: AdjustmentEnum,
+    adjustmentPrevQuantity: number,
     adjustmentQuantity: number,
     adjustmentReason: string,
     adjustmentDate: string  

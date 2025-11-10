@@ -153,13 +153,14 @@ enum RoleEnum {
 }
 
 model Inventory_Adjustment {
-  adjustment_id       String   @id @default(uuid())
-  product_id          String
-  adjustment_type     AdjustmentType
-  adjustment_quantity Int
-  adjustment_reason   String
-  user_id             String
-  adjustment_date     DateTime @default(now())
+  adjustment_id            String   @id @default(uuid())
+  product_id               String
+  adjustment_type          AdjustmentType
+  adjustment_prev_quantity Int
+  adjustment_quantity      Int
+  adjustment_reason        String
+  user_id                  String
+  adjustment_date          DateTime @default(now())
 
   Product             Product  @relation(fields: [product_id], references: [product_id])
   User                User     @relation(fields: [user_id], references: [user_id])

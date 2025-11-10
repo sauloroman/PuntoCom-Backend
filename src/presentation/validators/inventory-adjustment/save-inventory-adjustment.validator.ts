@@ -1,5 +1,4 @@
 import { SaveInventoryAdjustment } from "../../../application/dtos/inventory-adjustment.dto";
-import { AdjustmentEnum, AdjustmentType } from "../../../domain/value-objects";
 
 export class SaveInventoryAdjustmentValidator {
 

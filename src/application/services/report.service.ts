@@ -1,7 +1,9 @@
-import { buildProductsHtml, buildSuppliersHtml, buildUsersHtml } from "../../config/templates/pdf";
+import { buildProductsHtml, buildSuppliersHtml, buildUsersHtml, buildInventoryAdjustmentsHtml } from "../../config/templates/pdf";
+import { InventoryAdjustmentResponse } from "../dtos/inventory-adjustment.dto";
 import { ProductResponseIncludeDto } from "../dtos/product.dto";
 import { SupplierResponseDto } from "../dtos/supplier.dto";
 import { UserResponseDtoI } from "../dtos/user.dto";
+import { GetAllInventoryAdjustmentsUseCase } from "../usecases/inventory-adjustment";
 import { GetAllProductsUseCase } from "../usecases/product";
 import { GetAllReportsUseCase } from "../usecases/reports";
 import { DeleteReportUseCase } from "../usecases/reports/delete-report.use-case";
@@ -18,6 +20,7 @@ interface ReportServiceI {
     getAllUsersUC: GetAllUsersUseCase,
     getAllSuppliersUC: GetAllSuppliersUseCase,
     getAllProductsUC: GetAllProductsUseCase,
+    getAllInventoryAdjustmentsUC: GetAllInventoryAdjustmentsUseCase,
     getAllReports: GetAllReportsUseCase,
 }
 
@@ -31,6 +34,7 @@ export class ReportService {
     private readonly getAllProductsUC: GetAllProductsUseCase
     private readonly getAllReports: GetAllReportsUseCase
     private readonly deleteReportByIdUC: DeleteReportUseCase
+    private readonly getAllInventoryAdjustmentsUC: GetAllInventoryAdjustmentsUseCase
 
     constructor({ 
         uploadReportUC,
@@ -40,7 +44,8 @@ export class ReportService {
         getAllProductsUC,
         getAllSuppliersUC,
         getAllUsersUC,
-        getAllReports
+        getAllReports,
+        getAllInventoryAdjustmentsUC
     }: ReportServiceI){
         this.uploadReportUC = uploadReportUC
         this.getReportByIdUC = getReportByIdUC
@@ -49,6 +54,7 @@ export class ReportService {
         this.getAllSuppliersUC = getAllSuppliersUC
         this.getAllUsersUC = getAllUsersUC
         this.getAllReports = getAllReports
+        this.getAllInventoryAdjustmentsUC = getAllInventoryAdjustmentsUC
     }
 
     public async getReportById( entity: string, id: string ) {
@@ -70,6 +76,9 @@ export class ReportService {
             case 'products':
                 const products = await this.getAllProductsUC.execute()
                 return this.generateListProductsReport(products);
+            case 'inventory-adjustments':
+                const adjustments = await this.getAllInventoryAdjustmentsUC.execute()
+                return this.generateListAdjustmentsReport(adjustments)
             default:
                 return ''
         }
@@ -83,6 +92,12 @@ export class ReportService {
     private async generateListUsersReport( users: UserResponseDtoI[] ): Promise<string> {
         const html = buildUsersHtml(users)
         const pdfUrl = await this.uploadReportUC.execute(html, { folder: 'reports/users'})
+        return pdfUrl
+    }
+
+    private async generateListAdjustmentsReport( adjustments: InventoryAdjustmentResponse[] ): Promise<string> {
+        const html = buildInventoryAdjustmentsHtml(adjustments)
+        const pdfUrl = await this.uploadReportUC.execute(html, { folder: 'reports/inventory-adjustments'})
         return pdfUrl
     }
 

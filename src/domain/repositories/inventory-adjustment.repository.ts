@@ -5,5 +5,5 @@ import { InventoryAdjustment } from "../entities";
 export abstract class InventoryAdjustmentRepository {
     abstract save( inventoryAdjustment: InventoryAdjustment ): Promise<InventoryAdjustmentResponse>
     abstract listInventoryAdjustments( pagination: PaginationDTO ): Promise<PaginationResponseDto<InventoryAdjustmentResponse>>
-    abstract getInventoryAdjustmentsByUser( userId: string, pagination: PaginationDTO ): Promise<PaginationResponseDto<InventoryAdjustmentResponse>>
+    abstract getAllInventoryAdjustments(): Promise<InventoryAdjustmentResponse[]>
 }

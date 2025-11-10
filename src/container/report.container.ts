@@ -16,6 +16,9 @@ import { GetAllProductsUseCase } from "../application/usecases/product";
 import { ReportController } from "../presentation/controllers/report.controller";
 import { GetReportByIdUseCase } from "../application/usecases/reports/get-report-by-id.use-case";
 import { DeleteReportUseCase, GetAllReportsUseCase } from "../application/usecases/reports";
+import { GetAllInventoryAdjustmentsUseCase } from "../application/usecases/inventory-adjustment";
+import { InventoryAdjustmentImp } from "../infrastructure/repositories/inventory-adjustment.impl";
+import { PrismaInventoryAdjustmentDatasource } from "../infrastructure/datasource/prisma/prisma-inventory-adjustment.datasource";
 
 const prismaClient = PrismaDatasource.getInstance() 
 
@@ -35,6 +38,10 @@ export class ReportContainer {
             new PrismaSupplierDatasource( prismaClient )
         )
 
+        const inventoryAdjustmentRepository = new InventoryAdjustmentImp(
+            new PrismaInventoryAdjustmentDatasource(prismaClient)
+        )
+
         const uploadFileService = new LocalFileUploadService()
         const pdfFileService = new PuppeteerPdfService()
 
@@ -44,17 +51,19 @@ export class ReportContainer {
         const getAllUsersUC = new GetAllUsersUseCase(userRepository)
         const getAllSuppliersUC = new GetAllSuppliersUseCase(supplierRepository)
         const getAllProductsUC = new GetAllProductsUseCase(productRepository)
+        const getAllInventoryAdjustments = new GetAllInventoryAdjustmentsUseCase( inventoryAdjustmentRepository )
         const getAllReportsUC = new GetAllReportsUseCase()
         const deleteReportByIdUC = new DeleteReportUseCase()
 
         const reportService = new ReportService({
-            uploadReportUC: uploadPdfUC,
-            getReportByIdUC: getReportByIdUC,
             deleteReportByIdUC: deleteReportByIdUC,
+            getAllInventoryAdjustmentsUC: getAllInventoryAdjustments,
             getAllProductsUC: getAllProductsUC,
+            getAllReports: getAllReportsUC,
             getAllSuppliersUC: getAllSuppliersUC,
             getAllUsersUC: getAllUsersUC,
-            getAllReports: getAllReportsUC,
+            getReportByIdUC: getReportByIdUC,
+            uploadReportUC: uploadPdfUC,
         })
 
         const reportController = new ReportController(reportService)    

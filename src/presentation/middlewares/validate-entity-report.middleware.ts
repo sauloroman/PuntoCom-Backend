@@ -6,7 +6,7 @@ export class ValidateEntityReportMiddleware {
         return (req: Request, res: Response, next: NextFunction) => {
             const { entity } = req.params;
 
-            if (!['suppliers', 'users', 'products', 'purchases'].includes(entity)) {
+            if (!['suppliers', 'users', 'products', 'purchases', 'inventory-adjustments'].includes(entity)) {
                 return res.status(400).json({ message: 'Tipo de reporte no válido' });
             }
 

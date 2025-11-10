@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ReportController } from "../controllers/report.controller";
 import { Auth } from "../middlewares/auth";
-import { AuthMiddleware, ValidateEntityReportMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { ValidateEntityReportMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
 
 interface ReportRoutesI {

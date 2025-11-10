@@ -27,7 +27,11 @@ export class ProductRoutes {
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             MapperFilterMiddleware.ToPrisma()
         ], this.controller.getProducts )
+        
+        router.get('/all', this.controller.getAllProducts )
 
+        router.get('/all-minimal', this.controller.getAllProductsMinimalInformation)
+        
         router.get('/search', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             MapperFilterMiddleware.ToPrismaContains()

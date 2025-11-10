@@ -1,5 +1,5 @@
 import { PrismaClient, User as PrismaUser, Product as PrismaProduct, Inventory_Adjustment as PrismaInventoryAdjustment } from "../../../../generated/prisma";
-import { InventoryAdjustmentResponse, SaveInventoryAdjustment } from "../../../application/dtos/inventory-adjustment.dto";
+import { InventoryAdjustmentResponse } from "../../../application/dtos/inventory-adjustment.dto";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { InventoryAdjustmentDatasource } from "../../../domain/datasources/inventory-adjustment.datasource";
@@ -16,8 +16,16 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
         this.prisma = prisma
     }
 
-    async getInventoryAdjustmentsByUser(userId: string, pagination: PaginationDTO): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
-        throw new Error("Method not implemented.");
+    async getAllInventoryAdjustments(): Promise<InventoryAdjustmentResponse[]> {
+        try {
+            const adjustments = await this.prisma.inventory_Adjustment.findMany()
+            return adjustments.map( this.toDomain )
+        } catch(error) {
+            throw new InfrastructureError(
+                '[PRISMA]: Error al obtener todos los ajustes de inventario',
+                'PRISMA_GET_INVENTORY_ADJUSTMENTS_ERROR'
+            )
+        }
     }
 
     async listInventoryAdjustments(pagination: PaginationDTO): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
@@ -75,6 +83,7 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
     private toDomain( inventoryAdjustmentData: PrismaInventoryAdjustment & { User?: PrismaUser, Product?: PrismaProduct }): InventoryAdjustmentResponse {
         return {
             adjustmentId: inventoryAdjustmentData.adjustment_id,
+            adjustmentPrevQuantity: inventoryAdjustmentData.adjustment_prev_quantity,
             adjustmentQuantity: inventoryAdjustmentData.adjustment_quantity,
             adjustmentReason: inventoryAdjustmentData.adjustment_reason,
             productId: inventoryAdjustmentData.product_id,
@@ -103,6 +112,7 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
             product_id: inventoryAdjustment.productId,
             user_id: inventoryAdjustment.userId,
             adjustment_type: inventoryAdjustment.adjustmentType.value,
+            adjustment_prev_quantity: inventoryAdjustment.adjustmentPrevQuantity.value,
             adjustment_quantity: inventoryAdjustment.adjustmentQuantity.value,
             adjustment_reason: inventoryAdjustment.adjustmentReason,
             adjustment_date: inventoryAdjustment.adjustmentDate,

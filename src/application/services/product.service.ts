@@ -4,11 +4,12 @@ import { ChangeStatusDto, CreateProduct, StockCriteria, UpdateProductRequest } f
 import { 
     ChangeStatusProductUseCase, 
     CreateProductUseCase, 
-    GetAllProductsUseCase, 
+    GetAllProductsUseCase,
+    GetMinimalInformationProductsUseCase, 
     GetProductsByStock, 
     ListProductsUseCase, 
     UpdateProductImageUseCase, 
-    UpdateProductUseCase 
+    UpdateProductUseCase
 } from "../usecases/product";
 import { GetProductByIdUseCase } from "../usecases/product/get-product-by-id.use-case";
 import { DestroyImageUseCase, UploadImageUseCase } from "../usecases/upload";
@@ -17,6 +18,7 @@ import { UploadBarCodeUseCase } from "../usecases/upload/upload-bar-code.use-cas
 
 interface ProductServiceOptions {
     getProductByIdUC: GetProductByIdUseCase,
+    getMinimalInformationProductsUC: GetMinimalInformationProductsUseCase,
     getAllProductsUC: GetAllProductsUseCase,
     getProductByStockUC: GetProductsByStock,
     createProductUC: CreateProductUseCase,
@@ -34,6 +36,7 @@ export class ProductService {
 
     private readonly getProductByIdUC: GetProductByIdUseCase
     private readonly getAllProductsUC: GetAllProductsUseCase
+    private readonly getMinimalInformationProductsUC: GetMinimalInformationProductsUseCase
     private readonly getProductByStockUC: GetProductsByStock
     private readonly createProductUC: CreateProductUseCase
     private readonly updateProductUC: UpdateProductUseCase 
@@ -46,8 +49,9 @@ export class ProductService {
     private readonly destroyProductImageUC: DestroyImageUseCase
 
     constructor({ 
-        getProductByIdUC, 
         getAllProductsUC,
+        getProductByIdUC, 
+        getMinimalInformationProductsUC,
         getProductByStockUC,
         createProductUC, 
         updateProductUC,
@@ -59,8 +63,9 @@ export class ProductService {
         uploadProductImageUC,
         destroyProductImageUC
     }: ProductServiceOptions){
-        this.getProductByIdUC = getProductByIdUC
         this.getAllProductsUC = getAllProductsUC
+        this.getProductByIdUC = getProductByIdUC
+        this.getMinimalInformationProductsUC = getMinimalInformationProductsUC
         this.getProductByStockUC = getProductByStockUC
         this.createProductUC = createProductUC
         this.updateProductUC = updateProductUC
@@ -93,6 +98,10 @@ export class ProductService {
 
     public async changeStatus( dto: ChangeStatusDto ) {
         return await this.changeStatusProductUC.execute( dto )
+    }
+
+    public async getAllProductMinimalInformation() {
+        return await this.getMinimalInformationProductsUC.execute()
     }
 
     public async getAllProducts() {

@@ -6,7 +6,7 @@ import { Product } from "../../../domain/entities";
 import { Money, ProductCode, Stock } from "../../../domain/value-objects";
 import { InfrastructureError } from "../../errors/infrastructure-error";
 import { buildPaginationOptions } from "./utils/pagination-options";
-import { ProductResponseIncludeDto, StockCriteria } from "../../../application/dtos/product.dto";
+import { ProductInfo, ProductResponseIncludeDto, StockCriteria } from "../../../application/dtos/product.dto";
 
 export class PrismaProductDatasource implements ProductDatasource {
 
@@ -14,6 +14,24 @@ export class PrismaProductDatasource implements ProductDatasource {
 
     constructor( prisma: PrismaClient ){
         this.prisma = prisma
+    }
+
+    async getAllProducts(): Promise<ProductResponseIncludeDto[]> {
+        try {
+            const allProducts = await this.prisma.product.findMany({
+                include: {
+                    Category: true,
+                    Supplier: true
+                }
+            })
+            return allProducts.map( this.toDomain )
+        } catch(error){
+            throw new InfrastructureError(
+                '[PRISMA]: Error al obtener todos los products',
+                'PRISMA_FIND_PRODUCTS_BY_STOCK',
+                error
+            )
+        }
     }
 
     async getProductsByStock(stockCriteria: StockCriteria): Promise<ProductResponseIncludeDto[]> {
@@ -180,7 +198,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             }
     }
 
-    async getAllProducts(): Promise<ProductResponseIncludeDto[]> {
+    async getMinimalInformationProducts(): Promise<ProductInfo[]> {
         try {
             const products = await this.prisma.product.findMany({
                 include: {
@@ -188,7 +206,14 @@ export class PrismaProductDatasource implements ProductDatasource {
                     Supplier: true
                 }
             })
-            return products.map(this.toDomain)
+            return products.map(product => {
+                const domainProduct = this.toDomain(product)
+                return {
+                    productId: domainProduct.id,
+                    productName: domainProduct.name,
+                    productStock: domainProduct.stock
+                }
+            })
         } catch(error) {
             throw new InfrastructureError(
                 '[PRISMA]: Error al obtener todos los productos',

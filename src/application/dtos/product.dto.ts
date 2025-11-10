@@ -56,6 +56,12 @@ export interface ChangeStatusDto {
     status: boolean
 }
 
+export interface ProductInfo {
+    productId: string,
+    productName: string,
+    productStock: number
+}
+
 export interface ProductResponseIncludeDto {
     id: string,
     name: string,

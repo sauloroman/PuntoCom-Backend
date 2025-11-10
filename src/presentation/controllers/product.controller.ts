@@ -84,6 +84,22 @@ export class ProductController {
         })
     }
 
+    public getAllProductsMinimalInformation = async (_req: Request, res: Response) => {
+        const products  = await this.productService.getAllProductMinimalInformation()
+        res.status(200).json({
+            ok: true,
+            products
+        })
+    }
+
+    public getAllProducts = async (_req: Request, res: Response) => {
+        const products = await this.productService.getAllProducts()
+        res.status(200).json({
+            ok: true,
+            products
+        })
+    }
+
     public getProducts = async (req: Request, res: Response) => {
         const { page, limit } = req.query
         const sort = (req as any).sort

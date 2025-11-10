@@ -24,11 +24,13 @@ export class InventoryAdjustmentController {
     public getInventoryAdjustments = async (req: Request, res: Response) => {
         const { page, limit } = req.query
         const sort = (req as any).sort
+        const filter = (req as any).filter
         
         const pagination: PaginationDTO = {
             page: Number(page),
             limit: Number(limit),
-            sort: sort
+            sort: sort,
+            filter: filter
         }
 
         const { 

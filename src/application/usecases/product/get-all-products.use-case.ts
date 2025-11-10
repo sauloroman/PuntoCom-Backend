@@ -6,8 +6,7 @@ export class GetAllProductsUseCase {
     constructor(private readonly productRepository: ProductRepository){}
 
     public async execute(): Promise<ProductResponseIncludeDto[]> {
-        const products = await this.productRepository.getAllProducts()
-        return products
+        return await this.productRepository.getAllProducts()
     }
 
 }

@@ -9,7 +9,7 @@ export class GetAllReportsUseCase {
     public async execute() {
         const basePath = path.resolve(__dirname, '../../../uploads/reports');
 
-        const entities = ['users', 'suppliers', 'products'];
+        const entities = ['users', 'suppliers', 'products', 'inventoryAdjustments'];
 
         const results: Record<string, { id: string; date: string }[]> = {};
 

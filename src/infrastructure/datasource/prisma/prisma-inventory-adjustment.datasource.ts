@@ -18,7 +18,12 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
 
     async getAllInventoryAdjustments(): Promise<InventoryAdjustmentResponse[]> {
         try {
-            const adjustments = await this.prisma.inventory_Adjustment.findMany()
+            const adjustments = await this.prisma.inventory_Adjustment.findMany({
+                include: {
+                    User: true,
+                    Product: true
+                }
+            })
             return adjustments.map( this.toDomain )
         } catch(error) {
             throw new InfrastructureError(

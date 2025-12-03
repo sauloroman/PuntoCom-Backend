@@ -76,7 +76,7 @@ export class ReportService {
             case 'products':
                 const products = await this.getAllProductsUC.execute()
                 return this.generateListProductsReport(products);
-            case 'inventory-adjustments':
+            case 'inventoryAdjustments':
                 const adjustments = await this.getAllInventoryAdjustmentsUC.execute()
                 return this.generateListAdjustmentsReport(adjustments)
             default:
@@ -97,7 +97,7 @@ export class ReportService {
 
     private async generateListAdjustmentsReport( adjustments: InventoryAdjustmentResponse[] ): Promise<string> {
         const html = buildInventoryAdjustmentsHtml(adjustments)
-        const pdfUrl = await this.uploadReportUC.execute(html, { folder: 'reports/inventory-adjustments'})
+        const pdfUrl = await this.uploadReportUC.execute(html, { folder: 'reports/inventoryAdjustments'})
         return pdfUrl
     }
 

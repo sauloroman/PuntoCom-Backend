@@ -2,8 +2,7 @@ import { InventoryAdjustmentResponse } from "../../../application/dtos/inventory
 import { DatesAdapter } from "../../plugins";
 
 export function buildInventoryAdjustmentsHtml(adjustments: InventoryAdjustmentResponse[]) {
-  
-  const year = new Date().getFullYear();
+   const year = new Date().getFullYear();
   const dateReport = DatesAdapter.formatLocal(DatesAdapter.now());
 
   const totalAdjustments = adjustments.length;

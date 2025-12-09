@@ -5,9 +5,7 @@ import { SupplierResponseDto } from "../dtos/supplier.dto";
 import { UserResponseDtoI } from "../dtos/user.dto";
 import { GetAllInventoryAdjustmentsUseCase } from "../usecases/inventory-adjustment";
 import { GetAllProductsUseCase } from "../usecases/product";
-import { GetAllReportsUseCase } from "../usecases/reports";
-import { DeleteReportUseCase } from "../usecases/reports/delete-report.use-case";
-import { GetReportByIdUseCase } from "../usecases/reports/get-report-by-id.use-case";
+import { DeleteReportUseCase, GetAllReportsUseCase, GetReportByIdUseCase } from "../usecases/reports";
 import { GetAllSuppliersUseCase } from "../usecases/suppliers";
 import { UploadPdfUseCase } from "../usecases/upload";
 import { GetAllUsersUseCase } from "../usecases/user";
@@ -20,7 +18,7 @@ interface ReportServiceI {
     getAllUsersUC: GetAllUsersUseCase,
     getAllSuppliersUC: GetAllSuppliersUseCase,
     getAllProductsUC: GetAllProductsUseCase,
-    getAllInventoryAdjustmentsUC: GetAllInventoryAdjustmentsUseCase,
+    getAllInventoryAdjustmentsUC: GetAllInventoryAdjustmentsUseCase,    
     getAllReports: GetAllReportsUseCase,
 }
 

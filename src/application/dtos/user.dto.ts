@@ -15,7 +15,8 @@ export interface CreateUserRequestDtoI {
   lastname: string,
   email: string,
   password: string,
-  role: RoleEnum
+  role: RoleEnum,
+  phone: string,
 }
 
 export interface UpdateUserRequestDTOI {
@@ -29,7 +30,8 @@ export interface UpdateUserRequestDTOI {
 export interface UpdateUserRequestI {
   name?: string,
   lastname?: string,
-  role?: RoleEnum
+  role?: RoleEnum,
+  phone?: string
 }
 
 export interface ForgotPasswordRequestI {

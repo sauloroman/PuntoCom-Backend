@@ -6,6 +6,7 @@ export class CreateUserValidator {
 
     private static MAX_NAME_LENGTH = 60;
     private static MAX_LASTNAME_LENGTH = 60;
+    private static MAX_PHONE_LENGTH = 12;
     private static EMAIL_REGEX = RegularExp.EMAIL_REGEX;
     private static PASSWORD_REGEX = RegularExp.PASSWORD_REGEX;
 
@@ -21,6 +22,12 @@ export class CreateUserValidator {
             return [undefined, 'El apellido es obligatorio'];
         } else if (input.lastname.length > this.MAX_LASTNAME_LENGTH) {
             return [undefined, `El apellido no puede exceder ${this.MAX_LASTNAME_LENGTH} caracteres`];
+        }
+
+        if (!input.phone || input.phone.trim().length === 0) {
+            return [undefined, 'El número telefónico es obligatorio'];
+        } else if (input.lastname.length > this.MAX_PHONE_LENGTH) {
+            return [undefined, `El número telefónico no puede exceder ${this.MAX_PHONE_LENGTH} caracteres`];
         }
 
         if (!input.email || input.email.trim().length === 0) {
@@ -46,7 +53,8 @@ export class CreateUserValidator {
             lastname: input.lastname.trim(),
             email: input.email.trim(),
             password: input.password.trim(),
-            role: input.role
+            role: input.role,
+            phone: input.phone.trim()
         }];
     }
 }

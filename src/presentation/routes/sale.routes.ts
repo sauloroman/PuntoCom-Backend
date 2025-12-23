@@ -26,6 +26,10 @@ export class SaleRoutes {
             MapperFilterMiddleware.ToPrisma()
         ], this.controller.getSales )
 
+        router.get('/:id', [
+            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
+        ], this.controller.getSaleById)
+
         router.get('/user/:id', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             MapperFilterMiddleware.ToPrisma()

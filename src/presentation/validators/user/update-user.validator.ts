@@ -5,6 +5,7 @@ export class UpdateUserValidator {
 
     private static MAX_NAME_LENGTH = 60;
     private static MAX_LASTNAME_LENGTH = 60;
+    private static MAX_PHONE_LENGTH = 12;
 
     public static validate( input: any ): [ UpdateUserRequestI?, string? ] {
 
@@ -24,6 +25,12 @@ export class UpdateUserValidator {
             }
         }
 
+        if ( input.phone && input.phone.trim().length > 0 ) {
+            if (input.phone.length > this.MAX_PHONE_LENGTH) {
+                return [undefined, `El número de teléfono no puede exceder ${this.MAX_PHONE_LENGTH} caracteres`];
+            }
+        }
+
         if ( input.role && input.role.length > 0 ) {
             if ( !Object.values(RoleEnum).includes(input.role)) {
                 return [undefined, 'El rol proporcionado no es válido'];
@@ -34,7 +41,8 @@ export class UpdateUserValidator {
             {
                 name: input.name ? input.name.trim() : undefined,
                 lastname: input.lastname ? input.lastname.trim() : undefined,
-                role: input.role ? input.role.trim() : undefined
+                role: input.role ? input.role.trim() : undefined,
+                phone: input.phone ? input.phone.trim() : undefined
             }
         ]
 

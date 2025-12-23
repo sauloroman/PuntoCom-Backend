@@ -36,6 +36,15 @@ export class SalesController {
         })
     }
 
+    public getSaleById = async (req: Request, res: Response) => {
+        const { id: saleId } = req.params
+        const sale = await this.saleService.getSaleById( saleId )
+        res.status(200).json({
+            ok: true,
+            sale
+        })
+    }
+
     public getFilteredSales = async (req: Request, res: Response) => {
         const { page, limit, priceMin, priceMax, dateFrom, dateTo } = req.query
         const sort = (req as any).sort

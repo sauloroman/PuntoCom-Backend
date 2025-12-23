@@ -265,6 +265,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
                     User: true
                 }
             })
+
             return this.toDomain( saleCreated )
         } catch(error) {
             throw new InfrastructureError(
@@ -274,17 +275,36 @@ export class PrismaSalesDatasource implements SalesDatasource {
         }
     }
     
-    async findById(id: string): Promise<SaleResponse | null> {
+    async findById(id: string): Promise<SaleDetailsResponse | null> {
         try {
 
             const sale = await this.prisma.sale.findUnique({
                 where: { sale_id: id },
                 include: {
-                    User: true
+                    User: true,
+                    SaleProductDetails: {
+                        include: {
+                            Product: true
+                        }
+                    }
                 }
             })
             if ( !sale ) return null
-            return this.toDomain( sale )
+
+            const saleWithDetails: SaleDetailsResponse = {
+                id: sale.sale_id,
+                total: new Money(parseFloat(`${sale.sale_total}`)).value,
+                date: DatesAdapter.formatLocal(sale.sale_date),
+                code: sale.sale_code,
+                User: sale.User && {
+                    id: sale.User.user_id,
+                    name: `${sale.User.user_name} ${sale.User.user_lastname}`,
+                    role: sale.User.role,
+                },
+                details: sale.SaleProductDetails.map(this.toDomainSaleDetail)
+            }
+
+            return saleWithDetails
 
         } catch(error) {
             throw new InfrastructureError(

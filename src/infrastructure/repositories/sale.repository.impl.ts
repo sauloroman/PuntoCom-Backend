@@ -27,7 +27,7 @@ export class SalesRepositoryImpl implements SalesRepository {
         return await this.salesRepository.saveSaleDetails(data)
     }
 
-    async findById(id: string): Promise<SaleResponse | null> {
+    async findById(id: string): Promise<SaleDetailsResponse | null> {
         return await this.salesRepository.findById(id)
     }
 

@@ -7,6 +7,35 @@ export class PurchasesController {
 
     constructor(private readonly purchaseService: PurchaseService ){}
 
+    public getPurchase = async (req: Request, res: Response ) => {
+        const { page, limit } = req.query
+        const sort = (req as any).sort
+        
+        const pagination = {
+            page: Number(page),
+            limit: Number(limit),
+            sort: sort as string 
+        }
+        
+        const {
+            items,
+            page: currentPage,
+            total,
+            totalPages
+        } = await this.purchaseService.listSales(pagination)
+
+        res.status(200).json({
+            ok: true,
+            meta: {
+                page: currentPage,
+                totalPages,
+                total
+            },
+            purchases: items
+        })
+
+    }
+
     public savePurchase = async (req: Request, res: Response) => {
         const [ dto, errorMessage ] = SavePurchaseValidator.validate(req.body)
         if ( errorMessage ) throw new ApplicationError(errorMessage, 'VALIDATE_SAVE_PURCHASE')

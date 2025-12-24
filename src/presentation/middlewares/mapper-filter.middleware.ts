@@ -20,6 +20,8 @@ const fieldMap: Record<string, Record<string, string>> = {
         productSupplier: 'supplier_id',
         saleDate: 'sale_date',
         saleTotal: 'sale_total',
+        purchaseDate: 'purchase_date',
+        purchaseTotal: 'purchase_total',
         inventoryAdjustmentDate: 'adjustment_date',
         inventoryAdjustmentType: 'adjustment_type',
         inventoryAdjustmentUser: 'user_id'

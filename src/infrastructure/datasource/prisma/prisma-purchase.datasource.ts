@@ -1,12 +1,14 @@
 import {PrismaClient, Purchase as PrismaPurchase, Purchase_Detail as PrismaPurchaseDetail, Product as PrismaProduct, Supplier as PrismaSupplier, User as PrismaUser } from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
-import { PurchaseDetailResponse, PurchaseResponse } from "../../../application/dtos/purchase.dto";
+import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
+import { PurchaseDetailResponse, PurchaseDetailsReponse, PurchaseResponse } from "../../../application/dtos/purchase.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { PurchaseDatasource } from "../../../domain/datasources/purchase.datasource";
 import { Purchase, PurchaseDetail } from "../../../domain/entities";
 import { Money, Phone, Quantity, Role } from "../../../domain/value-objects";
 import { RoleEnum } from "../../../domain/value-objects/Role";
 import { InfrastructureError } from "../../errors/infrastructure-error";
+import { buildPaginationOptions } from "./utils/pagination-options";
 
 export class PrismaPurchaseDatasource implements PurchaseDatasource {
     
@@ -68,6 +70,52 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
         }
     }
 
+    async getPurchases(pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsReponse>> {
+        try {
+
+            const { limit, orderBy, page, skip, take, where } = buildPaginationOptions( pagination )
+
+            const [ purchases, total ] = await Promise.all([
+                this.prisma.purchase.findMany({
+                    where,
+                    skip,
+                    take,
+                    orderBy,
+                    include: {
+                        User: true,
+                        Supplier: true,
+                        PurchaseDetails: {
+                            include: {
+                                Product: true
+                            }
+                        }
+                    }
+                }),
+                this.prisma.purchase.count({ where })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            const purchasesWithDetails: PurchaseDetailsReponse[] = purchases.map( purchase => ({
+                purchase: this.toDomain(purchase),
+                details: purchase.PurchaseDetails.map( this.toDomainPurchaseDetail )      
+            }))
+
+            return {
+                items: purchasesWithDetails,
+                page,
+                total,
+                totalPages
+            }
+
+        } catch( error ) {
+            throw new InfrastructureError(
+                '[PRISMA]: Error al obtener las compras',
+                'PRISMA_GET_PURCHASES_ERROR'
+            )
+        }
+    }
+
     async savePurchaseDetails(purchaseDetail: PurchaseDetail): Promise<PurchaseDetailResponse> {
         try {
             const detail = await this.prisma.purchase_Detail.create({
@@ -78,7 +126,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
         } catch( error ) {
             throw new InfrastructureError(
                 '[PRISMA]: Error al guardar detalle de compra',
-                'PRIMSA_SAVE_PURCHASE_DETAIL_ERROR'
+                'PRISMA_SAVE_PURCHASE_DETAIL_ERROR'
             )
         }
     }

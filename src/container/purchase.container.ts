@@ -1,6 +1,6 @@
 import { PurchaseService } from "../application/services";
 import { IncreaseStockUseCase } from "../application/usecases/product";
-import { SavePurchaseDetailUseCase, SavePurchaseUseCase } from "../application/usecases/purchases";
+import { ListPurchasesUseCase, SavePurchaseDetailUseCase, SavePurchaseUseCase } from "../application/usecases/purchases";
 import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
 import { PrismaProductDatasource } from "../infrastructure/datasource/prisma/prisma-product.datasource";
 import { PrismaPurchaseDatasource } from "../infrastructure/datasource/prisma/prisma-purchase.datasource";
@@ -25,11 +25,13 @@ export class PurchaseContainer {
             new PrismaProductDatasource( prismaClient )
         )
 
+        const getPurchasesUC = new ListPurchasesUseCase( purchaseRepository )
         const savePurchaseUC = new SavePurchaseUseCase( purchaseRepository )
         const savePurchaseDetailUC = new SavePurchaseDetailUseCase( purchaseRepository )
         const increaseStockUC = new IncreaseStockUseCase( productRepository )
 
         const purchaseService = new PurchaseService({
+            getPurchasesUC: getPurchasesUC,
             savePurchaseUC: savePurchaseUC,
             savePurchaseDetailUC: savePurchaseDetailUC,
             increaseStockUC: increaseStockUC

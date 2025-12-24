@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { PurchasesController } from "../controllers/purchases.controller";
 import { Auth } from "../middlewares/auth";
-import { ValidateRolesMiddleware } from "../middlewares";
+import { MapperFilterMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
 
 interface PurchaseRoutesI {
@@ -26,6 +26,11 @@ export class PurchaseRoutes {
         router.post('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )   
         ], this.controller.savePurchase)
+        
+        router.get('/', [
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
+            MapperFilterMiddleware.ToPrisma()  
+        ], this.controller.getPurchase )
 
         return router
     }

@@ -2,7 +2,7 @@ import { Money } from '../value-objects/Money';
 import { DomainError } from '../errors/domain.error';
 
 interface PurchaseProps {
-  id: string;
+  id?: string;
   date?: Date;
   total: Money;
   supplierId: string;
@@ -23,7 +23,7 @@ export class Purchase {
   private readonly MESSAGE_ERROR: string = "PURCHASE_VALIDATION_ERROR"
 
   constructor({
-    id,
+    id = '',
     date = new Date(),
     total,
     supplierId,

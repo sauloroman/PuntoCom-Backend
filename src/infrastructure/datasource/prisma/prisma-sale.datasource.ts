@@ -318,7 +318,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
         return {
             id: saleData.sale_id,
             total: new Money(parseFloat(`${saleData.sale_total}`)).value,
-            date: saleData.sale_date,
+            date: DatesAdapter.formatLocal(new Date(saleData.sale_date)),
             code: saleData.sale_code,
             User: saleData.User && {
                 id: saleData.User.user_id,

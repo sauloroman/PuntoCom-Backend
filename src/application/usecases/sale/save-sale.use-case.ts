@@ -20,7 +20,7 @@ export class SaveSaleUseCase {
         })
 
         const sale = await this.salesRepository.saveSale(newSale)
-        if ( !sale ) throw new ApplicationError(this.MESSAGE_ERROR, 'No se pudo crear la venta')
+        if ( !sale ) throw new ApplicationError('No se pudo crear la venta', this.MESSAGE_ERROR)
         return sale            
     }
 

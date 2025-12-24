@@ -1,0 +1,1 @@
+export { SavePurchaseValidator } from './save-purchase.validator'

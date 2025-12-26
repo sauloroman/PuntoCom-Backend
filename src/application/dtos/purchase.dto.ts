@@ -44,3 +44,20 @@ export interface PurchaseDetailsReponse {
     purchase: PurchaseResponse,
     details: PurchaseDetailResponse[]
 }
+
+export interface PurchasePriceFilter {
+    minPrice: number,
+    maxPrice: number
+}
+
+export interface PurchaseDateFilter {
+    dateFrom: Date,
+    dateTo: Date
+}
+
+export interface PurchaseFilters {
+    prices?: PurchasePriceFilter,
+    dates?: PurchaseDateFilter,
+    supplier?: string,
+    user?: string
+}

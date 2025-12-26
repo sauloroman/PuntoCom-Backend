@@ -1,7 +1,7 @@
 import {PrismaClient, Purchase as PrismaPurchase, Purchase_Detail as PrismaPurchaseDetail, Product as PrismaProduct, Supplier as PrismaSupplier, User as PrismaUser } from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { PurchaseDetailResponse, PurchaseDetailsReponse, PurchaseResponse } from "../../../application/dtos/purchase.dto";
+import { PurchaseDetailResponse, PurchaseDetailsReponse, PurchaseFilters, PurchaseResponse } from "../../../application/dtos/purchase.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { PurchaseDatasource } from "../../../domain/datasources/purchase.datasource";
 import { Purchase, PurchaseDetail } from "../../../domain/entities";
@@ -67,6 +67,83 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
             purchase_unit_price: new Decimal(purchaseDetail.purchaseUnitPrice.value),
             product_id: purchaseDetail.productId,
             purchase_id: purchaseDetail.purchaseId
+        }
+    }
+
+    private buildWhereClause( baseWhere: any, filters: PurchaseFilters ) {
+        const where = { ...baseWhere }
+
+        if ( filters.prices ) {
+            where.purchase_total = {
+                gte: filters.prices.minPrice,
+                lte: filters.prices.maxPrice
+            }
+        }
+
+        if ( filters.dates ) {
+            const adjustedDateTo = new Date( filters.dates.dateTo )
+            adjustedDateTo.setHours(23, 59, 59, 999)
+
+            where.purchase_date = {
+                gte: filters.dates.dateFrom,
+                lte: adjustedDateTo
+            }
+        }
+
+        if ( filters.supplier ) {
+            where.supplier_id = filters.supplier
+        }
+
+        if ( filters.user ) {
+            where.user_id = filters.user
+        }
+
+        return where
+    }
+
+    async filterPurchases(filter: PurchaseFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsReponse>> {
+        try {
+            const { page, limit, orderBy, where, skip, take } = buildPaginationOptions(pagination)
+            const filterWhere = this.buildWhereClause(where, filter)
+
+            const [ purchases, total ] = await Promise.all([
+                this.prisma.purchase.findMany({
+                    where: filterWhere,
+                    skip,
+                    take,
+                    orderBy,
+                    include: {
+                        User: true,
+                        Supplier: true,
+                        PurchaseDetails: {
+                            include: {
+                                Product: true
+                            }
+                        }
+                    }
+                }),
+                this.prisma.purchase.count({ where: filterWhere })
+            ])
+
+            const totalPages = Math.ceil( total / limit )
+
+            const purchasesWithDetails: PurchaseDetailsReponse[] = purchases.map( purchase => ({
+                purchase: this.toDomain(purchase),
+                details: purchase.PurchaseDetails.map( this.toDomainPurchaseDetail )      
+            }))
+
+            return {
+                items: purchasesWithDetails,
+                page,
+                total,
+                totalPages
+            }
+
+        } catch(error) {
+            throw new InfrastructureError(
+                '[PRISMA]: Error al obtener las compras con filtro',
+                'PRISMA_GET_PURCHASES_FILTER_ERROR'
+            )
         }
     }
 

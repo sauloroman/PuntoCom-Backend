@@ -1,7 +1,20 @@
-import { PrismaClient, Sale as PrismaSale, User as PrismaUser, Sale_Product_Detail as PrismaSaleDetail, Product as PrismaProduct } from "../../../../generated/prisma";
+import { 
+    PrismaClient, 
+    Sale as PrismaSale, 
+    User as PrismaUser, 
+    Sale_Product_Detail as PrismaSaleDetail, 
+    Product as PrismaProduct 
+} from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
-import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { SaleDetailsResponse, SaleFilters, SaleProductDetailResponse, SaleResponse } from "../../../application/dtos/sale.dto";
+import { 
+    PaginationDTO, 
+    PaginationResponseDto 
+} from "../../../application/dtos/pagination.dto";
+import { 
+    SaleDetailsResponse, 
+    SaleFilters, 
+    SaleProductDetailResponse, 
+    SaleResponse } from "../../../application/dtos/sale.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { SalesDatasource } from "../../../domain/datasources/sales.datasource";
 import { Sale, SaleProductDetail } from "../../../domain/entities";

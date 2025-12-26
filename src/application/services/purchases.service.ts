@@ -1,9 +1,11 @@
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { PurchaseDetailsReponse, SavePurchase, SavePurchaseDetail } from "../dtos/purchase.dto";
+import { PurchaseDetailsReponse, PurchaseFilters, SavePurchase, SavePurchaseDetail } from "../dtos/purchase.dto";
 import { IncreaseStockUseCase } from "../usecases/product";
 import { ListPurchasesUseCase, SavePurchaseDetailUseCase, SavePurchaseUseCase } from "../usecases/purchases";
+import { FilterPurchasesUseCase } from "../usecases/purchases/filter-purchases.use-case";
 
 interface PurchaseServiceOptions {
+    filterPurchasesUC: FilterPurchasesUseCase,
     getPurchasesUC: ListPurchasesUseCase,
     savePurchaseUC: SavePurchaseUseCase,
     savePurchaseDetailUC: SavePurchaseDetailUseCase,
@@ -11,26 +13,33 @@ interface PurchaseServiceOptions {
 }
 
 export class PurchaseService {
- 
+    
+    private readonly filterPurchasesUC: FilterPurchasesUseCase
     private readonly getPurchasesUC: ListPurchasesUseCase
     private readonly savePurchaseUC: SavePurchaseUseCase 
     private readonly savePurchaseDetailUC: SavePurchaseDetailUseCase 
     private readonly increaseStockUC: IncreaseStockUseCase
 
     constructor({
+        filterPurchasesUC,
         getPurchasesUC,
         savePurchaseUC,
         savePurchaseDetailUC,
         increaseStockUC
     }: PurchaseServiceOptions){
+        this.filterPurchasesUC = filterPurchasesUC
         this.getPurchasesUC = getPurchasesUC
         this.savePurchaseUC = savePurchaseUC
         this.savePurchaseDetailUC = savePurchaseDetailUC
         this.increaseStockUC = increaseStockUC
     }
 
-    async listSales( pagination: PaginationDTO ) {
+    async listPurchases( pagination: PaginationDTO ) {
         return await this.getPurchasesUC.execute(pagination)
+    }
+
+    async filterPurchases( filter: PurchaseFilters, pagination: PaginationDTO ) {
+        return await this.filterPurchasesUC.execute(filter, pagination)
     }
 
     async savePurchase( savePurchaseDto: SavePurchase, details: SavePurchaseDetail[] ): Promise<PurchaseDetailsReponse> {

@@ -1,5 +1,5 @@
 import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
-import { PurchaseDetailResponse, PurchaseDetailsReponse, PurchaseResponse } from "../../application/dtos/purchase.dto";
+import { PurchaseDetailResponse, PurchaseDetailsReponse, PurchaseFilters, PurchaseResponse } from "../../application/dtos/purchase.dto";
 import { PurchaseDatasource } from "../../domain/datasources/purchase.datasource";
 import { Purchase, PurchaseDetail } from "../../domain/entities";
 import { PurchaseRepository } from "../../domain/repositories/purchase.repository";
@@ -7,6 +7,10 @@ import { PurchaseRepository } from "../../domain/repositories/purchase.repositor
 export class PurchaseRepositoryImp implements PurchaseRepository {
     
     constructor( private readonly purchaseDatasource: PurchaseDatasource ){}
+    
+    async filterPurchases(filter: PurchaseFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsReponse>> {
+        return await this.purchaseDatasource.filterPurchases(filter, pagination)
+    }
     
     async getPurchases(pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsReponse>> {
         return await this.purchaseDatasource.getPurchases(pagination)

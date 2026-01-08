@@ -1,5 +1,5 @@
 import { DatesAdapter } from "../../../config/plugins";
-import { VerificationCodeRepository } from "../../../domain/repositories/verification-code.repository";
+import { VerificationCodeRepository } from "../../../domain/repositories";
 import { GetVerificationCodeRequestI, VerificationCodeResponseI } from "../../dtos/verification-code.dto";
 import { ApplicationError } from "../../errors/application.error";
 

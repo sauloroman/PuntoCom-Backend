@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { Supplier } from "../../../domain/entities";
-import { SupplierRepository } from "../../../domain/repositories/supplier.repository";
+import { SupplierRepository } from "../../../domain/repositories";
 import { SupplierResponseDto } from "../../dtos/supplier.dto";
 
 export class GetAllSuppliersUseCase {

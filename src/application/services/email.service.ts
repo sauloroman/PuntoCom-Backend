@@ -1,47 +1,13 @@
-export interface IAttachment {
-  filename: string;
-  path: string;
-}
+import { 
+  SendChangePasswordI, 
+  SendDeactivationAccountI, 
+  SendEmailI, 
+  SendForgotPasswordI, 
+  SendForgotPasswordMobileI, 
+  SendVerificationCodeI 
+} from "../../infrastructure/interfaces/email.interface";
 
-export interface SendEmailI {
-  to: string | string[];
-  subject: string;
-  from?: string,
-  htmlBody?: string;
-  attachments?: IAttachment[];
-}
-
-export interface SendVerificationCodeI {
-  meta: SendEmailI,
-  username: string,
-  token: string,
-  verificationCode: string
-}
-
-export interface SendDeactivationAccountI {
-  meta: SendEmailI,
-  username: string,
-}
-
-export interface SendForgotPasswordI {
-  meta: SendEmailI,
-  username: string,
-  token: string
-}
-
-export interface SendForgotPasswordMobileI {
-  meta: SendEmailI,
-  username: string,
-  code: string
-}
-
-export interface SendChangePasswordI {
-  meta: SendEmailI,
-  username: string
-}
-
-export abstract class EmailService {
-  
+export abstract class EmailService {  
   abstract sendEmail( sendEmail: SendEmailI ): Promise<boolean>
   abstract sendValidateAccountEmail( data: SendVerificationCodeI ): Promise<void>
   abstract sendValidateAccountEmailMobile( data: SendVerificationCodeI ): Promise<void>
@@ -49,5 +15,4 @@ export abstract class EmailService {
   abstract sendForgotPasswordEmail( data: SendForgotPasswordI ): Promise<void>
   abstract sendForgotPasswordEmailMobile( data: SendForgotPasswordMobileI ): Promise<void>
   abstract sendChangePasswordEmail( data: SendChangePasswordI ): Promise<void>
-
 }

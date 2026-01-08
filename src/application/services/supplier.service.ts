@@ -6,9 +6,9 @@ import {
     GetAllSuppliersUseCase, 
     GetSupplierByIdUseCase, 
     ListSuppliersUseCase, 
-    UpdateSupplierUseCase 
+    UpdateSupplierUseCase,
+    GetUniqueCompaniesSupplier
 } from "../usecases/suppliers";
-import { GetUniqueCompaniesSupplier } from "../usecases/suppliers/get-unique-companies-supplier.use-case";
 
 interface SupplierServiceI {
     createSupplierUC: CreateSupplierUseCase,

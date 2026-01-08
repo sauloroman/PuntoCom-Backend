@@ -1,0 +1,1 @@
+export { SaveInventoryAdjustmentValidator } from './save-inventory-adjustment.validator'

@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { Category } from "../../../domain/entities";
-import { CategoryRepository } from "../../../domain/repositories/category.repository";
+import { CategoryRepository } from "../../../domain/repositories";
 import { CategoryResponseDto, CreateCategoryRequestDto } from "../../dtos/category.dto";
 import { ApplicationError } from "../../errors/application.error";
 

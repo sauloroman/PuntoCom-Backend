@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { Product } from "../../../domain/entities";
-import { ProductRepository } from "../../../domain/repositories/product.repository";
+import { ProductRepository } from "../../../domain/repositories";
 import { Money, ProductCode, Stock } from "../../../domain/value-objects";
 import { ProductResponseIncludeDto, UpdateProductImageDto } from "../../dtos/product.dto";
 

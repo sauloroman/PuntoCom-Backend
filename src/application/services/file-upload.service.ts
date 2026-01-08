@@ -1,22 +1,6 @@
-export interface UploadFileI {
-    file: any,
-    folder: string,
-    validExtentions: string[],
-    resourceType: any
-}
-
-export interface RemoveFileI {
-    path: string,
-    resourceType: any
-}
-
-export interface UploadFileCloud {
-    folder: string,
-    resourceType: any
-}
+import { RemoveFileI, UploadFileCloud, UploadFileI } from "../../infrastructure/interfaces/upload-file.interface";
 
 export abstract class FileUploadService {
-
     abstract uploadFile( data: UploadFileI ): Promise<string>
     abstract removeFile( data: RemoveFileI ): Promise<boolean | null>
     abstract uploadBuffer(buffer: Buffer, options: UploadFileCloud): Promise<string>

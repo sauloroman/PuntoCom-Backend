@@ -1,12 +1,19 @@
-import { SupplierService } from "../application/services";
-import { ChangeStatusSupplierUseCase, CreateSupplierUseCase, GetAllSuppliersUseCase, ListSuppliersUseCase, UpdateSupplierUseCase } from "../application/usecases/suppliers";
-import { GetSupplierByIdUseCase } from "../application/usecases/suppliers/get-supplier-by-id.use-case";
-import { GetUniqueCompaniesSupplier } from "../application/usecases/suppliers/get-unique-companies-supplier.use-case";
-import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
-import { PrismaSupplierDatasource } from "../infrastructure/datasource/prisma/prisma-supplier.datasource";
-import { SupplierRepositoryImpl } from "../infrastructure/repositories/supplier.repository.impl";
-import { SupplierController } from "../presentation/controllers/supplier.controller";
-import { SupplierRoutes } from "../presentation/routes";
+import { SupplierService } from "../application/services"
+import { 
+    ChangeStatusSupplierUseCase, 
+    CreateSupplierUseCase, 
+    GetAllSuppliersUseCase, 
+    GetSupplierByIdUseCase, 
+    GetUniqueCompaniesSupplier, 
+    ListSuppliersUseCase, 
+    UpdateSupplierUseCase 
+} from "../application/usecases/suppliers"
+
+import { PrismaDatasource, PrismaSupplierDatasource } from "../infrastructure/datasource/prisma"
+import { SupplierRepositoryImpl } from "../infrastructure/repositories"
+
+import { SupplierController } from "../presentation/controllers"
+import { SupplierRoutes } from "../presentation/routes"
 
 export class SupplierContainer {
 

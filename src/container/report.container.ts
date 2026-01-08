@@ -1,24 +1,31 @@
-import { ReportService } from "../application/services/report.service";
-import { GetAllSuppliersUseCase } from "../application/usecases/suppliers";
-import { UploadPdfUseCase } from "../application/usecases/upload";
-import { GetAllUsersUseCase } from "../application/usecases/user";
-import { UserRepositoryImpl } from "../infrastructure/repositories/user.repository.impl";
-import { LocalFileUploadService } from "../infrastructure/services/file-upload/local.service";
-import { PuppeteerPdfService } from "../infrastructure/services/pdf/puppeteer.service";
-import { ReportRoutes } from "../presentation/routes";
-import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
-import { PrismaUserDatasource } from "../infrastructure/datasource/prisma/prisma-user.datasource";
-import { PrismaProductDatasource } from "../infrastructure/datasource/prisma/prisma-product.datasource";
-import { ProductRepositoryImp } from "../infrastructure/repositories/product.repository.impl";
-import { SupplierRepositoryImpl } from "../infrastructure/repositories/supplier.repository.impl";
-import { PrismaSupplierDatasource } from "../infrastructure/datasource/prisma/prisma-supplier.datasource";
-import { GetAllProductsUseCase } from "../application/usecases/product";
-import { ReportController } from "../presentation/controllers/report.controller";
-import { GetReportByIdUseCase } from "../application/usecases/reports/get-report-by-id.use-case";
-import { DeleteReportUseCase, GetAllReportsUseCase } from "../application/usecases/reports";
-import { GetAllInventoryAdjustmentsUseCase } from "../application/usecases/inventory-adjustment";
-import { InventoryAdjustmentImp } from "../infrastructure/repositories/inventory-adjustment.impl";
-import { PrismaInventoryAdjustmentDatasource } from "../infrastructure/datasource/prisma/prisma-inventory-adjustment.datasource";
+import { ReportService } from "../application/services"
+import { GetAllInventoryAdjustmentsUseCase } from "../application/usecases/inventory-adjustment"
+import { GetAllProductsUseCase } from "../application/usecases/product"
+import { DeleteReportUseCase, GetAllReportsUseCase, GetReportByIdUseCase } from "../application/usecases/reports"
+import { GetAllSuppliersUseCase } from "../application/usecases/suppliers"
+import { UploadPdfUseCase } from "../application/usecases/upload"
+import { GetAllUsersUseCase } from "../application/usecases/user"
+
+import { 
+    PrismaDatasource, 
+    PrismaInventoryAdjustmentDatasource, 
+    PrismaProductDatasource, 
+    PrismaSupplierDatasource, 
+    PrismaUserDatasource 
+} from "../infrastructure/datasource/prisma"
+import { 
+    InventoryAdjustmentImp, 
+    ProductRepositoryImp, 
+    SupplierRepositoryImpl, 
+    UserRepositoryImpl 
+} from "../infrastructure/repositories"
+import { 
+    LocalFileUploadService, 
+    PuppeteerPdfService 
+} from "../infrastructure/services"
+
+import { ReportController } from "../presentation/controllers"
+import { ReportRoutes } from "../presentation/routes"
 
 const prismaClient = PrismaDatasource.getInstance() 
 

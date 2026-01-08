@@ -1,12 +1,12 @@
-export { Email } from './Email'
-export { Role } from './Role'
-export { Password } from './Password';
-export { Money } from './Money';
-export { Quantity } from './Quantity';
-export { ProductCode } from './ProductCode';
-export { Phone } from './Phone';
-export { Stock } from './Stock'
-export { Discount } from './Discount'
 export { AdjustmentType, AdjustmentEnum } from './Adjustment'
 export { CodeValue } from './CodeValue'
+export { Discount } from './Discount'
+export { Email } from './Email'
+export { Money } from './Money';
+export { Password } from './Password';
+export { Phone } from './Phone';
+export { ProductCode } from './ProductCode';
+export { Quantity } from './Quantity';
+export { Role } from './Role'
 export { SaleCode } from './SaleCode'
+export { Stock } from './Stock'

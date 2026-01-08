@@ -1,6 +1,6 @@
 import { PaginationDTO } from "../dtos/pagination.dto";
 import { SaleDetail, SaleDetailsResponse, SaleFilters, SaveSale } from "../dtos/sale.dto";
-import { ReduceStockUseCase } from "../usecases/product/reduce-stock.use-case";
+import { ReduceStockUseCase } from "../usecases/product";
 import {  FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../usecases/sale";
 
 interface SaleServiceOptions {

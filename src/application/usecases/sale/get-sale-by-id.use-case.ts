@@ -1,4 +1,4 @@
-import { SalesRepository } from "../../../domain/repositories/sale.repository";
+import { SalesRepository } from "../../../domain/repositories";
 import { SaleDetailsResponse } from "../../dtos/sale.dto";
 import { ApplicationError } from "../../errors/application.error";
 

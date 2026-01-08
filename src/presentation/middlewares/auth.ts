@@ -1,6 +1,5 @@
-import { PrismaDatasource } from '../../infrastructure/datasource/prisma/prisma-client';
-import { UserRepositoryImpl } from '../../infrastructure/repositories/user.repository.impl';
-import { PrismaUserDatasource } from '../../infrastructure/datasource/prisma/prisma-user.datasource';
+import { PrismaDatasource, PrismaUserDatasource } from '../../infrastructure/datasource/prisma';
+import { UserRepositoryImpl } from '../../infrastructure/repositories';
 import { AuthMiddleware } from './authentication.middleware';
 
 const prisma = PrismaDatasource.getInstance();

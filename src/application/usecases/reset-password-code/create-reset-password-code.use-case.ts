@@ -1,5 +1,5 @@
 import { CodeGeneratorAdapter, DatesAdapter, IDAdapter } from "../../../config/plugins";
-import { ResetPasswordCodeDatasource } from "../../../domain/datasources/reset-password-code.datasource";
+import { ResetPasswordCodeDatasource } from "../../../domain/datasources";
 import { PasswordResetCode } from "../../../domain/entities";
 import { CodeValue } from "../../../domain/value-objects";
 import { CreateResetPassCodeRequest, ResetPassCodeResponse } from "../../dtos/reset-pass-code.dto";

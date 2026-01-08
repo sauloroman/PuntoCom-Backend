@@ -1,5 +1,5 @@
 import { DatesAdapter } from "../../../config/plugins";
-import { ProductRepository } from "../../../domain/repositories/product.repository";
+import { ProductRepository } from "../../../domain/repositories";
 import { ProductResponseIncludeDto } from "../../dtos/product.dto";
 import { ApplicationError } from "../../errors/application.error";
 

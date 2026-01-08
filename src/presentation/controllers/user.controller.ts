@@ -1,14 +1,21 @@
 import { Request, Response } from 'express';
-import { ChangePasswordMobileValidator, ChangePasswordValidator, CreateUserValidator, LoginUserValidator, PasswordResetCodeValidator, ResendVerificationCodeValidator, UpdateUserValidator, ValidateUserValidator } from '../validators/user';
+import { 
+  ChangePasswordValidator, 
+  CreateUserValidator, 
+  LoginUserValidator, 
+  PasswordResetCodeValidator, 
+  ResendVerificationCodeValidator, 
+  UpdateUserValidator, 
+  ValidateUserValidator,
+  ForgotPasswordUserValidator,
+  CheckAdminPasswordValidator 
+} from '../validators/user';
 import { ValidationError } from '../../application/errors/validation.error';
 import { UserService } from '../../application/services';
-import { ForgotPasswordUserValidator } from '../validators/user/forgot-password-user.validator';
-import { CheckAdminPasswordValidator } from '../validators/user/check-admin-password.validator';
 
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  
+  constructor( private readonly userService: UserService ) {}
 
   public checkAdminPassword = async (req: Request, res: Response) => {
     const [ dto, error ] = CheckAdminPasswordValidator.validate(req.body)

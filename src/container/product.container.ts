@@ -1,14 +1,21 @@
-import { ProductService } from "../application/services/product.service";
-import { ChangeStatusProductUseCase, GetAllProductsUseCase, GetMinimalInformationProductsUseCase, GetProductsByStock, ListProductsUseCase, UpdateProductImageUseCase, UpdateProductUseCase } from "../application/usecases/product";
-import { CreateProductUseCase } from "../application/usecases/product/create-product.use-case";
-import { GetProductByIdUseCase } from "../application/usecases/product/get-product-by-id.use-case";
-import { DestroyImageUseCase, UploadBarCodeUseCase, UploadImageUseCase } from "../application/usecases/upload";
-import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
-import { PrismaProductDatasource } from "../infrastructure/datasource/prisma/prisma-product.datasource";
-import { ProductRepositoryImp } from "../infrastructure/repositories/product.repository.impl";
-import { CloudinaryFileUploadService } from "../infrastructure/services/file-upload/cloudinary.service";
-import { ProductController } from "../presentation/controllers/product.controller";
-import { ProductRoutes } from "../presentation/routes/product.routes";
+import { ProductService } from "../application/services"
+import { 
+    ChangeStatusProductUseCase, 
+    CreateProductUseCase, 
+    GetAllProductsUseCase, 
+    GetMinimalInformationProductsUseCase, 
+    GetProductByIdUseCase, 
+    GetProductsByStock, 
+    ListProductsUseCase, 
+    UpdateProductImageUseCase, 
+    UpdateProductUseCase 
+} from "../application/usecases/product"
+import { DestroyImageUseCase, UploadBarCodeUseCase, UploadImageUseCase } from "../application/usecases/upload"
+import { PrismaDatasource, PrismaProductDatasource } from "../infrastructure/datasource/prisma"
+import { ProductRepositoryImp } from "../infrastructure/repositories"
+import { CloudinaryFileUploadService } from "../infrastructure/services"
+import { ProductController } from "../presentation/controllers"
+import { ProductRoutes } from "../presentation/routes"
 
 export class ProductContainer {
 

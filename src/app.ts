@@ -1,8 +1,6 @@
-import { EnvAdapter } from './config/plugins/env-var.plugin';
-import { Container } from './container/container';
-
-import { ServerConfiguration } from "./presentation/server/server-configuration"
-import { Server } from "./presentation/server/server";
+import { EnvAdapter } from './config/plugins';
+import { Container } from './container';
+import { Server, ServerConfiguration } from "./presentation/server"
 
 (async () => {
   await main()

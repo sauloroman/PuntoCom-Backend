@@ -1,4 +1,4 @@
-import { SupplierRepository } from "../../../domain/repositories/supplier.repository";
+import { SupplierRepository } from "../../../domain/repositories";
 
 export class GetUniqueCompaniesSupplier {
 

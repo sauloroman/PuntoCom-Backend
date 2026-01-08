@@ -1,28 +1,43 @@
-import { EnvAdapter } from '../config/plugins';
+import { UserService } from "../application/services";
+import { 
+  SendChangePasswordEmailUseCase, 
+  SendDeactivationAccountEmailUseCase, 
+  SendForgotPasswordEmailMobileUseCase, 
+  SendForgotPasswordEmailUseCase, 
+  SendVerificationCodeEmailMobileUseCase, 
+  SendVerificationCodeEmailUseCase 
+} from "../application/usecases/email";
+import { CreateResetPassCodeUseCase, GetPasswordResetCodeUseCase } from "../application/usecases/reset-password-code";
+import { DestroyImageUseCase, UploadImageUseCase } from "../application/usecases/upload";
+import { 
+  ChangePasswordUseCase, 
+  ChangeStatusUserUseCase, 
+  CheckAdminPasswordUseCase, 
+  CreateUserUseCase, 
+  GetAllUsersUseCase, 
+  GetUserByEmailUseCase, 
+  GetUserByIdUseCase, 
+  ListUsersUseCase, 
+  LoginUserUseCase, 
+  UpdateUserImageUseCase, 
+  UpdateUserUseCase, 
+  ValidateUserUseCase 
+} from "../application/usecases/user";
+import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from "../application/usecases/verification-code";
 
-import { UserService } from '../application/services';
-import { ValidateUserUseCase } from '../application/usecases/user/validate-user.use-case';
-import { ChangePasswordUseCase, ChangeStatusUserUseCase, CheckAdminPasswordUseCase, CreateUserUseCase, GetAllUsersUseCase, GetUserByEmailUseCase, GetUserByIdUseCase, ListUsersUseCase, LoginUserUseCase, UpdateUserImageUseCase } from '../application/usecases/user';
-import { SendVerificationCodeEmailUseCase, SendDeactivationAccountEmailUseCase, SendForgotPasswordEmailUseCase, SendChangePasswordEmailUseCase, SendVerificationCodeEmailMobileUseCase, SendForgotPasswordEmailMobileUseCase } from '../application/usecases/email';
-import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from '../application/usecases/verification-code';
-import { DestroyImageUseCase, UploadImageUseCase } from '../application/usecases/upload';
+import { EnvAdapter } from "../config/plugins";
 
-import { PrismaDatasource } from '../infrastructure/datasource/prisma/prisma-client';
-import { UserRepositoryImpl } from '../infrastructure/repositories/user.repository.impl';
-import { PrismaUserDatasource } from '../infrastructure/datasource/prisma/prisma-user.datasource';
-import { VerificationCodeRepositoryImpl } from '../infrastructure/repositories/verification-code.repository.impl';
-import { PrismaVerificationCodeDatasource } from '../infrastructure/datasource/prisma/prisma-verification-code.datasource';
-import { NodeMailerService } from '../infrastructure/services/email/nodemailer.service';
-import { CloudinaryFileUploadService } from '../infrastructure/services/file-upload/cloudinary.service';
+import { 
+  PrismaDatasource, 
+  PrismaResetPasswordCode, 
+  PrismaUserDatasource, 
+  PrismaVerificationCodeDatasource 
+} from "../infrastructure/datasource/prisma";
+import { ResetPassCodeImpl, UserRepositoryImpl, VerificationCodeRepositoryImpl } from "../infrastructure/repositories";
+import { CloudinaryFileUploadService, LocalFileUploadService, NodeMailerService, PuppeteerPdfService } from "../infrastructure/services";
 
-import { UserRoutes } from '../presentation/routes/user.routes';
-import { UserController } from '../presentation/controllers/user.controller';
-import { UpdateUserUseCase } from '../application/usecases/user/update-user.use-case';
-import { PuppeteerPdfService } from '../infrastructure/services/pdf/puppeteer.service';
-import { LocalFileUploadService } from '../infrastructure/services/file-upload/local.service';
-import { CreateResetPassCodeUseCase, GetPasswordResetCodeUseCase } from '../application/usecases/reset-password-code';
-import { ResetPassCodeImpl } from '../infrastructure/repositories/reset-pass-code.repository.impl';
-import { PrismaResetPasswordCode } from '../infrastructure/datasource/prisma/prisma-reset-pass-code.datasource';
+import { UserController } from "../presentation/controllers";
+import { UserRoutes } from "../presentation/routes";
 
 export class UserContainer {
 

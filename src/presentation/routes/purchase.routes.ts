@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { PurchasesController } from "../controllers/purchases.controller";
-import { Auth } from "../middlewares/auth";
-import { MapperFilterMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
+import { PurchasesController } from "../controllers";
+import { Auth, MapperFilterMiddleware, ValidateRolesMiddleware } from "../middlewares";
 
 interface PurchaseRoutesI {
     controller: PurchasesController

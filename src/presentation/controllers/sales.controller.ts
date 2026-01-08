@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { SaleService } from "../../application/services/sale.service";
-import { SaveSaleValidator } from "../validators/sale/save-sale.validator";
+import { SaleService } from "../../application/services";
+import { SaveSaleValidator } from "../validators/sale";
 import { ApplicationError } from "../../application/errors/application.error";
 import { SaleFilters } from "../../application/dtos/sale.dto";
 

@@ -7,11 +7,11 @@ import {
     GetCategoryByIdUseCase, 
     ListCategoriesUseCase, 
     UpdateCategoryUseCase,
-    GetAllCategoriesUseCase 
+    GetAllCategoriesUseCase, 
+    UpdateImageCategoryUseCase
 } from "../usecases/categories";
 import { DestroyImageUseCase, UploadImageUseCase } from "../usecases/upload";
 import { ApplicationError } from "../errors/application.error";
-import { UpdateImageCategoryUseCase } from "../usecases/categories/update-image-category.use-case";
 
 interface CategoryServiceI {
     createCategoryUC: CreateCategoryUseCase,

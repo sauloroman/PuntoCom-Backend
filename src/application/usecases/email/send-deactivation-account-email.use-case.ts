@@ -1,9 +1,5 @@
-import { EmailService } from '../../services/email.service';
-
-interface SendDeactivationAccount {
-  userEmail: string,
-  username: string
-}
+import { SendDeactivationAccount } from '../../dtos/verification-code.dto';
+import { EmailService } from '../../services';
 
 export class SendDeactivationAccountEmailUseCase {
 

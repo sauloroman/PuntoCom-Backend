@@ -1,14 +1,14 @@
 import { PurchaseService } from "../application/services"
 import { IncreaseStockUseCase } from "../application/usecases/product"
-import { FilterPurchasesUseCase } from "../application/usecases/purchases/filter-purchases.use-case"
-import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client"
-import { PrismaProductDatasource } from "../infrastructure/datasource/prisma/prisma-product.datasource"
-import { PrismaPurchaseDatasource } from "../infrastructure/datasource/prisma/prisma-purchase.datasource"
-import { ProductRepositoryImp } from "../infrastructure/repositories/product.repository.impl"
-import { PurchaseRepositoryImp } from "../infrastructure/repositories/purchase.repository.impl"
-import { PurchasesController } from "../presentation/controllers/purchases.controller"
+import { 
+    FilterPurchasesUseCase, 
+    ListPurchasesUseCase, 
+    SavePurchaseDetailUseCase, 
+    SavePurchaseUseCase } from "../application/usecases/purchases"
+import { PrismaDatasource, PrismaProductDatasource, PrismaPurchaseDatasource } from "../infrastructure/datasource/prisma"
+import { ProductRepositoryImp, PurchaseRepositoryImp } from "../infrastructure/repositories"
+import { PurchasesController } from "../presentation/controllers"
 import { PurchaseRoutes } from "../presentation/routes"
-import {  ListPurchasesUseCase, SavePurchaseDetailUseCase, SavePurchaseUseCase } from "../application/usecases/purchases"
 
 const prismaClient = PrismaDatasource.getInstance()
 

@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { CategoryController } from "../controllers/category.controller";
-import { Auth } from "../middlewares/auth";
-import { FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { CategoryController } from "../controllers";
+import { Auth, FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
 
 interface CategoryRoutesI {

@@ -1,5 +1,5 @@
 import { UploadedFile } from "express-fileupload";
-import { FileUploadService } from "../../services/file-upload.service";
+import { FileUploadService } from "../../services";
 
 export class UploadImageUseCase {
 

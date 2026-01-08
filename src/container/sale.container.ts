@@ -1,16 +1,12 @@
-import { SaleService } from "../application/services/sale.service";
-import { ReduceStockUseCase } from "../application/usecases/product/reduce-stock.use-case";
-import { FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveSaleUseCase } from "../application/usecases/sale";
-import { SaveDetailSaleUseCase } from "../application/usecases/sale/save-detail-save.use-case";
-import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
-import { PrismaProductDatasource } from "../infrastructure/datasource/prisma/prisma-product.datasource";
-import { PrismaSalesDatasource } from "../infrastructure/datasource/prisma/prisma-sale.datasource";
-import { PrismaUserDatasource } from "../infrastructure/datasource/prisma/prisma-user.datasource";
-import { ProductRepositoryImp } from "../infrastructure/repositories/product.repository.impl";
-import { SalesRepositoryImpl } from "../infrastructure/repositories/sale.repository.impl";
-import { UserRepositoryImpl } from "../infrastructure/repositories/user.repository.impl";
-import { SalesController } from "../presentation/controllers/sales.controller";
-import { SaleRoutes } from "../presentation/routes";
+import { SaleService } from "../application/services"
+import { ReduceStockUseCase } from "../application/usecases/product"
+import { FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../application/usecases/sale"
+
+import { PrismaDatasource, PrismaProductDatasource, PrismaSalesDatasource, PrismaUserDatasource } from "../infrastructure/datasource/prisma"
+import { ProductRepositoryImp, SalesRepositoryImpl, UserRepositoryImpl } from "../infrastructure/repositories"
+
+import { SalesController } from "../presentation/controllers"
+import { SaleRoutes } from "../presentation/routes"
 
 const prismaClient = PrismaDatasource.getInstance()
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { JwtAdapter } from "../../config/plugins";
 import { RoleEnum } from "../../../generated/prisma";
-import { UserRepository } from "../../domain/repositories/user.repository";
+import { UserRepository } from "../../domain/repositories";
 
 export class AuthMiddleware {
 

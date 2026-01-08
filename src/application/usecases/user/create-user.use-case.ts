@@ -1,6 +1,6 @@
 import { HashAdapter, DatesAdapter } from '../../../config/plugins';
 
-import { UserRepository } from '../../../domain/repositories/user.repository';
+import { UserRepository } from '../../../domain/repositories';
 import { Email, Password, Phone, Role } from '../../../domain/value-objects';
 import { User } from '../../../domain/entities';
 

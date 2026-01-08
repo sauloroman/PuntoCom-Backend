@@ -1,4 +1,4 @@
-import { PurchaseRepository } from "../../../domain/repositories/purchase.repository";
+import { PurchaseRepository } from "../../../domain/repositories";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
 import { PurchaseDetailsResponse, PurchaseFilters } from "../../dtos/purchase.dto";
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ProductService } from "../../application/services/product.service";
+import { ProductService } from "../../application/services";
 import { CreateProductValidator, UpdateProductValidator } from "../validators/product";
 import { ApplicationError } from "../../application/errors/application.error";
 import { StockCriteria } from "../../application/dtos/product.dto";

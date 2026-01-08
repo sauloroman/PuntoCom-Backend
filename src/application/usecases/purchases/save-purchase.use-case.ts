@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { Purchase } from "../../../domain/entities";
-import { PurchaseRepository } from "../../../domain/repositories/purchase.repository";
+import { PurchaseRepository } from "../../../domain/repositories";
 import { Money } from "../../../domain/value-objects";
 import { PurchaseResponse, SavePurchase } from "../../dtos/purchase.dto";
 import { ApplicationError } from "../../errors/application.error";

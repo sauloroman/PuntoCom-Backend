@@ -1,4 +1,4 @@
-import { DashboardStatsRepository } from "../../../domain/repositories/dashboard-stats.repository";
+import { DashboardStatsRepository } from "../../../domain/repositories";
 import { TopProductStats } from "../../dtos/dashboard-stats.dto";
 
 export class GetTopSellingProductUseCase {

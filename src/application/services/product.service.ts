@@ -9,12 +9,11 @@ import {
     GetProductsByStock, 
     ListProductsUseCase, 
     UpdateProductImageUseCase, 
-    UpdateProductUseCase
+    UpdateProductUseCase,
+    GetProductByIdUseCase 
 } from "../usecases/product";
-import { GetProductByIdUseCase } from "../usecases/product/get-product-by-id.use-case";
-import { DestroyImageUseCase, UploadImageUseCase } from "../usecases/upload";
+import { DestroyImageUseCase, UploadImageUseCase, UploadBarCodeUseCase } from "../usecases/upload";
 import { ApplicationError } from "../errors/application.error";
-import { UploadBarCodeUseCase } from "../usecases/upload/upload-bar-code.use-case";
 
 interface ProductServiceOptions {
     getProductByIdUC: GetProductByIdUseCase,

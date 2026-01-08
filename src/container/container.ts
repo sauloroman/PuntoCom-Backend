@@ -1,13 +1,15 @@
 import { AppRoutes } from '../presentation/routes/app.routes';
-import { CategoryContainer } from './category.container';
-import { DashboardStatsContainer } from './dashboard-stats.container';
-import { InventoryAdjustmentContainer } from './inventory-adjustment.container';
-import { ProductContainer } from './product.container';
-import { PurchaseContainer } from './purchase.container';
-import { ReportContainer } from './report.container';
-import { SaleContainer } from './sale.container';
-import { SupplierContainer } from './supplier.container';
-import { UserContainer } from './user.container';
+import { 
+  CategoryContainer, 
+  DashboardStatsContainer, 
+  InventoryAdjustmentContainer, 
+  ProductContainer, 
+  PurchaseContainer, 
+  ReportContainer, 
+  SaleContainer, 
+  SupplierContainer, 
+  UserContainer 
+} from './';
 
 export class Container {
 

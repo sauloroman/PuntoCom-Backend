@@ -1,15 +1,13 @@
-import { Request, Response } from "express";
-import { CategoryService } from "../../application/services/category.service";
-import { CreateCategoryValidator } from "../validators/category";
-import { ApplicationError } from "../../application/errors/application.error";
-import { UpdateCategoryValidator } from "../validators/category/update-category.validator";
+import { Request, Response } from "express"
+import { ApplicationError } from "../../application/errors"
+import { CategoryService } from "../../application/services"
+import { CreateCategoryValidator, UpdateCategoryValidator } from "../validators/category"
 
 export class CategoryController {
 
     constructor( private readonly categoryService: CategoryService){}
 
     public createCategory = async ( req: Request, res: Response ) => {
-
         const [ dto, error ] = CreateCategoryValidator.validate( req.body )
         if ( error ) throw new ApplicationError(error, 'CREATE_CATEGORY_VALIDATION_ERROR')
 

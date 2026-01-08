@@ -1,19 +1,21 @@
-import { CategoryService } from "../application/services/category.service";
+import { CategoryService } from "../application/services"
 import { 
     ChangeCategoryStatusUseCase, 
+    CreateCategoryUseCase, 
     GetAllCategoriesUseCase, 
     GetCategoryByIdUseCase, 
     ListCategoriesUseCase, 
-    UpdateCategoryUseCase } from "../application/usecases/categories";
-import { CreateCategoryUseCase } from "../application/usecases/categories/create-category.use-case";
-import { UpdateImageCategoryUseCase } from "../application/usecases/categories/update-image-category.use-case";
-import { DestroyImageUseCase, UploadImageUseCase } from "../application/usecases/upload";
-import { PrismaCategoryDatasource } from "../infrastructure/datasource/prisma/prisma-category.datasource";
-import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
-import { CategoryRepositoryImp } from "../infrastructure/repositories/category.repository.impl";
-import { CloudinaryFileUploadService } from "../infrastructure/services/file-upload/cloudinary.service";
-import { CategoryController } from "../presentation/controllers/category.controller";
-import { CategoryRoutes } from "../presentation/routes/category.routes";
+    UpdateCategoryUseCase, 
+    UpdateImageCategoryUseCase 
+} from "../application/usecases/categories"
+import { DestroyImageUseCase, UploadImageUseCase } from "../application/usecases/upload"
+
+import { PrismaCategoryDatasource, PrismaDatasource } from "../infrastructure/datasource/prisma"
+import { CategoryRepositoryImp } from "../infrastructure/repositories"
+import { CloudinaryFileUploadService } from "../infrastructure/services"
+
+import { CategoryController } from "../presentation/controllers"
+import { CategoryRoutes } from "../presentation/routes"
 
 export class CategoryContainer {
 

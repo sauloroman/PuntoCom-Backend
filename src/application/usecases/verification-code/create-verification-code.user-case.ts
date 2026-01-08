@@ -1,9 +1,8 @@
-import { CreateVerificationCodeRequest, VerificationCodeResponseI } from '../../dtos/verification-code.dto'
 import { DatesAdapter, IDAdapter, CodeGeneratorAdapter } from '../../../config/plugins';
-
-import { VerificationCodeRepository } from '../../../domain/repositories/verification-code.repository';
-import { VerificationCode } from '../../../domain/entities/VerificationCode';
-import { CodeValue } from '../../../domain/value-objects/CodeValue';
+import { CreateVerificationCodeRequest, VerificationCodeResponseI } from '../../dtos/verification-code.dto'
+import { VerificationCodeRepository } from '../../../domain/repositories';
+import { VerificationCode } from '../../../domain/entities';
+import { CodeValue } from '../../../domain/value-objects';
 
 export class CreateVerificationCodeUseCase {
 

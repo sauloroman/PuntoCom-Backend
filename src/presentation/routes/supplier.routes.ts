@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { SupplierController } from "../controllers/supplier.controller";
-import { Auth } from "../middlewares/auth";
-import { MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
+import { SupplierController } from "../controllers";
+import { Auth, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from "../middlewares";
 
 interface SupplierRoutesI {
     controller: SupplierController

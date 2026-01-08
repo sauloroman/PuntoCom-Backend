@@ -1,8 +1,7 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { InventoryAdjustment } from "../../../domain/entities";
-import { InventoryAdjustmentRepository } from "../../../domain/repositories/inventory-adjustment.repository";
-import { ProductRepository } from "../../../domain/repositories/product.repository";
-import { UserRepository } from "../../../domain/repositories/user.repository";
+import { InventoryAdjustmentRepository } from "../../../domain/repositories";
+import { ProductRepository, UserRepository } from "../../../domain/repositories";
 import { AdjustmentType, Quantity } from "../../../domain/value-objects";
 import { InventoryAdjustmentResponse, SaveInventoryAdjustment } from "../../dtos/inventory-adjustment.dto";
 import { ApplicationError } from "../../errors/application.error";

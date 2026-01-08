@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { InventoryAdjustmentController } from "../controllers/inventory-adjustment";
-import { Auth } from "../middlewares/auth";
-import { MapperFilterMiddleware, ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
+import { InventoryAdjustmentController } from "../controllers";
+import { Auth, MapperFilterMiddleware, ValidateRolesMiddleware } from "../middlewares";
 
 interface InventoryAdjustmentRoutesI {
     controller:InventoryAdjustmentController 

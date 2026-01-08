@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { DashboardStatsController } from "../controllers/dashboard-stats.controller";
-import { ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
-import { Auth } from "../middlewares/auth";
+import { DashboardStatsController } from "../controllers";
+import { ValidateRolesMiddleware } from "../middlewares";
+import { Auth } from "../middlewares";
 
 interface DashboardStatsRoutesI {
     controller: DashboardStatsController

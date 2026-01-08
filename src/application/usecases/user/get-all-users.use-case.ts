@@ -1,5 +1,5 @@
 import { DatesAdapter } from "../../../config/plugins";
-import { UserRepository } from "../../../domain/repositories/user.repository";
+import { UserRepository } from "../../../domain/repositories";
 import { UserResponseDtoI } from "../../dtos/user.dto";
 
 export class GetAllUsersUseCase {

@@ -1,8 +1,14 @@
 import { Router } from 'express';
-import { UserController } from '../controllers/user.controller';
-import { AuthMiddleware, FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware } from '../middlewares';
 import { RoleEnum } from '../../../generated/prisma';
-import { Auth } from '../middlewares/auth';
+import { UserController } from '../controllers';
+import { 
+  Auth, 
+  AuthMiddleware, 
+  FileUploadMiddleware, 
+  MapperFilterMiddleware, 
+  ParamsHandlerMiddleware, 
+  ValidateRolesMiddleware 
+} from '../middlewares';
 
 interface UserRoutesOptions {
   controller: UserController,

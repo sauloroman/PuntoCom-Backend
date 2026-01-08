@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
-import { UserRepository } from "../../../domain/repositories/user.repository";
+import { UserRepository } from "../../../domain/repositories";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
 import { UserResponseDtoI } from "../../dtos/user.dto";
 

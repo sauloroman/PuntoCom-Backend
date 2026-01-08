@@ -1,5 +1,5 @@
 import { DatesAdapter } from "../../../config/plugins";
-import { ResetPasswordCodeRepository } from "../../../domain/repositories/reset-pass-code.repository";
+import { ResetPasswordCodeRepository } from "../../../domain/repositories";
 import { GetResetPassCodeRequest, ResetPassCodeResponse } from "../../dtos/reset-pass-code.dto";
 import { ApplicationError } from "../../errors/application.error";
 

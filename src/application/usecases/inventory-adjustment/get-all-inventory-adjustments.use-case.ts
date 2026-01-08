@@ -1,4 +1,4 @@
-import { InventoryAdjustmentRepository } from "../../../domain/repositories/inventory-adjustment.repository";
+import { InventoryAdjustmentRepository } from "../../../domain/repositories";
 import { InventoryAdjustmentResponse } from "../../dtos/inventory-adjustment.dto";
 
 export class GetAllInventoryAdjustmentsUseCase {

@@ -1,8 +1,7 @@
 import fs from 'fs'
 import path from 'path';
 import { UploadedFile } from "express-fileupload";
-import { FileUploadService } from "../../services";
-import { PdfOptions, PdfService } from "../../services/pdf.service";
+import { FileUploadService, PdfOptions, PdfService  } from "../../services";
 import { IDAdapter } from '../../../config/plugins';
 
 export class UploadPdfUseCase {

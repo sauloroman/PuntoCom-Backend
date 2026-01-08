@@ -1,9 +1,5 @@
+import { SendChangePassword } from "../../dtos/verification-code.dto";
 import { EmailService } from "../../services";
-
-interface SendChangePassword {
-  userEmail: string,
-  username: string
-}
 
 export class SendChangePasswordEmailUseCase {
 

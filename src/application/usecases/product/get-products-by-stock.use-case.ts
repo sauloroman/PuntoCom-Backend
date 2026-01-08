@@ -1,4 +1,4 @@
-import { ProductRepository } from "../../../domain/repositories/product.repository";
+import { ProductRepository } from "../../../domain/repositories";
 import { ProductResponseIncludeDto, StockCriteria } from "../../dtos/product.dto";
 
 export class GetProductsByStock {

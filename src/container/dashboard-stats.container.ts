@@ -1,10 +1,16 @@
-import { DashboardStatsService } from "../application/services/dashboard-stats.service";
-import { GetDashboardStatsUseCase, GetProductsWithoutSalesUseCase, GetPurchasesByDateUseCase, GetSalesByDateUseCase, GetTopSellingProductUseCase } from "../application/usecases/dashboard";
-import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
-import { PrismaDashboardStatsDatasource } from "../infrastructure/datasource/prisma/prisma-dashboard-stats.datasource";
-import { DashboardStatsRepositoryImp } from "../infrastructure/repositories/dashboard-stats.repository.imp";
-import { DashboardStatsController } from "../presentation/controllers/dashboard-stats.controller";
-import { DashboardStatsRoutes } from "../presentation/routes";
+import { DashboardStatsService } from "../application/services"
+import { 
+    GetDashboardStatsUseCase, 
+    GetProductsWithoutSalesUseCase, 
+    GetPurchasesByDateUseCase, 
+    GetSalesByDateUseCase, 
+    GetTopSellingProductUseCase 
+} from "../application/usecases/dashboard"
+import { DashboardStatsController } from "../presentation/controllers"
+import { DashboardStatsRoutes } from "../presentation/routes"
+
+import { PrismaDashboardStatsDatasource, PrismaDatasource } from "../infrastructure/datasource/prisma"
+import { DashboardStatsRepositoryImp } from "../infrastructure/repositories"
 
 export class DashboardStatsContainer {
 

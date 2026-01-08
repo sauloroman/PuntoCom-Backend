@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { SaleProductDetail } from "../../../domain/entities";
-import { SalesRepository } from "../../../domain/repositories/sale.repository";
+import { SalesRepository } from "../../../domain/repositories";
 import { Discount, Money, Quantity } from "../../../domain/value-objects";
 import { SaleDetail, SaleProductDetailResponse } from "../../dtos/sale.dto";
 

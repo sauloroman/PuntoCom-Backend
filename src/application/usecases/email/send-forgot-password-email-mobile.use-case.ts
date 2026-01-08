@@ -1,10 +1,5 @@
+import { SendForgotPasswordMobile } from "../../dtos/verification-code.dto";
 import { EmailService } from "../../services";
-
-interface SendForgotPasswordMobile {
-    userEmail: string,
-    userName: string,
-    code: string
-}
 
 export class SendForgotPasswordEmailMobileUseCase {
 

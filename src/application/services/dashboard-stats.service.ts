@@ -1,4 +1,10 @@
-import { GetDashboardStatsUseCase, GetProductsWithoutSalesUseCase, GetPurchasesByDateUseCase, GetSalesByDateUseCase, GetTopSellingProductUseCase } from "../usecases/dashboard";
+import { 
+    GetDashboardStatsUseCase, 
+    GetProductsWithoutSalesUseCase, 
+    GetPurchasesByDateUseCase, 
+    GetSalesByDateUseCase, 
+    GetTopSellingProductUseCase 
+} from "../usecases/dashboard";
 
 interface DashboardStatsServiceOptions {
     getDashboardStatsUC: GetDashboardStatsUseCase,

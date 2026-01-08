@@ -1,7 +1,7 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
-import { UserRepository } from "../../../domain/repositories/user.repository";
 import { Email, Password, Phone, Role } from "../../../domain/value-objects";
+import { UserRepository } from "../../../domain/repositories";
 import { UpdateUserRequestDTOI, UserResponseDtoI } from "../../dtos/user.dto";
 import { ApplicationError } from "../../errors/application.error";
 

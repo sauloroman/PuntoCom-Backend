@@ -1,8 +1,14 @@
 import { Router } from "express";
-import { ProductController } from "../controllers/product.controller";
-import { Auth } from "../middlewares/auth";
-import { FileUploadMiddleware, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMiddleware, ValidateStockCriteriaMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
+import { ProductController } from "../controllers/product.controller";
+import { 
+    Auth, 
+    FileUploadMiddleware, 
+    MapperFilterMiddleware, 
+    ParamsHandlerMiddleware, 
+    ValidateRolesMiddleware, 
+    ValidateStockCriteriaMiddleware 
+} from "../middlewares";
 
 interface ProductRoutesI {
     controller: ProductController

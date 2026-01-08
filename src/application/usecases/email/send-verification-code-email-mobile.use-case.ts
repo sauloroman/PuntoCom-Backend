@@ -1,11 +1,5 @@
-import { EmailService } from '../../services/email.service';
-
-interface SendVerificationCode {
-  userEmail: string,
-  username: string,
-  token: string,
-  verificationCode: string
-}
+import { SendVerificationCode } from '../../dtos/verification-code.dto';
+import { EmailService } from '../../services';
 
 export class SendVerificationCodeEmailMobileUseCase {
 

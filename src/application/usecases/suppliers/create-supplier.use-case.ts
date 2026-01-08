@@ -1,6 +1,6 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { Supplier } from "../../../domain/entities";
-import { SupplierRepository } from "../../../domain/repositories/supplier.repository";
+import { SupplierRepository } from "../../../domain/repositories";
 import { Email, Phone } from "../../../domain/value-objects";
 import { CreateSupplierRequestDto, SupplierResponseDto } from "../../dtos/supplier.dto";
 import { ApplicationError } from "../../errors/application.error";

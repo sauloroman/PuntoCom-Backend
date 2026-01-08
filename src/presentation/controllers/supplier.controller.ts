@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { SupplierService } from "../../application/services";
-import { CreateSupplierValidator } from "../validators/supplier/create-supplier.validator";
+import { CreateSupplierValidator, UpdateSupplierValidator } from "../validators/supplier";
 import { ApplicationError } from "../../application/errors/application.error";
-import { UpdateSupplierValidator } from "../validators/supplier/update-supplier.validator";
 
 export class SupplierController {
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DashboardStatsService } from "../../application/services/dashboard-stats.service";
+import { DashboardStatsService } from "../../application/services";
 
 export class DashboardStatsController {
 

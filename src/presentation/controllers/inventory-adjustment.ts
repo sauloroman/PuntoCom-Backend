@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { InventoryAdjustmentService } from "../../application/services/inventory-adjustment.service";
-import { SaveInventoryAdjustmentValidator } from "../validators/inventory-adjustment/save-inventory-adjustment.validator";
+import { InventoryAdjustmentService } from "../../application/services";
+import { SaveInventoryAdjustmentValidator } from "../validators/inventory-adjustment";
 import { ApplicationError } from "../../application/errors/application.error";
 import { PaginationDTO } from "../../application/dtos/pagination.dto";
 

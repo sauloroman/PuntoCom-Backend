@@ -1,7 +1,8 @@
-import { UserResponseDtoI } from "../../../application/dtos/user.dto";
-import { PdfOptions, PdfService } from "../../../application/services/pdf.service";
 import puppeteer from "puppeteer";
+import { UserResponseDtoI } from "../../../application/dtos/user.dto";
+import { PdfService } from "../../../application/services";
 import { buildUsersHtml } from "../../../config/templates/pdf";
+import { PdfOptions } from "../../interfaces/pdf.interface";
 
 export class PuppeteerPdfService implements PdfService {
     

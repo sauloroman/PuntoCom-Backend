@@ -1,8 +1,21 @@
-import { EmailService, SendChangePasswordI, SendDeactivationAccountI, SendEmailI, SendForgotPasswordI, SendForgotPasswordMobileI, SendVerificationCodeI } from '../../../application/services/email.service';
-import { welcomeEmailTemplate, accountDeactivatedEmailTemplate, resetPasswordEmailTemplate, passwordChangedEmailTemplate, codeOnlyEmailTemplate } from '../../../config/templates/email';
-import { Transporter } from 'nodemailer';
-import nodemailer from 'nodemailer';
+import nodemailer, { Transporter } from 'nodemailer';
+import { EmailService } from '../../../application/services';
+import { 
+  welcomeEmailTemplate, 
+  accountDeactivatedEmailTemplate, 
+  resetPasswordEmailTemplate, 
+  passwordChangedEmailTemplate, 
+  codeOnlyEmailTemplate 
+} from '../../../config/templates/email';
 import { mobileResetPasswordEmailTemplate } from '../../../config/templates/email/forgot-email-mobile.template';
+import { 
+  SendChangePasswordI, 
+  SendDeactivationAccountI, 
+  SendEmailI, 
+  SendForgotPasswordI, 
+  SendForgotPasswordMobileI, 
+  SendVerificationCodeI 
+} from '../../interfaces/email.interface';
 
 interface NodemailerServiceOptions {
   mailerService: string,

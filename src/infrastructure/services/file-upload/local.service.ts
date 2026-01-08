@@ -1,9 +1,10 @@
 import path from 'path'
 import fs from 'fs'
-import { IDAdapter } from '../../../config/plugins';
-import { FileUploadService, RemoveFileI, UploadFileCloud, UploadFileI } from "../../../application/services/file-upload.service";
-import { InfrastructureError } from '../../errors/infrastructure-error';
 import { UploadedFile } from 'express-fileupload';
+import { IDAdapter } from '../../../config/plugins';
+import { FileUploadService } from "../../../application/services";
+import { InfrastructureError } from '../../errors/infrastructure-error';
+import { RemoveFileI, UploadFileCloud, UploadFileI } from '../../interfaces/upload-file.interface';
 
 export class LocalFileUploadService implements FileUploadService {
     

@@ -1,10 +1,10 @@
-import { EnvAdapter } from "../../../config/plugins";
-import { FileUploadService, RemoveFileI, UploadFileCloud, UploadFileI } from "../../../application/services/file-upload.service";
-import { InfrastructureError } from "../../errors/infrastructure-error";
-import { v2 as cloudinary } from 'cloudinary'
 import { UploadedFile } from "express-fileupload";
 import streamifier from 'streamifier'
-
+import { v2 as cloudinary } from 'cloudinary'
+import { RemoveFileI, UploadFileCloud, UploadFileI } from "../../interfaces/upload-file.interface";
+import { EnvAdapter } from "../../../config/plugins";
+import { FileUploadService } from "../../../application/services";
+import { InfrastructureError } from "../../errors/infrastructure-error";
 
 cloudinary.config( EnvAdapter.CLOUDINARY_URL )
 

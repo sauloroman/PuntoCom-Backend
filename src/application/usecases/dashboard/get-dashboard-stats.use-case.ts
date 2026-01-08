@@ -1,11 +1,11 @@
 import { DashboardStatsRepository } from "../../../domain/repositories/dashboard-stats.repository";
-import { DashboarStats } from "../../dtos/dashboard-stats.dto";
+import { DashboardStats } from "../../dtos/dashboard-stats.dto";
 
 export class GetDashboardStatsUseCase {
 
     constructor(private readonly statsRepository: DashboardStatsRepository){}
 
-    public async execute(): Promise<DashboarStats> {
+    public async execute(): Promise<DashboardStats> {
 
         const [ kpis, salesByDate, purchasesByDate, topProduct, productsWithoutSales ] = await Promise.all([
             this.statsRepository.getKpis(),

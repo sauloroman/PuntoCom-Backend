@@ -1,6 +1,6 @@
 import { SaleService } from "../application/services/sale.service";
 import { ReduceStockUseCase } from "../application/usecases/product/reduce-stock.use-case";
-import { GetFilteredSalesByUserUseCase, GetFilteredSalesUseCase, GetSaleByIdUseCase, GetSalesByUserUseCase, ListSalesUseCase, SaveSaleUseCase } from "../application/usecases/sale";
+import { FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveSaleUseCase } from "../application/usecases/sale";
 import { SaveDetailSaleUseCase } from "../application/usecases/sale/save-detail-save.use-case";
 import { PrismaDatasource } from "../infrastructure/datasource/prisma/prisma-client";
 import { PrismaProductDatasource } from "../infrastructure/datasource/prisma/prisma-product.datasource";
@@ -36,19 +36,15 @@ export class SaleContainer {
         const saveSaleDetailUC = new SaveDetailSaleUseCase( saleRepository )
         const listSalesUC = new ListSalesUseCase( saleRepository )
         const reduceStockUC = new ReduceStockUseCase( productRepository )
-        const getSalesByUserUC = new GetSalesByUserUseCase( saleRepository, userRepository )
-        const getFilteredSalesUC = new GetFilteredSalesUseCase( saleRepository )
-        const getFilteredSalesByUserUC = new GetFilteredSalesByUserUseCase( saleRepository, userRepository )
         const getSaleByIdUC = new GetSaleByIdUseCase(saleRepository)
+        const filterSalesUC = new FilterSalesUseCase(saleRepository)
 
         const saleService = new SaleService({
             saveSaleUC: saveSaleUC,
             saveSaleDetailUC: saveSaleDetailUC,
             reduceStockUC: reduceStockUC,
             listSalesUC: listSalesUC,
-            getSalesByUserUC: getSalesByUserUC,
-            getFilteredSalesUC: getFilteredSalesUC,
-            getFilteredSalesByUserUC: getFilteredSalesByUserUC,
+            filterSalesUC: filterSalesUC,
             getSaleByIdUC: getSaleByIdUC
         })
 

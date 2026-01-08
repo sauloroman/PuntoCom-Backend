@@ -2,6 +2,7 @@ import { Router } from "express";
 import { DashboardStatsController } from "../controllers/dashboard-stats.controller";
 import { ValidateRolesMiddleware } from "../middlewares";
 import { RoleEnum } from "../../../generated/prisma";
+import { Auth } from "../middlewares/auth";
 
 interface DashboardStatsRoutesI {
     controller: DashboardStatsController
@@ -19,6 +20,8 @@ export class DashboardStatsRoutes {
 
     private initRoutes(): Router {
         const router = Router()
+
+        router.use([Auth.Logged])
 
         router.get('/stats', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)

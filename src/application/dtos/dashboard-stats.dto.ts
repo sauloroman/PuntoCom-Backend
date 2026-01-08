@@ -21,3 +21,15 @@ export interface ProductWithoutSales {
     productName: string
     stock: number
 }
+
+export interface DashboardStats {
+    kpis: DashboardKpis,
+    charts: {
+        salesByDate: ChartPoint[],
+        purchasesByDate: ChartPoint[]
+    },
+    insights: {
+        topProduct: TopProductStats | null,
+        productsWithoutSales: ProductWithoutSales[]
+    }
+}

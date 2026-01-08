@@ -1,3 +1,4 @@
+// Sale Creation
 export interface SaveSale {
     total: number,
     userId: string, 
@@ -10,21 +11,20 @@ export interface SaleDetail {
     discount: number
 }
 
-export interface SaleResponse {
-    id: string
-    date: Date | string,
-    total: number,
-    code: string,
-    User?: {
-        id: string,
-        name: string,
-        role: string
-    }
+export interface SaleProductDetail {
+    id: string,
+    saleQuantity: number,
+    saleUnitPrice: number,
+    saleDiscount: number,
+    productId: string,
+    saleId: string,
 }
 
+// Sale Filter
+
 export interface SalePriceRange {
-    priceMin: number,
-    priceMax: number
+    minPrice: number,
+    maxPrice: number
 }
 
 export interface SaleDateRange {
@@ -34,20 +34,22 @@ export interface SaleDateRange {
 
 export interface SaleFilters {
     prices?: SalePriceRange,
-    dates?: SaleDateRange
+    dates?: SaleDateRange,
+    user?: string
 }
 
-export interface SaleDetailsResponse {
-    id: string
-    date: Date | string,
-    total: number,
-    code: string,
+// Responses
+
+export interface SaleResponse {
+    saleId: string
+    saleDate: Date | string,
+    saleTotal: number,
+    saleCode: string,
     User?: {
         id: string,
         name: string,
         role: string
-    },
-    details: SaleProductDetailResponse[]
+    }
 }
 
 export interface SaleProductDetailResponse {
@@ -64,11 +66,7 @@ export interface SaleProductDetailResponse {
     }
 }
 
-export interface SaleProductDetail {
-    id: string,
-    saleQuantity: number,
-    saleUnitPrice: number,
-    saleDiscount: number,
-    productId: string,
-    saleId: string,
+export interface SaleDetailsResponse {
+    sale: SaleResponse,
+    details: SaleProductDetailResponse[]
 }

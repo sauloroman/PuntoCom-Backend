@@ -8,7 +8,7 @@ export class PurchasesController {
 
     constructor(private readonly purchaseService: PurchaseService ){}
 
-    public listPurchases = async (req: Request, res: Response) => {
+    public filterPurchases = async (req: Request, res: Response) => {
         const { page, limit, minPrice, maxPrice, dateFrom, dateTo, user, supplier } = req.query
         const sort = (req as any).sort
 
@@ -63,7 +63,7 @@ export class PurchasesController {
 
     }
 
-    public getPurchases = async (req: Request, res: Response) => {
+    public listPurchases = async (req: Request, res: Response) => {
         const { page, limit } = req.query
         const sort = (req as any).sort
         

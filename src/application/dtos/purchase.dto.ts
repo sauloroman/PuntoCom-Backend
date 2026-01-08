@@ -40,7 +40,7 @@ export interface PurchaseDetailResponse {
     }
 }
 
-export interface PurchaseDetailsReponse {
+export interface PurchaseDetailsResponse {
     purchase: PurchaseResponse,
     details: PurchaseDetailResponse[]
 }

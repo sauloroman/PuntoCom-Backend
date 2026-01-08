@@ -30,12 +30,12 @@ export class PurchaseRoutes {
         router.get('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
             MapperFilterMiddleware.ToPrisma()  
-        ], this.controller.getPurchases)
+        ], this.controller.listPurchases)
 
         router.get('/filter', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
             MapperFilterMiddleware.ToPrisma()
-        ], this.controller.listPurchases )
+        ], this.controller.filterPurchases )
 
         return router
     }

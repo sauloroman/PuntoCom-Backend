@@ -21,34 +21,23 @@ export class SaleRoutes {
         const router = Router()
         router.use([Auth.Logged])
 
+        router.post('/', this.controller.saveSale )
+
         router.get('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             MapperFilterMiddleware.ToPrisma()
-        ], this.controller.getSales )
+        ], this.controller.listSales )
 
         router.get('/filter', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             ValidateFiltersMiddleware.validateSaleFilters(),
             MapperFilterMiddleware.ToPrisma(),
-        ], this.controller.getFilteredSales )
+        ], this.controller.filterSales )
 
         router.get('/:id', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
         ], this.controller.getSaleById)
-
-        router.get('/user/:id', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToPrisma()
-        ], this.controller.getSalesByUser )
         
-        router.get('/filter/user/:id', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            ValidateFiltersMiddleware.validateSaleFilters(),
-            MapperFilterMiddleware.ToPrisma(),
-        ], this.controller.getFilteredSalesByUser )
-        
-        router.post('/', this.controller.saveSale )
-
         return router;  
     }
 

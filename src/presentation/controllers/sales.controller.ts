@@ -8,7 +8,32 @@ export class SalesController {
 
     constructor(private readonly saleService: SaleService){}
 
-    public getSales = async (req: Request, res: Response) => {
+    private formatFilters( req: Request ): SaleFilters {
+        const { minPrice, maxPrice, dateFrom, dateTo, user } = req.query
+        const filters: SaleFilters = {}
+
+        if ( minPrice && maxPrice ) {
+            filters.prices = {
+                minPrice: Number(minPrice),
+                maxPrice: Number(maxPrice)
+            }
+        }
+
+        if ( dateFrom && dateTo ) {
+            filters.dates = {
+                dateFrom: new Date(dateFrom as string),
+                dateTo: new Date(dateTo as string)
+            }
+        }
+
+        if ( user ) {
+            filters.user = user as string
+        }
+
+        return filters
+    }
+
+    public listSales = async (req: Request, res: Response) => {
         const { page, limit } = req.query
         const sort = (req as any).sort
 
@@ -45,127 +70,36 @@ export class SalesController {
         })
     }
 
-    public getFilteredSales = async (req: Request, res: Response) => {
-        const { page, limit, priceMin, priceMax, dateFrom, dateTo } = req.query
-        const sort = (req as any).sort
-
-        const pagination = {
-            page: Number(page),
-            limit: Number(limit),
-            sort: sort as string
-        }
-
-        const filters: SaleFilters = {}
-
-        if ( priceMin && priceMax ) {
-            filters.prices = {
-                priceMin: Number(priceMin),
-                priceMax: Number(priceMax),
-            }
-        }
-
-        if ( dateFrom && dateTo ) {
-            filters.dates = {
-                dateFrom: new Date(dateFrom as string),
-                dateTo: new Date(dateTo as string)
-            }
-        }
-
-        const {
-            items,
-            page: currentPage,
-            total,
-            totalPages
-        } = await this.saleService.getFilteredSales(filters, pagination)
-
-        res.status(200).json({
-            ok: true,
-            meta: {
-                page: currentPage,
-                totalPages,
-                total,
-                filters: {
-                    prices: filters.prices || null,
-                    dates: filters.dates || null
-                }
-            },
-            sales: items
-        })
-    }
-
-    public getFilteredSalesByUser = async (req: Request, res: Response) => {
-        const { id: userId } = req.params
-        const { page, limit, priceMin, priceMax, dateFrom, dateTo } = req.query
-        const sort = (req as any).sort
-
-        const pagination = {
-            page: Number(page),
-            limit: Number(limit),
-            sort: sort as string
-        }
-
-        const filters: SaleFilters = {}
-
-        if ( priceMin && priceMax ) {
-            filters.prices = {
-                priceMin: Number(priceMin),
-                priceMax: Number(priceMax),
-            }
-        }
-
-        if ( dateFrom && dateTo ) {
-            filters.dates = {
-                dateFrom: new Date(dateFrom as string),
-                dateTo: new Date(dateTo as string)
-            }
-        }
-
-        const {
-            items,
-            page: currentPage,
-            total,
-            totalPages
-        } = await this.saleService.getFilteredSalesByUser(userId, filters, pagination)
-
-        res.status(200).json({
-            ok: true,
-            meta: {
-                page: currentPage,
-                totalPages,
-                total,
-                filters: {
-                    prices: filters.prices || null,
-                    dates: filters.dates || null
-                }
-            },
-            sales: items
-        })
-    }
-
-    public getSalesByUser = async (req: Request, res: Response) => {
-        const { id: userId } = req.params
+    public filterSales = async (req: Request, res: Response) => {
         const { page, limit } = req.query
         const sort = (req as any).sort
 
         const pagination = {
             page: Number(page),
             limit: Number(limit),
-            sort: sort as string,
+            sort: sort as string
         }
 
-        const { 
+        const filters = this.formatFilters(req)
+
+        const {
             items,
             page: currentPage,
             total,
             totalPages
-        } = await this.saleService.getSalesByUser( userId, pagination )
+        } = await this.saleService.filterSales(filters, pagination)
 
         res.status(200).json({
             ok: true,
             meta: {
                 page: currentPage,
                 totalPages,
-                total
+                total,
+                filters: {
+                    prices: filters.prices || null,
+                    dates: filters.dates || null,
+                    user: filters.user || null
+                }
             },
             sales: items
         })

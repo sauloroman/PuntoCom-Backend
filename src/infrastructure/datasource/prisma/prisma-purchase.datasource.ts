@@ -1,7 +1,7 @@
 import {PrismaClient, Purchase as PrismaPurchase, Purchase_Detail as PrismaPurchaseDetail, Product as PrismaProduct, Supplier as PrismaSupplier, User as PrismaUser } from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { PurchaseDetailResponse, PurchaseDetailsReponse, PurchaseFilters, PurchaseResponse } from "../../../application/dtos/purchase.dto";
+import { PurchaseDetailResponse, PurchaseDetailsResponse, PurchaseFilters, PurchaseResponse } from "../../../application/dtos/purchase.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { PurchaseDatasource } from "../../../domain/datasources/purchase.datasource";
 import { Purchase, PurchaseDetail } from "../../../domain/entities";
@@ -101,7 +101,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
         return where
     }
 
-    async filterPurchases(filter: PurchaseFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsReponse>> {
+    async filterPurchases(filter: PurchaseFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsResponse>> {
         try {
             const { page, limit, orderBy, where, skip, take } = buildPaginationOptions(pagination)
             const filterWhere = this.buildWhereClause(where, filter)
@@ -127,7 +127,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
 
             const totalPages = Math.ceil( total / limit )
 
-            const purchasesWithDetails: PurchaseDetailsReponse[] = purchases.map( purchase => ({
+            const purchasesWithDetails: PurchaseDetailsResponse[] = purchases.map( purchase => ({
                 purchase: this.toDomain(purchase),
                 details: purchase.PurchaseDetails.map( this.toDomainPurchaseDetail )      
             }))
@@ -147,7 +147,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
         }
     }
 
-    async getPurchases(pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsReponse>> {
+    async getPurchases(pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsResponse>> {
         try {
 
             const { limit, orderBy, page, skip, take, where } = buildPaginationOptions( pagination )
@@ -173,7 +173,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
 
             const totalPages = Math.ceil( total / limit )
 
-            const purchasesWithDetails: PurchaseDetailsReponse[] = purchases.map( purchase => ({
+            const purchasesWithDetails: PurchaseDetailsResponse[] = purchases.map( purchase => ({
                 purchase: this.toDomain(purchase),
                 details: purchase.PurchaseDetails.map( this.toDomainPurchaseDetail )      
             }))

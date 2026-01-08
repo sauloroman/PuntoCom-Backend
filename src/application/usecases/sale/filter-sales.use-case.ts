@@ -2,16 +2,16 @@ import { SalesRepository } from "../../../domain/repositories/sale.repository";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
 import { SaleDetailsResponse, SaleFilters } from "../../dtos/sale.dto";
 
-export class GetFilteredSalesUseCase {
+export class FilterSalesUseCase {
 
-    constructor(private readonly saleRepository: SalesRepository){}
+    constructor(private readonly salesRepository: SalesRepository){}
 
     public async execute( filter: SaleFilters, pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
-        if ( !filter.prices && !filter.dates ) {
-            return await this.saleRepository.getSales(pagination)
+        if ( !filter.prices && !filter.dates && !filter.user ) {
+            return await this.salesRepository.getSales(pagination)
         }
 
-        return await this.saleRepository.getFilteredSales(filter, pagination)
+        return await this.salesRepository.filterSales(filter, pagination)
     }
 
 }

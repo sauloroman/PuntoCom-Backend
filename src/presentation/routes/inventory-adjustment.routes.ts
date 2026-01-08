@@ -32,10 +32,6 @@ export class InventoryAdjustmentRoutes {
             MapperFilterMiddleware.ToPrisma()
         ], this.controller.getInventoryAdjustments )
 
-        // router.get('/user/:id', [
-
-        // ])
-
         return router
     }
 

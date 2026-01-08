@@ -26,6 +26,12 @@ export class SaleRoutes {
             MapperFilterMiddleware.ToPrisma()
         ], this.controller.getSales )
 
+        router.get('/filter', [
+            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
+            ValidateFiltersMiddleware.validateSaleFilters(),
+            MapperFilterMiddleware.ToPrisma(),
+        ], this.controller.getFilteredSales )
+
         router.get('/:id', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
         ], this.controller.getSaleById)
@@ -34,12 +40,6 @@ export class SaleRoutes {
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             MapperFilterMiddleware.ToPrisma()
         ], this.controller.getSalesByUser )
-        
-        router.get('/filter', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            ValidateFiltersMiddleware.validateSaleFilters(),
-            MapperFilterMiddleware.ToPrisma(),
-        ], this.controller.getFilteredSales )
         
         router.get('/filter/user/:id', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),

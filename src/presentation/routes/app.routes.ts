@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { UserRoutes, CategoryRoutes, SupplierRoutes, SaleRoutes, ProductRoutes, ReportRoutes, InventoryAdjustmentRoutes } from './';
+import { UserRoutes, CategoryRoutes, SupplierRoutes, SaleRoutes, ProductRoutes, ReportRoutes, InventoryAdjustmentRoutes, DashboardStatsRoutes } from './';
 import { ErrorHandlerMiddleware } from '../middlewares/error-handler.middleware';
 import { PurchaseRoutes } from './purchase.routes';
 
@@ -12,6 +12,7 @@ interface AppRoutesOptions {
   saleRoutes: SaleRoutes,
   purchaseRoutes: PurchaseRoutes,
   inventoryAdjustmentRoutes: InventoryAdjustmentRoutes
+  dashboardStatsRoutes: DashboardStatsRoutes
 }
 
 export class AppRoutes {
@@ -25,6 +26,7 @@ export class AppRoutes {
   private readonly saleRoutes: SaleRoutes
   private readonly purchaseRoutes: PurchaseRoutes
   private readonly inventoryAdjustmentRoutes: InventoryAdjustmentRoutes
+  private readonly dashboardStatsRoutes: DashboardStatsRoutes
 
   constructor({ 
     userRoutes, 
@@ -34,7 +36,8 @@ export class AppRoutes {
     reportRoutes,
     saleRoutes,
     purchaseRoutes,
-    inventoryAdjustmentRoutes
+    inventoryAdjustmentRoutes,
+    dashboardStatsRoutes
   }: AppRoutesOptions) {
     this.userRoutes = userRoutes
     this.categoryRoutes = categoryRoutes
@@ -44,6 +47,7 @@ export class AppRoutes {
     this.saleRoutes = saleRoutes
     this.purchaseRoutes = purchaseRoutes
     this.inventoryAdjustmentRoutes = inventoryAdjustmentRoutes
+    this.dashboardStatsRoutes = dashboardStatsRoutes
     this.routes = this.initRoutes()
   }
 
@@ -57,6 +61,7 @@ export class AppRoutes {
     router.use('/api/sale', this.saleRoutes.routes )
     router.use('/api/purchase', this.purchaseRoutes.routes )
     router.use('/api/inventory-adjustment', this.inventoryAdjustmentRoutes.routes )
+    router.use('/api/dashboard-stats', this.dashboardStatsRoutes.routes )
     router.use( ErrorHandlerMiddleware.getHandler() )
     return  router
   }

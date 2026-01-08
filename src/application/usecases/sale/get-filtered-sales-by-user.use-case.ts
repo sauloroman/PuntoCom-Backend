@@ -13,6 +13,7 @@ export class GetFilteredSalesByUserUseCase {
 
     public async execute( userId: string, filter: SaleFilters, pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
         const existingUser = await this.userRepositoy.findById(userId)
+        
         if ( !existingUser ) throw new ApplicationError(`El usuario con id ${userId} no existe`, 'USER_NOT_FOUND')        
        
         if ( !filter.prices && !filter.dates ) {

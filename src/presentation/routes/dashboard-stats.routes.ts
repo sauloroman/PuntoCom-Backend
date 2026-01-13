@@ -43,6 +43,10 @@ export class DashboardStatsRoutes {
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
         ], this.controller.getProductsWithoutSales)
 
+        router.get('/sales-percentage-users', [
+            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
+        ], this.controller.getSalesPercentagesByUser )
+
         return router
     }
 

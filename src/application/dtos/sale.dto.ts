@@ -48,7 +48,8 @@ export interface SaleResponse {
     User?: {
         id: string,
         name: string,
-        role: string
+        role: string,
+        image: string
     }
 }
 

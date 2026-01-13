@@ -1,5 +1,6 @@
 import { DashboardStatsService } from "../application/services"
 import { 
+    GetDashboardSalesPercentageByUserUseCase,
     GetDashboardStatsUseCase, 
     GetProductsWithoutSalesUseCase, 
     GetPurchasesByDateUseCase, 
@@ -8,7 +9,6 @@ import {
 } from "../application/usecases/dashboard"
 import { DashboardStatsController } from "../presentation/controllers"
 import { DashboardStatsRoutes } from "../presentation/routes"
-
 import { PrismaDashboardStatsDatasource, PrismaDatasource } from "../infrastructure/datasource/prisma"
 import { DashboardStatsRepositoryImp } from "../infrastructure/repositories"
 
@@ -27,13 +27,15 @@ export class DashboardStatsContainer {
         const getPurchasesChartUC = new GetPurchasesByDateUseCase( dashboardStatsRepository )
         const getTopProductsUC = new GetTopSellingProductUseCase( dashboardStatsRepository )
         const getProductsWithoutSalesUC = new GetProductsWithoutSalesUseCase( dashboardStatsRepository )
+        const getSalesPercentageByUserUC = new GetDashboardSalesPercentageByUserUseCase( dashboardStatsRepository )
 
         const dashboardStatsService = new DashboardStatsService({
             getDashboardStatsUC,
             getProductsWithoutSalesUC,
             getPurchasesChartUC,
             getSalesChartUC,
-            getTopProductsUC
+            getTopProductsUC,
+            getSalesPercentageByUserUC
         })
 
         const dashboardStatsController = new DashboardStatsController(dashboardStatsService)

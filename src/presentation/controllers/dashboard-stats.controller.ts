@@ -21,6 +21,14 @@ export class DashboardStatsController {
         })
     }
 
+    public getSalesPercentagesByUser = async (_req: Request, res: Response) => {
+        const chart = await this.dashboardStatsService.getSalesPercentageByUser()
+        res.status(200).json({
+            ok: true,
+            chart
+        })
+    }
+
     public getPurchasesChart = async (_req: Request, res: Response) => {
         const chart = await this.dashboardStatsService.getPurchasesChart()
         res.status(200).json({

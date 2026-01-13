@@ -3,7 +3,8 @@ import {
     DashboardKpis,
     ChartPoint,
     TopProductStats,
-    ProductWithoutSales
+    ProductWithoutSales,
+    SalesByUserStats
 } from "../../../application/dtos/dashboard-stats.dto";
 import { DashboardStatsDatasource } from "../../../domain/datasources/dashboard-stats.datasource";
 import { InfrastructureError } from "../../errors/infrastructure-error";
@@ -11,6 +12,57 @@ import { InfrastructureError } from "../../errors/infrastructure-error";
 export class PrismaDashboardStatsDatasource implements DashboardStatsDatasource {
 
     constructor(private readonly prisma: PrismaClient){}
+    
+    public async getSalesPercentageByUser(): Promise<SalesByUserStats[]> {
+        try {
+            const salesByUser = await this.prisma.sale.groupBy({
+                by: ['user_id'],
+                _sum: { sale_total: true }
+            })
+
+            if (!salesByUser.length) return []
+
+            const totalSales = salesByUser.reduce(
+                (acc, s) => acc + Number(s._sum.sale_total ?? 0),
+                0
+            )
+
+            const users = await this.prisma.user.findMany({
+                where: {
+                    user_id: { in: salesByUser.map(s => s.user_id!) }
+                },
+                select: {
+                    user_id: true,
+                    user_name: true,
+                    user_lastname: true
+                }
+            })
+
+            return salesByUser.map(sale => {
+                const user = users.find(u => u.user_id === sale.user_id)
+
+                const userTotal = Number(sale._sum.sale_total ?? 0)
+                const percentage = totalSales > 0
+                    ? Number(((userTotal / totalSales) * 100).toFixed(2))
+                    : 0
+
+                return {
+                    userId: sale.user_id!,
+                    userName: `${user?.user_name ?? ''} ${user?.user_lastname ?? ''}`.trim(),
+                    totalSales: userTotal,
+                    percentage
+                }
+            })
+
+        } catch (error) {
+            throw new InfrastructureError(
+                '[PRISMA]: Error obteniendo porcentaje de ventas por usuario',
+                'PRISMA_DASHBOARD_SALES_BY_USER_PERCENTAGE_ERROR',
+                error
+            )
+        }
+    }
+
 
     public async getKpis(): Promise<DashboardKpis> {
         try {

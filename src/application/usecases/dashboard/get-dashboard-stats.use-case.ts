@@ -7,23 +7,25 @@ export class GetDashboardStatsUseCase {
 
     public async execute(): Promise<DashboardStats> {
 
-        const [ kpis, salesByDate, purchasesByDate, topProduct, productsWithoutSales ] = await Promise.all([
+        const [ kpis, salesByDate, purchasesByDate, topProduct, productsWithoutSales, salesPercentageByUser ] = await Promise.all([
             this.statsRepository.getKpis(),
             this.statsRepository.getSalesByDate(),
             this.statsRepository.getPurchasesByDate(),
             this.statsRepository.getTopSellingProduct(),
-            this.statsRepository.getProductsWithoutSales()
+            this.statsRepository.getProductsWithoutSales(),
+            this.statsRepository.getSalesPercentageByUser()
         ])
 
         return {
             kpis,
             charts: {
                 salesByDate,
-                purchasesByDate
+                purchasesByDate,
+                salesPercentageByUser,
             },
             insights: {
                 topProduct,
-                productsWithoutSales
+                productsWithoutSales,
             }
         }
         

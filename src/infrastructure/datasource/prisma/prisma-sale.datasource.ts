@@ -40,7 +40,8 @@ export class PrismaSalesDatasource implements SalesDatasource {
             User: saleData.User && {
                 id: saleData.User.user_id,
                 name: `${saleData.User.user_name} ${saleData.User.user_lastname}`,
-                role: saleData.User.role
+                role: saleData.User.role,
+                image: saleData.User.user_image
             }
         }
     }

@@ -2,7 +2,8 @@ import {
     DashboardKpis,
     ChartPoint,
     TopProductStats,
-    ProductWithoutSales
+    ProductWithoutSales,
+    SalesByUserStats
 } from "../../application/dtos/dashboard-stats.dto";
 
 export abstract class DashboardStatsDatasource {
@@ -11,4 +12,5 @@ export abstract class DashboardStatsDatasource {
     abstract getPurchasesByDate(): Promise<ChartPoint[]>
     abstract getTopSellingProduct(): Promise<TopProductStats | null>
     abstract getProductsWithoutSales(): Promise<ProductWithoutSales[]>
+    abstract getSalesPercentageByUser(): Promise<SalesByUserStats[]>
 }

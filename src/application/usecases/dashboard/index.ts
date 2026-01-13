@@ -1,4 +1,5 @@
 export { GetDashboardKpisUseCase } from './get-dashboard-kpis.use-case'
+export { GetDashboardSalesPercentageByUserUseCase } from './get-dashboard-sales-percentage-by-user.use-case'
 export { GetDashboardStatsUseCase } from './get-dashboard-stats.use-case'
 export { GetProductsWithoutSalesUseCase } from './get-products-without-sales.use-case'
 export { GetPurchasesByDateUseCase } from './get-purchases-by-date.use-case'

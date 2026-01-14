@@ -5,7 +5,7 @@ export function resetPasswordEmailTemplate(
   token: string
 ): string {
 
-  const url = `${EnvAdapter.FRONTEND_URL}/reset-password/${token}`;
+  const url = `${EnvAdapter.FRONTEND_URL}/auth/change-password/${token}`;
   const year = new Date().getFullYear();
 
   return `

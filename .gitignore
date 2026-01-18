@@ -5,3 +5,5 @@ postgres/
 .env
 generated/
 /generated/prisma
+
+uploads/

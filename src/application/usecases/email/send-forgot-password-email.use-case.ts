@@ -5,14 +5,15 @@ export class SendForgotPasswordEmailUseCase {
 
     constructor( private readonly emailService: EmailService ){}
 
-    public async execute({ token, username, userEmail }: SendForgotPassword) {
+    public async execute({ token, username, userEmail, code }: SendForgotPassword) {
         await this.emailService.sendForgotPasswordEmail({
             meta: {
                 to: userEmail,
                 subject: 'PuntoCom - Reestablece tu contraseña'
             },
             token: token,
-            username: username
+            username: username,
+            code: code
         })
     }
 

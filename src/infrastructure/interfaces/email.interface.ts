@@ -26,7 +26,8 @@ export interface SendDeactivationAccountI {
 export interface SendForgotPasswordI {
   meta: SendEmailI,
   username: string,
-  token: string
+  token: string,
+  code: string
 }
 
 export interface SendForgotPasswordMobileI {

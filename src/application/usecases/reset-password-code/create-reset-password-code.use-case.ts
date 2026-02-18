@@ -16,28 +16,40 @@ export class CreateResetPassCodeUseCase {
         
         await this.resetPassCodeDatasource.deleteAllCodesByUserId(userId)
 
-        let resetPassCodeValue = CodeGeneratorAdapter.generateNumericCode(this.CODE_LENGTH)
-
+        const resetPassCodeValue = await this.generateUniqueCode()
         const createdAt = DatesAdapter.now()
         const expiresAt = DatesAdapter.addMinutes( createdAt, 15 )
 
         const resetPassCode = new PasswordResetCode({
+            resetId: IDAdapter.generate(),
             code: new CodeValue( resetPassCodeValue ),
             createdAt: createdAt,
             expiresAt: expiresAt,
             userId: userId
         }) 
 
-        const code = await this.resetPassCodeDatasource.save( resetPassCode )
+        await this.resetPassCodeDatasource.save( resetPassCode )
 
         return {
-            id: code.id,
-            code: code.code.value,
-            createdAt: DatesAdapter.formatLocal( DatesAdapter.toLocal(code.createdAt) ),
-            expiresAt: DatesAdapter.formatLocal( DatesAdapter.toLocal(code.expiresAt) ),
-            userId: code.userId
+            id: resetPassCode.id,
+            code: resetPassCode.code.value,
+            createdAt: DatesAdapter.formatLocal( DatesAdapter.toLocal(resetPassCode.createdAt) ),
+            expiresAt: DatesAdapter.formatLocal( DatesAdapter.toLocal(resetPassCode.expiresAt) ),
+            userId: resetPassCode.userId
         }
 
+    }
+
+    private async generateUniqueCode(): Promise<string> {
+        let resetPasswordCode = ''
+        let existingCode: PasswordResetCode | null = null
+
+        do {
+            resetPasswordCode = CodeGeneratorAdapter.generateNumericCode(this.CODE_LENGTH)
+            existingCode = await this.resetPassCodeDatasource.findByCode( resetPasswordCode )
+        } while( existingCode )
+
+        return resetPasswordCode
     }
 
 }

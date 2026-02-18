@@ -18,16 +18,13 @@ import {
 } from '../usecases/verification-code';
 import { 
   SendChangePasswordEmailUseCase, 
-  SendDeactivationAccountEmailUseCase, 
-  SendForgotPasswordEmailMobileUseCase, 
-  SendForgotPasswordEmailUseCase, 
-  SendVerificationCodeEmailMobileUseCase, 
+  SendDeactivationAccountEmailUseCase,  
+  SendForgotPasswordEmailUseCase,  
   SendVerificationCodeEmailUseCase 
 } from '../usecases/email';
 import { ApplicationError } from '../errors/application.error';
 import { UpdateUserUseCase } from '../usecases/user/update-user.use-case';
 import { 
-  ChangePasswordMobileRequestDtoI,
   ChangePasswordRequestDtoI, 
   CheckAdminPasswordDtoI, 
   CreateUserRequestDtoI, 
@@ -62,9 +59,7 @@ interface UserServiceI {
   
   sendDeactivationEmailUC: SendDeactivationAccountEmailUseCase
   sendVerificationCodeEmailUC: SendVerificationCodeEmailUseCase
-  sendVerificationCodeEmailMobileUC: SendVerificationCodeEmailMobileUseCase
   sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
-  sendForgotPasswordEmaiMobileUC: SendForgotPasswordEmailMobileUseCase
   sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
   uploadUserImageUC: UploadImageUseCase
@@ -92,11 +87,9 @@ export class UserService {
   private readonly getVerificationCodeUC: GetVerificationCodeUseCase
   private readonly getResetPassCodeUC: GetPasswordResetCodeUseCase
 
-  private readonly sendVerificationCodeEmailMobileUC: SendVerificationCodeEmailMobileUseCase
   private readonly sendDeactivationEmailUC: SendDeactivationAccountEmailUseCase
   private readonly sendVerificationCodeEmailUC: SendVerificationCodeEmailUseCase
   private readonly sendForgotPasswordEmailUC: SendForgotPasswordEmailUseCase
-  private readonly sendForgotPasswordEmaiMobileUC: SendForgotPasswordEmailMobileUseCase
   private readonly sendChangePasswordEmaiUC: SendChangePasswordEmailUseCase
 
   private readonly uploadUserImageUC: UploadImageUseCase
@@ -122,9 +115,7 @@ export class UserService {
     getResetPassCodeUC,
     sendDeactivationEmailUC,
     sendVerificationCodeEmailUC,
-    sendVerificationCodeEmailMobileUC,
     sendForgotPasswordEmailUC,
-    sendForgotPasswordEmaiMobileUC,
     sendChangePasswordEmaiUC,
     uploadUserImageUC,
     destroyUserImageUC,
@@ -147,10 +138,8 @@ export class UserService {
     this.getVerificationCodeUC = getVerificationCodeUC
     this.getResetPassCodeUC = getResetPassCodeUC
     this.sendDeactivationEmailUC = sendDeactivationEmailUC
-    this.sendVerificationCodeEmailMobileUC = sendVerificationCodeEmailMobileUC
     this.sendVerificationCodeEmailUC = sendVerificationCodeEmailUC
     this.sendForgotPasswordEmailUC = sendForgotPasswordEmailUC
-    this.sendForgotPasswordEmaiMobileUC = sendForgotPasswordEmaiMobileUC
     this.sendChangePasswordEmaiUC = sendChangePasswordEmaiUC
     this.uploadUserImageUC = uploadUserImageUC
     this.destroyUserImageUC = destroyUserImageUC
@@ -259,25 +248,17 @@ export class UserService {
     return await this.changeStatusUC.execute({ userId }, true)
   }
 
-  async forgotPassword( dto: ForgotPasswordRequestI, isMobile: boolean ) {
+  async forgotPassword( dto: ForgotPasswordRequestI ) {
     const user = await this.getUserByEmail(dto?.email!)
     const {code} = await this.createResetPassCodeUC.execute({ userId: user.id! })
-    
-    if ( isMobile ) {
-      await this.sendForgotPasswordEmaiMobileUC.execute({
-        code: code,
-        userEmail: user.email,
-        userName: user.name
-      })
-    } else {
-      const token = await JwtAdapter.generateJWT({ id: user.id }) as string
-      await this.sendForgotPasswordEmailUC.execute({
-        userEmail: user.email, 
-        token,
-        username: user.name
-      })
-    }
+    const token = await JwtAdapter.generateJWT({ id: user.id }) as string
 
+    await this.sendForgotPasswordEmailUC.execute({
+      userEmail: user.email, 
+      username: user.name,
+      token,
+      code: code,
+    })
   }
 
   async changePassword( dto: ChangePasswordRequestDtoI ) {

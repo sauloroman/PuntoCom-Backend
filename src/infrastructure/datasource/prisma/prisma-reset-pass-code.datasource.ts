@@ -39,7 +39,7 @@ export class PrismaResetPasswordCode implements ResetPasswordCodeDatasource {
 
     public async deleteAllCodesByUserId(userId: string): Promise<void> {
         try {
-           await this.prismaClient.passwordResetCode.findMany({ where: { user_id: userId }})
+           await this.prismaClient.passwordResetCode.deleteMany({ where: { user_id: userId }})
         } catch (error) {
             throw new InfrastructureError(
                 `Error al eliminar código de recuperación de contraseña asociados al usuario: ${userId}`,

@@ -144,24 +144,11 @@ export class UserController {
   public forgotPassword = async(req: Request, res: Response) => {
     const [ dto, error ] = ForgotPasswordUserValidator.validate( req.body )
     if (error) throw new ValidationError(error, 'FORGOT_PASSWORD__USER_VALIDATION_ERROR')
-    await this.userService.forgotPassword( dto!, false )
+    await this.userService.forgotPassword( dto! )
     res.status(200).json({
       ok: true,
       message: `Se ha enviado un correo electrónico a ${dto?.email}. Revisa tu bandeja y sigue las instrucciones.`
     })
-
-  }
-
-  public forgotPasswordMobile = async(req: Request, res: Response) => {
-    const [ dto, error ] = ForgotPasswordUserValidator.validate( req.body )
-    if (error) throw new ValidationError(error, 'FORGOT_PASSWORD__USER_VALIDATION_ERROR')
-    await this.userService.forgotPassword( dto!, true )
-    res.status(200).json({
-      ok: true,
-      email: dto?.email,
-      message: `Se ha enviado un código de recuperación al correo ${dto?.email}`
-    })
-
   }
 
   public validatePasswordResetCode = async (req: Request, res: Response) => {

@@ -2,7 +2,8 @@ import { EnvAdapter } from "../../plugins";
 
 export function resetPasswordEmailTemplate(
   name: string,
-  token: string
+  token: string,
+  code: string | number
 ): string {
 
   const url = `${EnvAdapter.FRONTEND_URL}/auth/change-password/${token}`;
@@ -25,13 +26,29 @@ export function resetPasswordEmailTemplate(
         
         <div style="padding:30px; text-align:center;">
           <h1 style="color:#1e3a8a; font-size:24px; margin-bottom:15px;">Hola, ${name}</h1>
+          
           <p style="font-size:16px; color:#555; line-height:1.5; margin:0 0 15px;">
             Hemos recibido una solicitud para restablecer tu contraseña.<br>
-            Si fuiste tú, haz clic en el siguiente botón para crear una nueva:
+            Puedes usar el siguiente código de verificación. Presiona en el botón para ingresarlo:
           </p>
+
+          <!-- Código destacado -->
+          <div style="
+            margin:20px auto;
+            padding:15px;
+            background:#f1f5ff;
+            border:2px dashed #2563eb;
+            border-radius:8px;
+            font-size:22px;
+            font-weight:bold;
+            color:#1e3a8a;
+            letter-spacing:3px;
+            width:fit-content;">
+            ${code}
+          </div>
           
           <a href="${url}" 
-            style="display:inline-block; margin-top:25px; padding:12px 25px; background-color:#2563eb; color:white; text-decoration:none; border-radius:6px; font-weight:bold;">
+            style="display:inline-block; margin-top:20px; padding:12px 25px; background-color:#2563eb; color:white; text-decoration:none; border-radius:6px; font-weight:bold;">
             Crear nueva contraseña
           </a>
           

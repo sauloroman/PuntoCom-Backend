@@ -33,7 +33,8 @@ export interface SendForgotPasswordMobile {
 export interface SendForgotPassword {
   userEmail: string
   username: string,
-  token: string
+  token: string,
+  code: string,
 }
 
 export interface SendVerificationCode {

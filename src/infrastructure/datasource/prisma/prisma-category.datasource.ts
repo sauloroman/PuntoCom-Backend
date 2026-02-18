@@ -19,7 +19,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             return categories.map(this.toDomain)
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener todas las categorias',
+                'Error al obtener todas las categorias',
                 'PRISMA_FIND_CATEGORIES',
                  error
             );
@@ -33,7 +33,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             return this.toDomain(category)
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener la categoría por id',
+                'Error al obtener la categoría por id',
                 'PRISMA_FIND_CATEGORY_BY_ID_ERROR',
                  error
             );
@@ -47,7 +47,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             return this.toDomain( category )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener la categoría por nombre',
+                'Error al obtener la categoría por nombre',
                 'PRISMA_FIND_CATEGORY_BY_NAME_ERROR',
                  error
             );
@@ -60,7 +60,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             return this.toDomain( categoryCreated )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al crear la categoría',
+                'Error al crear la categoría',
                 'PRISMA_CREATE_CATEGORY_ERROR',
                  error
             );
@@ -76,7 +76,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             return this.toDomain( categoryUpdated )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al actualizar la categoría',
+                'Error al actualizar la categoría',
                 'PRISMA_CREATE_CATEGORY_ERROR',
                  error
             );
@@ -92,7 +92,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             return this.toDomain( categoryUpdated )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al actualizar la categoría',
+                'Error al actualizar la categoría',
                 'PRISMA_CREATE_CATEGORY_ERROR',
                  error
             );
@@ -120,7 +120,7 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
 
         } catch(error) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener las categorías',
+                'Error al obtener las categorías',
                 'PRISMA_FIND_USERS_BY_FILTER_ERROR',
                 error
             );

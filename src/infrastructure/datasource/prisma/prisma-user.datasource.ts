@@ -23,7 +23,7 @@ export class PrismaUserDatasource implements UserDatasource {
       return users.map( this.toDomain )
     } catch( error ) {
       throw new InfrastructureError(
-        '[Prisma]: Error al obtener todos los usuarios',
+        'Error al obtener todos los usuarios',
         'PRISMA_FIND_USERS_ERROR',
         error
       );
@@ -51,7 +51,7 @@ export class PrismaUserDatasource implements UserDatasource {
 
     } catch( error ) {
       throw new InfrastructureError(
-        '[Prisma]: Error al obtener los usuarios',
+        'Error al obtener los usuarios',
         'PRISMA_FIND_USERS_BY_FILTER_ERROR',
         error
       );
@@ -65,7 +65,7 @@ export class PrismaUserDatasource implements UserDatasource {
       return this.toDomain(userData);
     } catch (error) {
       throw new InfrastructureError(
-        '[Prisma]: Error al obtener el usuario por id',
+        'Error al obtener el usuario por id',
         'PRISMA_FIND_BY_ID_ERROR',
         error
       );    
@@ -79,7 +79,7 @@ export class PrismaUserDatasource implements UserDatasource {
       return this.toDomain(userData);
     } catch (error) {
       throw new InfrastructureError(
-        '[Prisma]: Error al obtener el usuario por email',
+        'Error al obtener el usuario por email',
         'PRISMA_FIND_BY_EMAIL_ERROR',
         error
       );    
@@ -92,7 +92,7 @@ export class PrismaUserDatasource implements UserDatasource {
       return this.toDomain( createdUser )
     } catch (error) {
       throw new InfrastructureError(
-        '[Prisma]: Error al crear el usuario',
+        'Error al crear el usuario',
         'PRISMA_CREATE_ERROR',
         error
       );
@@ -108,7 +108,7 @@ export class PrismaUserDatasource implements UserDatasource {
       return this.toDomain( updatedUser )
     } catch (error) {
       throw new InfrastructureError(
-        '[Prisma]: Error al actualizar el usuario',
+        'Error al actualizar el usuario',
         'PRISMA_UPDATE_ERROR',
         error
       );
@@ -124,7 +124,7 @@ export class PrismaUserDatasource implements UserDatasource {
       return this.toDomain( updatedUser )
     } catch (error) {
       throw new InfrastructureError(
-        '[Prisma]: Error al cambiar el estado del usuario',
+        'Error al cambiar el estado del usuario',
         'PRISMA_DEACTIVATE_ERROR',
         error
       );

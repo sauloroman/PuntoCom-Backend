@@ -15,7 +15,7 @@ export class PrismaVerificationCodeDatasource implements VerificationCodeDatasou
       return this.toDomain( code )
     } catch( error ) {
       throw new InfrastructureError(
-        '[Prisma]: Error obtener el código de verificación',
+        'Error obtener el código de verificación',
         'PRISMA_CREATE_VERIFICATION_CODE',
         error
       )
@@ -27,7 +27,7 @@ export class PrismaVerificationCodeDatasource implements VerificationCodeDatasou
       await this.prismaClient.verificationCode.deleteMany({ where: { user_id: userId }})
     } catch( error ) {
       throw new InfrastructureError(
-        `[Prisma]: Error al eliminar código de verificación asociados al usuario: ${userId}`,
+        `Error al eliminar código de verificación asociados al usuario: ${userId}`,
         'PRISMA_DELETE_VERIFICATION_CODES',
         error
       )
@@ -39,7 +39,7 @@ export class PrismaVerificationCodeDatasource implements VerificationCodeDatasou
       await this.prismaClient.verificationCode.create({ data: this.toPrisma(verificationCode) })
     } catch( error ) {
       throw new InfrastructureError(
-        '[Prisma]: Error al crear el código de verificación',
+        'Error al crear el código de verificación',
         'PRISMA_CREATE_VERIFICATION_CODE',
         error
       )

@@ -27,7 +27,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
             return [...new Set(companies)];
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener las compañias',
+                'Error al obtener las compañias',
                 'PRISMA_GET_COMPANIES_ERROR',
                 error
             );
@@ -41,7 +41,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
             return this.toDomain(supplier)
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener el proveedor por id',
+                'Error al obtener el proveedor por id',
                 'PRISMA_GET_SUPPLIER_BY_ID_ERROR',
                 error
             );
@@ -55,7 +55,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
             return this.toDomain(supplier)
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener el proveedor por empresa',
+                'Error al obtener el proveedor por empresa',
                 'PRISMA_GET_SUPPLIER_BY_ID_ERROR',
                 error
             );
@@ -68,7 +68,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
             return this.toDomain( supplierCreated )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al crear el proveedor',
+                'Error al crear el proveedor',
                 'PRISMA_CREATE_SUPPLIER_ERROR',
                 error
             );
@@ -84,7 +84,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
             return this.toDomain( updatedSupplier )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al actualizar el proveeodr',
+                'Error al actualizar el proveeodr',
                 'PRISMA_UPDATE_SUPPLIER_ERROR',
                 error
             );
@@ -100,7 +100,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
             return this.toDomain( updatedSupplier )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al cambiar el estado del proveedor',
+                'Error al cambiar el estado del proveedor',
                 'PRISMA_CHANGE_SUPPLIER_ERROR',
                 error
             );
@@ -128,7 +128,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
 
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al filtrar los proveedores',
+                'Error al filtrar los proveedores',
                 'PRISMA_FIND_SUPPLIERS_BY_FILTER_ERROR',
                 error
             );
@@ -141,7 +141,7 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
             return suppliers.map( this.toDomain )
         } catch( error ) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener todos los proveedores',
+                'Error al obtener todos los proveedores',
                 'PRISMA_GET_ALL_SUPPLIERS_ERROR',
                 error
             );

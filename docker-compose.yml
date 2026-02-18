@@ -1,5 +1,6 @@
 version: '3.9'
 services:
+
   postgres-db:
     image: postgres:latest
     container_name: puntocom
@@ -12,3 +13,5 @@ services:
       - 5432:5432
     volumes:
       - ./postgres:/data/db
+
+    

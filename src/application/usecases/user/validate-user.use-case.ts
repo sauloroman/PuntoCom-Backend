@@ -1,7 +1,7 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
 import { UserRepository } from "../../../domain/repositories";
-import { Email, Password, Role } from "../../../domain/value-objects";
+import { Email, Password, Phone, Role } from "../../../domain/value-objects";
 import { UserResponseDtoI, ValidateUserI } from "../../dtos/user.dto";
 import { ApplicationError } from "../../errors/application.error";
 
@@ -25,6 +25,7 @@ export class ValidateUserUseCase {
             lastname: exitingUser.lastname,
             name: exitingUser.name,
             password: new Password(exitingUser.password.value),
+            phone: new Phone(exitingUser.phone.value) ?? '',
             role: new Role(exitingUser.role.value),
             createdAt: exitingUser.createdAt,
             updatedAt: DatesAdapter.now()

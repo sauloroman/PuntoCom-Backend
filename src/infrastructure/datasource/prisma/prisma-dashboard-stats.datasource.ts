@@ -56,7 +56,7 @@ export class PrismaDashboardStatsDatasource implements DashboardStatsDatasource 
 
         } catch (error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error obteniendo porcentaje de ventas por usuario',
+                'Error obteniendo porcentaje de ventas por usuario',
                 'PRISMA_DASHBOARD_SALES_BY_USER_PERCENTAGE_ERROR',
                 error
             )
@@ -86,7 +86,7 @@ export class PrismaDashboardStatsDatasource implements DashboardStatsDatasource 
 
         } catch (error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error obteniendo KPIs',
+                'Error obteniendo KPIs',
                 'PRISMA_DASHBOARD_KPI_ERROR',
                 error
             )
@@ -107,7 +107,7 @@ export class PrismaDashboardStatsDatasource implements DashboardStatsDatasource 
             }))
         } catch (error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error obteniendo ventas por fecha',
+                'Error obteniendo ventas por fecha',
                 'PRISMA_DASHBOARD_SALES_BY_DATE_ERROR',
                 error
             )
@@ -128,7 +128,7 @@ export class PrismaDashboardStatsDatasource implements DashboardStatsDatasource 
             }))
         } catch (error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error obteniendo compras por fecha',
+                'Error obteniendo compras por fecha',
                 'PRISMA_DASHBOARD_PURCHASES_BY_DATE_ERROR',
                 error
             )
@@ -164,7 +164,7 @@ export class PrismaDashboardStatsDatasource implements DashboardStatsDatasource 
 
         } catch (error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error obteniendo el producto más vendido',
+                'Error obteniendo el producto más vendido',
                 'PRISMA_DASHBOARD_TOP_SELLING_PRODUCT_ERROR',
                 error
             )
@@ -187,7 +187,7 @@ export class PrismaDashboardStatsDatasource implements DashboardStatsDatasource 
 
         } catch (error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error obteniendo productos sin ventas',
+                'Error obteniendo productos sin ventas',
                 'PRISMA_DASHBOARD_PRODUCTS_WITHOUT_SALES_ERROR',
                 error
             )

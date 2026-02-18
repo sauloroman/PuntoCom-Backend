@@ -2,7 +2,7 @@ export class InfrastructureError extends Error {
   public readonly cause?: unknown;
 
   constructor(message: string, code?: string, cause?: unknown) {
-    super(`[INFRASTRUCTURE - ${code ?? 'INFRASTRUCTURE_ERROR'}]: ${message}`);
+    super(message);
     this.name = this.constructor.name;
     this.code = code;
     this.cause = cause;

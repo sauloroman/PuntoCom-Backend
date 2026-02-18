@@ -13,11 +13,10 @@ export class CreateVerificationCodeUseCase {
   public async execute( data: CreateVerificationCodeRequest ): Promise<VerificationCodeResponseI> {
 
     const { userId } = data
-
-    await this.verificationCodeRepository.deleteAllCodesByUserId(userId)
     
-    let verificationCodeValue = CodeGeneratorAdapter.generateNumericCode(this.CODE_LENGTH)
-
+    await this.verificationCodeRepository.deleteAllCodesByUserId( userId )
+    
+    const verificationCodeValue = await this.generateUniqueCode()
     const createdAt = DatesAdapter.now()
     const expiresAt = DatesAdapter.addMinutes( createdAt, 10 )
 
@@ -38,6 +37,18 @@ export class CreateVerificationCodeUseCase {
       expiresAt: DatesAdapter.formatLocal(DatesAdapter.toLocal(verificationCode.expiresAt)),
       userId: verificationCode.userId
     }  
+  }
+
+  private async generateUniqueCode(): Promise<string> {
+    let verificationCodeValue = ''
+    let existingCode: VerificationCode | null = null
+
+    do {
+      verificationCodeValue = CodeGeneratorAdapter.generateNumericCode(this.CODE_LENGTH)
+      existingCode = await this.verificationCodeRepository.findByCode( verificationCodeValue )
+    } while ( existingCode )
+
+    return verificationCodeValue
   }
 
 }

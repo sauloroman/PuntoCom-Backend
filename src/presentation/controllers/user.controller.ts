@@ -19,8 +19,11 @@ export class UserController {
 
   public checkAdminPassword = async (req: Request, res: Response) => {
     const [ dto, error ] = CheckAdminPasswordValidator.validate(req.body)
+
     if ( error ) throw new ValidationError(error, 'CHECK_ADMIN_PASSWORD')
+    
     const isValid = await this.userService.checkAdminPassword(dto!)
+    
     res.status(200).json({
       ok: true,
       message: 'Contraseña correcta',
@@ -67,26 +70,12 @@ export class UserController {
     const [dto, error] = CreateUserValidator.validate(req.body)
     if (error) throw new ValidationError(error, 'CREATE_USER_VALIDATION_ERROR')
 
-    const result = await this.userService.registerUser(dto!, false)
+    const result = await this.userService.registerUser(dto!)
     
     res.status(201).json({
       ok: true,
       message: `🚀 Se ha enviado un correo a ${result.user.email}. Revisa tu bandeja de entrada y valida tu cuenta`,
       user: result.user
-    })
-  }
-
-  public createUserMobile = async (req: Request, res: Response) => {
-    const [dto, error] = CreateUserValidator.validate(req.body)
-    if (error) throw new ValidationError(error, 'CREATE_USER_VALIDATION_ERROR')
-
-    const result = await this.userService.registerUser(dto!, true)
-    
-    res.status(201).json({
-      ok: true,
-      message: `🚀 Se ha enviado un correo a ${result.user.email}. Revisa tu bandeja de entrada y valida tu cuenta`,
-      user: result.user,
-      token: result.token,
     })
   }
 
@@ -198,18 +187,6 @@ export class UserController {
     })
   }
 
-  // public changePasswordMobile = async (req: Request, res: Response) => {
-  //   const [ dto, error ] = ChangePasswordMobileValidator.validate( req.body )
-  //   if (error) throw new ValidationError(error, 'CHANGE_PASSWORD_USER_VALIDATION_ERROR')
-    
-  //   await this.userService.changePasswordMobile(dto!)
-
-  //   res.status(200).json({
-  //     ok: true,
-  //     message: 'Se ha actualizado la contraseña correctamente'
-  //   })
-  // }
-
   public resendVerificationCode = async (req: Request, res: Response) => {
     const [ dto, error ] = ResendVerificationCodeValidator.validate( req.body )
     if ( error ) throw new ValidationError(error, 'RESEND_VERIFICATION_CODE_VALIDATION_ERROR')
@@ -219,7 +196,7 @@ export class UserController {
     res.status(200).json({
       ok: true,
       message: `Se ha reenviado el código de verificación para ${dto?.email}`,
-      user: result.user 
+      user: result?.user  ?? null
     })
   }
 

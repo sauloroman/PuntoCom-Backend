@@ -21,11 +21,14 @@ import {
   LoginUserUseCase, 
   UpdateUserImageUseCase, 
   UpdateUserUseCase, 
+  UserIsValidatedUseCase, 
   ValidateUserUseCase 
 } from "../application/usecases/user";
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from "../application/usecases/verification-code";
 
 import { EnvAdapter } from "../config/plugins";
+import { MSSQLUsers } from "../infrastructure/datasource/ms-sql/mssql-user.datasource";
+import { MSSQLVerificationCode } from "../infrastructure/datasource/ms-sql/mssql-verification-code.datasource";
 
 import { 
   PrismaDatasource, 
@@ -34,7 +37,7 @@ import {
   PrismaVerificationCodeDatasource 
 } from "../infrastructure/datasource/prisma";
 import { ResetPassCodeImpl, UserRepositoryImpl, VerificationCodeRepositoryImpl } from "../infrastructure/repositories";
-import { CloudinaryFileUploadService, LocalFileUploadService, NodeMailerService, PuppeteerPdfService } from "../infrastructure/services";
+import { CloudinaryFileUploadService, NodeMailerService } from "../infrastructure/services";
 
 import { UserController } from "../presentation/controllers";
 import { UserRoutes } from "../presentation/routes";
@@ -46,13 +49,11 @@ export class UserContainer {
   constructor() {
 
     // Repositorios
-    const userRepository = new UserRepositoryImpl( 
-      new PrismaUserDatasource( PrismaDatasource.getInstance() ) 
-    )
-
-    const verificationCodeRepository = new VerificationCodeRepositoryImpl(
-      new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance() )
-    )
+    const userRepositoryPrisma = new UserRepositoryImpl( new PrismaUserDatasource(PrismaDatasource.getInstance()))
+    const verificationCodeRepository = new VerificationCodeRepositoryImpl( new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance()))
+    
+    const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers() )
+    const verificationCodeRepositoryMSSQL = new VerificationCodeRepositoryImpl( new MSSQLVerificationCode() )
 
     const resetPassCodeRepository = new ResetPassCodeImpl(
       new PrismaResetPasswordCode( PrismaDatasource.getInstance() )
@@ -66,27 +67,42 @@ export class UserContainer {
     })
 
     const uploadFileService = new CloudinaryFileUploadService()
-    const uploadPdfService = new LocalFileUploadService()
-    const pdfService = new PuppeteerPdfService() 
 
     // Casos de uso
-    const loginUserUseCase = new LoginUserUseCase(userRepository)
-    const createUserUseCase = new CreateUserUseCase( userRepository )
-    const getUserByIdUseCase = new GetUserByIdUseCase( userRepository )
-    const getUserByEmailUseCase = new GetUserByEmailUseCase( userRepository )
-    const changeStatusUserUseCase = new ChangeStatusUserUseCase( userRepository )
-    const validateUserUseCase = new ValidateUserUseCase( userRepository )
-    const updateUserUseCase = new UpdateUserUseCase( userRepository )
-    const changePasswordUseCase = new ChangePasswordUseCase( userRepository )
-    const listUsersUseCase = new ListUsersUseCase( userRepository )
-    const getAllUsersUseCase = new GetAllUsersUseCase(userRepository)
-    const updateUserImageUseCase = new UpdateUserImageUseCase( userRepository )
-    const checkAdminPassUseCase = new CheckAdminPasswordUseCase( userRepository )
+    const changePasswordUseCase = new ChangePasswordUseCase( userRepositoryMSSQL )
+    const changeStatusUserUseCase = new ChangeStatusUserUseCase( userRepositoryMSSQL )
+    const checkAdminPassUseCase = new CheckAdminPasswordUseCase( userRepositoryMSSQL )
+    const createUserUseCase = new CreateUserUseCase( userRepositoryMSSQL )
+    const getAllUsersUseCase = new GetAllUsersUseCase(userRepositoryMSSQL)
+    const getUserByEmailUseCase = new GetUserByEmailUseCase( userRepositoryMSSQL )
+    const getUserByIdUseCase = new GetUserByIdUseCase( userRepositoryMSSQL )
+    const listUsersUseCase = new ListUsersUseCase( userRepositoryMSSQL )
+    const loginUserUseCase = new LoginUserUseCase(userRepositoryMSSQL)
+    const updateUserImageUseCase = new UpdateUserImageUseCase( userRepositoryMSSQL )
+    const updateUserUseCase = new UpdateUserUseCase( userRepositoryMSSQL )
+    const validateUserUseCase = new ValidateUserUseCase( userRepositoryMSSQL )
+    const userIsValidatedUseCase = new UserIsValidatedUseCase( userRepositoryMSSQL )
+    
+    const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepositoryMSSQL )
+    const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepositoryMSSQL )
+    
+    // const changePasswordUseCase = new ChangePasswordUseCase( userRepositoryPrisma )
+    // const changeStatusUserUseCase = new ChangeStatusUserUseCase( userRepositoryPrisma )
+    // const checkAdminPassUseCase = new CheckAdminPasswordUseCase( userRepositoryPrisma )
+    // const createUserUseCase = new CreateUserUseCase( userRepositoryPrisma )
+    // const getAllUsersUseCase = new GetAllUsersUseCase(userRepositoryPrisma)
+    // const getUserByEmailUseCase = new GetUserByEmailUseCase( userRepositoryPrisma )
+    // const getUserByIdUseCase = new GetUserByIdUseCase( userRepositoryPrisma )
+    // const listUsersUseCase = new ListUsersUseCase( userRepositoryPrisma )
+    // const loginUserUseCase = new LoginUserUseCase(userRepositoryPrisma)
+    // const updateUserImageUseCase = new UpdateUserImageUseCase( userRepositoryPrisma )
+    // const updateUserUseCase = new UpdateUserUseCase( userRepositoryPrisma )
+    // const validateUserUseCase = new ValidateUserUseCase( userRepositoryPrisma )
 
     const createResetPasswordCodeUseCase = new CreateResetPassCodeUseCase( resetPassCodeRepository )
     const getResetPassCodeUseCase = new GetPasswordResetCodeUseCase( resetPassCodeRepository )
-    const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepository )
-    const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepository )
+    // const createVerificationCodeUseCase = new CreateVerificationCodeUseCase( verificationCodeRepository )
+    // const getVerificationCodeUseCase = new GetVerificationCodeUseCase( verificationCodeRepository )
 
     const sendVerificationCodeEmailUseCase = new SendVerificationCodeEmailUseCase( emailService )
     const sendVerificationCodeEmailMobileUseCase = new SendVerificationCodeEmailMobileUseCase(emailService)
@@ -114,6 +130,7 @@ export class UserContainer {
       listUsersUC: listUsersUseCase,
       updateUserImageUC: updateUserImageUseCase,
       checkAdminPasswordUC: checkAdminPassUseCase,
+      userIsValidatedUC: userIsValidatedUseCase,
       
       updateUserUC: updateUserUseCase,
       validateUserUC: validateUserUseCase,

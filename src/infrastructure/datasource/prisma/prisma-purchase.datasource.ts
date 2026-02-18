@@ -141,7 +141,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
 
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener las compras con filtro',
+                'Error al obtener las compras con filtro',
                 'PRISMA_GET_PURCHASES_FILTER_ERROR'
             )
         }
@@ -187,7 +187,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
 
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener las compras',
+                'Error al obtener las compras',
                 'PRISMA_GET_PURCHASES_ERROR'
             )
         }
@@ -202,7 +202,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
             return this.toDomainPurchaseDetail(detail)
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al guardar detalle de compra',
+                'Error al guardar detalle de compra',
                 'PRISMA_SAVE_PURCHASE_DETAIL_ERROR'
             )
         }
@@ -223,7 +223,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
             
         } catch ( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al guardar la compra',
+                'Error al guardar la compra',
                 'PRISMA_SAVE_PURCHASE_ERROR'
             )
         }

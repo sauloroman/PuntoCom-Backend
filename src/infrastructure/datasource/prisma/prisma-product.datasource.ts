@@ -27,7 +27,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             return allProducts.map( this.toDomain )
         } catch(error){
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener todos los products',
+                'Error al obtener todos los products',
                 'PRISMA_FIND_PRODUCTS_BY_STOCK',
                 error
             )
@@ -63,7 +63,7 @@ export class PrismaProductDatasource implements ProductDatasource {
 
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener los productos por criterio de stock',
+                'Error al obtener los productos por criterio de stock',
                 'PRISMA_FIND_PRODUCTS_BY_STOCK',
                 error
             )
@@ -84,7 +84,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             return this.toDomain(product)
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener el producto por id',
+                'Error al obtener el producto por id',
                 'PRISMA_FIND_PRODUCT_BY_ID_ERROR',
                 error
             )
@@ -104,7 +104,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             return this.toDomain(product)
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener el producto por nombre',
+                'Error al obtener el producto por nombre',
                 'PRISMA_FIND_PRODUCT_BY_NAME_ERROR',
                 error
             )
@@ -123,7 +123,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             return this.toDomain(createProduct)
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al crear el producto',
+                'Error al crear el producto',
                 'PRISMA_CREATE_PRODUCT_ERROR',
                 error
             )
@@ -143,7 +143,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             return this.toDomain(updatedProduct)
         } catch(error) {
             throw new InfrastructureError(
-                '[Prisma]: Error al actualizar el producto',
+                'Error al actualizar el producto',
                 'PRISMA_UPDATE_ERROR',
                 error
             );
@@ -163,7 +163,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             return this.toDomain( updatedProduct )
         } catch (error) {
             throw new InfrastructureError(
-                '[Prisma]: Error al cambiar el estado del producto',
+                'Error al cambiar el estado del producto',
                 'PRISMA_DEACTIVATE_ERROR',
                 error
             );
@@ -191,7 +191,7 @@ export class PrismaProductDatasource implements ProductDatasource {
         
             } catch( error ) {
               throw new InfrastructureError(
-                '[Prisma]: Error al obtener los productos',
+                'Error al obtener los productos',
                 'PRISMA_FIND_PRODUCTS_BY_FILTER_ERROR',
                 error
               );
@@ -216,7 +216,7 @@ export class PrismaProductDatasource implements ProductDatasource {
             })
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener todos los productos',
+                'Error al obtener todos los productos',
                 'PRISMA_FIND_USERS_ERROR',
                 error
             )

@@ -148,7 +148,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
 
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al filtrar las ventas',
+                'Error al filtrar las ventas',
                 'PRISMA_FILTER_SALES_ERROR'
             ) 
         }
@@ -192,7 +192,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
 
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al listar las ventas',
+                'Error al listar las ventas',
                 'PRISMA_GET_ALL_SALES_ERROR'
             )
         }
@@ -209,7 +209,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
             return this.toDomainSaleDetail(detail)
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al crear el detalle de la venta',
+                'Error al crear el detalle de la venta',
                 'PRISMA_CREATE_SALE_ERROR'
             )
         }
@@ -227,7 +227,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
             return this.toDomain( saleCreated )
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al crear la venta',
+                'Error al crear la venta',
                 'PRISMA_CREATE_SALE_ERROR'
             )
         }
@@ -258,7 +258,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
 
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener la venta',
+                'Error al obtener la venta',
                 'PRISMA_GET_SALE_BY_ID_ERROR'
             )
         }

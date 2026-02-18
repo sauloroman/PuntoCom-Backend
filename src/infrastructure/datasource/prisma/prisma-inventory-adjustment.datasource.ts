@@ -27,7 +27,7 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
             return adjustments.map( this.toDomain )
         } catch(error) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener todos los ajustes de inventario',
+                'Error al obtener todos los ajustes de inventario',
                 'PRISMA_GET_INVENTORY_ADJUSTMENTS_ERROR'
             )
         }
@@ -63,7 +63,7 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
 
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al obtener los ajustes de inventario',
+                'Error al obtener los ajustes de inventario',
                 'PRISMA_GET_INVENTORY_ADJUSTMENTS_ERROR'
             )
         }
@@ -79,7 +79,7 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
             return this.toDomain( adjustment )
         } catch( error ) {
             throw new InfrastructureError(
-                '[PRISMA]: Error al guardar el ajuste de inventario',
+                'Error al guardar el ajuste de inventario',
                 'PRISMA_SAVE_INVENTORY_ADJUSTMENT_ERROR'
             )
         }

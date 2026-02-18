@@ -10,7 +10,8 @@ import {
   ListUsersUseCase, 
   UpdateUserImageUseCase,
   GetAllUsersUseCase,
-  CheckAdminPasswordUseCase} from '../usecases/user';
+  CheckAdminPasswordUseCase,
+  UserIsValidatedUseCase} from '../usecases/user';
 import { 
   CreateVerificationCodeUseCase, 
   GetVerificationCodeUseCase 
@@ -52,6 +53,7 @@ interface UserServiceI {
   updateUserImageUC: UpdateUserImageUseCase
   listUsersUC: ListUsersUseCase
   checkAdminPasswordUC: CheckAdminPasswordUseCase,
+  userIsValidatedUC: UserIsValidatedUseCase,
 
   createResetPassCodeUC: CreateResetPassCodeUseCase,
   getResetPassCodeUC: GetPasswordResetCodeUseCase,
@@ -83,6 +85,7 @@ export class UserService {
   private readonly changePasswordUserUC: ChangePasswordUseCase
   private readonly listUsersUC: ListUsersUseCase
   private readonly checkAdminPasswordUC: CheckAdminPasswordUseCase
+  private readonly userIsValidatedUC: UserIsValidatedUseCase
 
   private readonly createResetPassCodeUC: CreateResetPassCodeUseCase
   private readonly createVerificationCodeUC: CreateVerificationCodeUseCase
@@ -112,6 +115,7 @@ export class UserService {
     changePasswordUserUC,
     listUsersUC,
     checkAdminPasswordUC,
+    userIsValidatedUC,
     createResetPassCodeUC,
     createVerificationCodeUC,
     getVerificationCodeUC,
@@ -135,6 +139,7 @@ export class UserService {
     this.updateUserImageUC = updateUserImageUC
     this.loginUserUC = loginUserUC
     this.changePasswordUserUC = changePasswordUserUC
+    this.userIsValidatedUC = userIsValidatedUC
     this.listUsersUC = listUsersUC
     this.checkAdminPasswordUC = checkAdminPasswordUC
     this.createResetPassCodeUC = createResetPassCodeUC
@@ -180,32 +185,25 @@ export class UserService {
     return await this.listUsersUC.execute( dto )
   }
 
-  async registerUser(dto: CreateUserRequestDtoI, mobile: boolean ) {
+  async registerUser(dto: CreateUserRequestDtoI) {
     const user = await this.createUserUC.execute(dto)
     const verificationCode = await this.createVerificationCodeUC.execute({ userId: user.id })
     const token = await JwtAdapter.generateJWT({ id: user.id }) as string
 
-    if ( mobile ) { 
-      await this.sendVerificationCodeEmailMobileUC.execute({
-        token,
-        userEmail: user.email,
-        username: `${user.name} ${user.lastname}`,
-        verificationCode: verificationCode.code
-      })
-    } else {
-      await this.sendVerificationCodeEmailUC.execute({
-        token,
-        userEmail: user.email,
-        username: `${user.name} ${user.lastname}`,
-        verificationCode: verificationCode.code
-      })
-    }
+    await this.sendVerificationCodeEmailUC.execute({
+      token,
+      userEmail: user.email,
+      username: `${user.name} ${user.lastname}`,
+      verificationCode: verificationCode.code
+    })
     
     return { user, token }
   }
 
   async resendVerificationCode( dto: ResendVerificationCodeRequestI ) {
-    
+
+    if ( await this.userIsValidatedUC.execute(dto.email) ) return
+
     const user = await this.getUserByEmail( dto!.email )
     const verificationCode = await this.createVerificationCodeUC.execute({ userId: user.id })
     const token = await JwtAdapter.generateJWT({ id: user.id }) as string
@@ -231,7 +229,8 @@ export class UserService {
     const verificationCode = await this.getVerificationCodeUC.execute({ code })
 
     if (verificationCode.userId !== userId) throw new ApplicationError("El código no corresponde con el usuario")
-    if (DatesAdapter.isExpired(new Date(verificationCode.expiresAt), 10)) {
+      
+    if (DatesAdapter.isExpired(new Date(verificationCode.createdAt), 10)) {
       throw new ApplicationError("El código ha expirado. Solicita uno nuevo.")
     }
 

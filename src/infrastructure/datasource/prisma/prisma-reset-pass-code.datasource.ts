@@ -16,7 +16,7 @@ export class PrismaResetPasswordCode implements ResetPasswordCodeDatasource {
             return this.toDomain(code)
         } catch (error) {
             throw new InfrastructureError(
-                '[Prisma]: Error al crear el código para recuperar contraseña',
+                'Error al crear el código para recuperar contraseña',
                 'PRISMA_CREATE_RESET_PASSWORD_CODE',
                 error
             )
@@ -30,7 +30,7 @@ export class PrismaResetPasswordCode implements ResetPasswordCodeDatasource {
             return this.toDomain( resetPasswordCode )
         } catch (error) {
             throw new InfrastructureError(
-                '[Prisma]: Error al obtener el código para recuperar contraseña por código',
+                'Error al obtener el código para recuperar contraseña por código',
                 'PRISMA_GET_RESET_PASSWORD_CODE',
                 error
             )
@@ -42,7 +42,7 @@ export class PrismaResetPasswordCode implements ResetPasswordCodeDatasource {
            await this.prismaClient.passwordResetCode.findMany({ where: { user_id: userId }})
         } catch (error) {
             throw new InfrastructureError(
-                `[Prisma]: Error al eliminar código de recuperación de contraseña asociados al usuario: ${userId}`,
+                `Error al eliminar código de recuperación de contraseña asociados al usuario: ${userId}`,
                 'PRISMA_DELETE_RESET_PASSWORD_CODES',
                 error
             )

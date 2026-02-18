@@ -34,17 +34,14 @@ export class UserRoutes {
     router.post('/forgot-password/mobile', this.controller.forgotPasswordMobile )
     router.post('/validate-reset-password-code/mobile', this.controller.validatePasswordResetCode)
     router.post('/change-password', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.changePassword)
-    // router.post('/change-password/mobile', this.controller.changePasswordMobile)
     router.post('/resend-verification-code', this.controller.resendVerificationCode )
-    router.post('/', [ 
-      // ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
-    ], this.controller.createUser )
-    router.post('/create-mobile', [ 
-      // ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
-    ], this.controller.createUserMobile )
     
     // Private routes 
     router.use([ Auth.Logged ])
+    
+    router.post('/', [ 
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
+    ], this.controller.createUser )
     
     router.post('/check-admin-password', [
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
@@ -57,16 +54,10 @@ export class UserRoutes {
       FileUploadMiddleware.validateContainFiles 
     ], this.controller.uploadUserImage )
 
-    router.get('/', [
-      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-      MapperFilterMiddleware.ToPrisma()
-    ], this.controller.getUsers )
-
     router.get('/search', [
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-      MapperFilterMiddleware.ToPrismaContains()
+      MapperFilterMiddleware.ToMssqlContains()
     ], this.controller.getUsers )
-
 
     router.get('/:id', [
       ParamsHandlerMiddleware.hasIDItem(),

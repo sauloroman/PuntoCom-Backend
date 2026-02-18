@@ -7,9 +7,9 @@ export class AuthMiddleware {
 
   public static isValidJWBody<T>() {
     return async ( req: Request, res: Response, next: NextFunction ): Promise<any> => {
-        const payload = await JwtAdapter.validateToken<T>( req.body.token )
-        if ( !payload ) return res.status(401).json({ ok: false, error: 'El token es invalido'})
-        next()
+      const payload = await JwtAdapter.validateToken<T>( req.body.token )
+      if ( !payload ) return res.status(401).json({ ok: false, error: 'El token es invalido'})
+      next()
     }
   }
 

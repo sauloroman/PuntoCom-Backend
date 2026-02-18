@@ -66,6 +66,14 @@ export class UserController {
     })
   }
 
+  public getAllUsers = async (_req: Request, res: Response) => {
+    const users = await this.userService.getAllUsers()
+    return res.status(200).json({
+      ok: true,
+      users
+    })
+  }
+
   public createUser = async (req: Request, res: Response) => {
     const [dto, error] = CreateUserValidator.validate(req.body)
     if (error) throw new ValidationError(error, 'CREATE_USER_VALIDATION_ERROR')
@@ -150,17 +158,6 @@ export class UserController {
       message: `Se ha enviado un correo electrónico a ${dto?.email}. Revisa tu bandeja y sigue las instrucciones.`
     })
   }
-
-  public validatePasswordResetCode = async (req: Request, res: Response) => {
-    const [ dto, error ] = PasswordResetCodeValidator.validate(req.body)
-    if (error) throw new ValidationError(error, 'RESET_PASSWORD_CODE_VALIDATION_ERROR')
-    const isCodeValidated = await this.userService.validateResetPasswordCode(dto!)
-    res.status(200).json({
-      ok: true,
-      message: 'Ingresa tu nueva contraseña',
-      isCodeValidated
-    })
-   }
 
   public changePassword = async (req: Request, res: Response) => {
     const [ dto, error ] = ChangePasswordValidator.validate( req.body )

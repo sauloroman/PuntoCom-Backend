@@ -8,11 +8,14 @@
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/app.js",
     "prisma:migrate": "npx prisma migrate dev --name init",
-    "db:seed:categories": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-category.seed.ts",
-    "db:seed:suppliers": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-suppliers.seed.ts",
-    "db:seed:users": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-users.seed.ts",
-    "db:seed:products": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-products.seed.ts",
-    "db:mssql:seed:users": "ts-node-dev src/infrastructure/datasource/ms-sql/seeds/mssql-users.seed.ts"
+
+    "seed:prisma:users": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-users.seed.ts",
+    "seed:prisma:categories": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-category.seed.ts",
+    "seed:prisma:suppliers": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-suppliers.seed.ts",
+    "seed:prisma:products": "ts-node-dev src/infrastructure/datasource/prisma/seeds/prisma-products.seed.ts",
+
+    "seed:mssql:users": "ts-node-dev src/infrastructure/datasource/ms-sql/seeds/mssql-users.seed.ts",
+    "seed:mssql:categories": "ts-node-dev src/infrastructure/datasource/ms-sql/seeds/mssql-category.seed.ts"
   },
   "author": "Saulo Román Santillán Nava",
   "license": "ISC",

@@ -10,6 +10,10 @@ export class CategoryRepositoryImp implements CategoryRepository {
     async findById(categoryId: string): Promise<Category | null> {
         return await this.categoryDatasource.findById( categoryId )
     }
+
+    async exists(categoryName: string): Promise<boolean> {
+        return await this.categoryDatasource.exists( categoryName )
+    }
     
     async findByName(categoryName: string): Promise<Category | null> {
         return await this.categoryDatasource.findByName( categoryName )

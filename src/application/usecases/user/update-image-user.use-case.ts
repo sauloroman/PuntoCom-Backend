@@ -1,7 +1,7 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
 import { UserRepository } from "../../../domain/repositories";
-import { Email, Password, Role } from "../../../domain/value-objects";
+import { Email, Password, Phone, Role } from "../../../domain/value-objects";
 import { UpdateUserImageDto, UserResponseDtoI } from "../../dtos/user.dto";
 
 export class UpdateUserImageUseCase {
@@ -11,6 +11,8 @@ export class UpdateUserImageUseCase {
     public async execute( data: UpdateUserImageDto ): Promise<UserResponseDtoI | null> {
 
         const { id, url } = data
+
+        console.log(url)
 
         const existingUser = await this.userRepository.findById( id )
         if ( !existingUser ) return null
@@ -23,6 +25,7 @@ export class UpdateUserImageUseCase {
             lastname: existingUser.lastname,
             name: existingUser.name,
             password: new Password(existingUser.password.value),
+            phone: new Phone(existingUser.phone.value),
             role: new Role( existingUser.role.value ),
             image: url,
             createdAt: DatesAdapter.toLocal(existingUser.createdAt),

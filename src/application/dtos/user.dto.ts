@@ -1,4 +1,3 @@
-import { Phone } from '../../domain/value-objects';
 import { RoleEnum } from '../../domain/value-objects/Role';
 
 export interface ChangeStatusUserRequestI {
@@ -41,10 +40,7 @@ export interface ForgotPasswordRequestI {
 export interface ChangePasswordRequestDtoI {
   token: string,
   newPassword: string,
-}
-
-export interface ChangePasswordMobileRequestDtoI {
-  newPassword: string,
+  code: string
 }
 
 export interface GetUserRequestDtoI {

@@ -20,24 +20,42 @@ export class CategoryRoutes {
     private initRoutes(): Router {
         const router = Router()
 
+        // ############# Private Routes #############
+        
         router.use([Auth.Logged])
-
+        
         router.patch('/upload-image/:id', [ 
             ParamsHandlerMiddleware.hasIDItem(),
             FileUploadMiddleware.validateContainFiles 
         ], this.controller.uploadCategoryImage )
 
-        router.get('/all', this.controller.getAllCategories)
-        router.get('/', [MapperFilterMiddleware.ToPrisma()], this.controller.getCategories)
-        router.get('/search', [MapperFilterMiddleware.ToPrismaContains()], this.controller.getCategories)
-
+        router.get('/', this.controller.getAllCategories)
+        
+        router.get('/search', [
+            MapperFilterMiddleware.ToMssqlContains()
+        ], this.controller.getCategories)
+        
+        // ############# Only Admin Private Routes #############
+        
         router.use([ ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ) ])
 
         router.post('/', this.controller.createCategory )
-        router.get('/:id', [ParamsHandlerMiddleware.hasIDItem()], this.controller.getCategoryById )
-        router.put('/:id', [ParamsHandlerMiddleware.hasIDItem()], this.controller.updateCategory )
-        router.patch('/activate/:id', [ParamsHandlerMiddleware.hasIDItem()], this.controller.activateCategory )
-        router.patch('/deactivate/:id', [ParamsHandlerMiddleware.hasIDItem()], this.controller.deactivateCategory )
+
+        router.get('/:id', [
+            ParamsHandlerMiddleware.hasIDItem()
+        ], this.controller.getCategoryById )
+
+        router.put('/:id', [
+            ParamsHandlerMiddleware.hasIDItem()
+        ], this.controller.updateCategory )
+
+        router.patch('/activate/:id', [
+            ParamsHandlerMiddleware.hasIDItem()
+        ], this.controller.activateCategory )
+
+        router.patch('/deactivate/:id', [
+            ParamsHandlerMiddleware.hasIDItem()
+        ], this.controller.deactivateCategory )
 
         return router
     }

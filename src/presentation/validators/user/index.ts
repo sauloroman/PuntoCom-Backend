@@ -1,4 +1,3 @@
-export { ChangePasswordMobileValidator } from './change-password-mobile-user.validator'
 export { ChangePasswordValidator } from './change-password-user.validator'
 export { CheckAdminPasswordValidator } from './check-admin-password.validator'
 export { CreateUserValidator } from './create-user.validator'

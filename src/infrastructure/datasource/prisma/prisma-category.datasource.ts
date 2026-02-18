@@ -15,8 +15,10 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
 
     async getAllCategories(): Promise<Category[]> {
         try {
-            const categories = await this.prisma.category.findMany()
-            return categories.map(this.toDomain)
+            const categories = await this.prisma.category.findMany({
+                orderBy: { category_createdAt: 'desc' }
+            });
+            return categories.map(this.toDomain);
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al obtener todas las categorias',
@@ -28,9 +30,11 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
 
     async findById(categoryId: string): Promise<Category | null> {
         try {
-            const category = await this.prisma.category.findUnique({ where: { category_id: categoryId }})
-            if ( !category ) return null
-            return this.toDomain(category)
+            const category = await this.prisma.category.findUnique({ 
+                where: { category_id: categoryId }
+            });
+            if ( !category ) return null;
+            return this.toDomain(category);
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al obtener la categoría por id',
@@ -40,14 +44,36 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
         }
     }
 
-    async findByName(categoryName: string): Promise<Category | null> {
-        try {   
-            const category = await this.prisma.category.findUnique({ where: { category_name: categoryName }})
-            if ( !category ) return null
-            return this.toDomain( category )
+    async exists(categoryName: string): Promise<boolean> {
+        try {
+            const category = await this.prisma.category.findUnique({ 
+                where: { category_name: categoryName }
+            });
+            return category !== null;
         } catch( error ) {
             throw new InfrastructureError(
-                'Error al obtener la categoría por nombre',
+                'Error al verificar existencia de categoría por nombre',
+                'PRISMA_EXISTS_CATEGORY_ERROR',
+                 error
+            );
+        }
+    }
+
+    async findByName(categoryName: string): Promise<Category | null> {
+        try {   
+            const category = await this.prisma.category.findFirst({ 
+                where: { 
+                    category_name: {
+                        contains: categoryName,
+                        mode: 'insensitive'  
+                    }
+                }
+            });
+            if ( !category ) return null;
+            return this.toDomain( category );
+        } catch( error ) {
+            throw new InfrastructureError(
+                'Error al buscar la categoría por nombre',
                 'PRISMA_FIND_CATEGORY_BY_NAME_ERROR',
                  error
             );
@@ -56,8 +82,10 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
 
     async create(category: Category): Promise<Category> {
         try {   
-            const categoryCreated = await this.prisma.category.create( { data: this.toPrisma( category ) } )
-            return this.toDomain( categoryCreated )
+            const categoryCreated = await this.prisma.category.create({ 
+                data: this.toPrisma( category ) 
+            });
+            return this.toDomain( categoryCreated );
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al crear la categoría',
@@ -72,12 +100,12 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             const categoryUpdated = await this.prisma.category.update({
                 where: { category_id: category.id },
                 data: this.toPrisma(category)
-            })
-            return this.toDomain( categoryUpdated )
+            });
+            return this.toDomain( categoryUpdated );
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al actualizar la categoría',
-                'PRISMA_CREATE_CATEGORY_ERROR',
+                'PRISMA_UPDATE_CATEGORY_ERROR',
                  error
             );
         }
@@ -88,12 +116,12 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             const categoryUpdated = await this.prisma.category.update({
                 where: { category_id: categoryId },
                 data: { category_is_active: status }
-            })
-            return this.toDomain( categoryUpdated )
+            });
+            return this.toDomain( categoryUpdated );
         } catch( error ) {
             throw new InfrastructureError(
-                'Error al actualizar la categoría',
-                'PRISMA_CREATE_CATEGORY_ERROR',
+                'Error al cambiar estado de la categoría',
+                'PRISMA_CHANGE_STATUS_CATEGORY_ERROR',
                  error
             );
         }
@@ -102,26 +130,26 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
     async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
         try {
 
-            const { limit, orderBy, page, skip, take, where } = buildPaginationOptions(pagination)
+            const { limit, orderBy, page, skip, take, where } = buildPaginationOptions(pagination);
 
             const [ categories, total ] = await Promise.all([
                 this.prisma.category.findMany({ where, skip, take, orderBy }),
                 this.prisma.category.count({ where })
-            ])
+            ]);
 
-            const totalPages = Math.ceil( total / limit )
+            const totalPages = Math.ceil( total / limit );
 
             return {
                 items: categories.map( this.toDomain ),
                 total,
                 page,
                 totalPages
-            }
+            };
 
         } catch(error) {
             throw new InfrastructureError(
                 'Error al obtener las categorías',
-                'PRISMA_FIND_USERS_BY_FILTER_ERROR',
+                'PRISMA_GET_CATEGORIES_ERROR',
                 error
             );
         }
@@ -137,14 +165,14 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
             createdAt: categoryData.category_createdAt,
             updatedAt: categoryData.category_updatedAt
         });
-      }
+    }
     
-      private toPrisma(category: Category): Omit<PrismaCategory, 'category_id' | 'category_createdAt' | 'category_updatedAt'> {
+    private toPrisma(category: Category): Omit<PrismaCategory, 'category_id' | 'category_createdAt' | 'category_updatedAt'> {
         return {
-          category_name: category.name,
-          category_description: category.description,
-          category_icon: category.icon,
-          category_is_active: category.isActive
+            category_name: category.name,
+            category_description: category.description,
+            category_icon: category.icon,
+            category_is_active: category.isActive
         };
-      }
+    }
 }

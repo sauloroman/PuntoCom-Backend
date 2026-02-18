@@ -35,7 +35,6 @@ import {
   import { DestroyImageUseCase, UploadImageUseCase } from '../usecases/upload';
   import { UploadedFile } from 'express-fileupload';
   import { CreateResetPassCodeUseCase, GetPasswordResetCodeUseCase } from '../usecases/reset-password-code';
-import { ValidateResetPassCode } from '../dtos/reset-pass-code.dto';
 
 interface UserServiceI {
   createUserUC: CreateUserUseCase
@@ -265,38 +264,22 @@ export class UserService {
     const payload = await JwtAdapter.validateToken<{ id: string }>( dto.token )
     const userId = payload!.id
 
+    const resetPassCode = await this.getResetPassCodeUC.execute({ code: dto.code })
+
+    if ( resetPassCode.userId !== userId ) {
+      throw new ApplicationError('El código no coincide con el usuario')
+    }
+
+    if (DatesAdapter.isExpired(new Date(resetPassCode.createdAt), 15)) {
+      throw new ApplicationError("El código ha expirado. Solicita uno nuevo.")
+    }
+
     const user = await this.changePasswordUserUC.execute({ id: userId, newPassword: dto.newPassword })
 
     await this.sendChangePasswordEmaiUC.execute({
       userEmail: user.email,
       username: user.name
     })
-  }
-
-  // async changePasswordMobile( dto: ChangePasswordMobileRequestDtoI ) {
-  //   // const { userId } = await this.getResetPassCodeUC.execute({ code: dto.code })
-  //   const user = await this.changePasswordUserUC.execute({ id: userId, newPassword: dto.newPassword })
-  //   await this.sendChangePasswordEmaiUC.execute({
-  //     userEmail: user.email,
-  //     username: user.name
-  //   })
-  // }
-
-  async validateResetPasswordCode( dto: ValidateResetPassCode ): Promise<boolean> {
-    const { code, email } = dto
-
-    const user = await this.getUserByEmailUC.execute({ email })
-    const resetPassCodse = await this.getResetPassCodeUC.execute({ code })
-
-    if ( resetPassCodse.userId !== user.id ) {
-      throw new ApplicationError('El código no coincide con el usuario')
-    } 
-
-    if (DatesAdapter.isExpired(new Date(resetPassCodse.expiresAt), 15)) {
-      throw new ApplicationError("El código ha expirado. Solicita uno nuevo.")
-    }
-
-    return true
   }
 
   async getUserById(userId: string) {

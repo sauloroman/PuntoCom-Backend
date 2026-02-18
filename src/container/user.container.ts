@@ -43,8 +43,8 @@ export class UserContainer {
 
     // Repositorios
     // const userRepositoryPrisma = new UserRepositoryImpl( new PrismaUserDatasource(PrismaDatasource.getInstance()))
-    // const verificationCodeRepository = new VerificationCodeRepositoryImpl( new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance()))
-    // const resetPassCodeRepository = new ResetPassCodeImpl( new PrismaResetPasswordCode( PrismaDatasource.getInstance()))
+    // const verificationCodeRepositoryPrisma = new VerificationCodeRepositoryImpl( new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance()))
+    // const resetPassCodeRepositoryPrisma = new ResetPassCodeImpl( new PrismaResetPasswordCode( PrismaDatasource.getInstance()))
     
     const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers() )
     const verificationCodeRepositoryMSSQL = new VerificationCodeRepositoryImpl( new MSSQLVerificationCode() )

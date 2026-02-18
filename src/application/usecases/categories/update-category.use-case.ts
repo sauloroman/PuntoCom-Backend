@@ -14,7 +14,7 @@ export class UpdateCategoryUseCase {
     public async execute( data: UpdateCategoryRequest ): Promise<CategoryResponseDto> {
 
         if ( data.name ) {
-            const existingCategory = await this.categoryRepository.findByName( data.name! )
+            const existingCategory = await this.categoryRepository.exists( data.name! )
             if ( existingCategory ) throw new ApplicationError(`La categoría ${data.name} ya existe. Intente con otro nombre`, this.MESSAGE_ERROR)
         }
         
@@ -25,8 +25,8 @@ export class UpdateCategoryUseCase {
 
         const category = new Category({
             id: id,
-            name: data.name ? data.name : name,
-            description: data.description ? data.description : description,
+            name: data.name ?? name,
+            description: data.description ?? description,
             icon: icon,
             isActive: isActive,
             createdAt: DatesAdapter.toLocal(createdAt), 

@@ -1,7 +1,7 @@
 import { DatesAdapter, HashAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
 import { UserRepository } from "../../../domain/repositories";
-import { Email, Password, Role } from "../../../domain/value-objects";
+import { Email, Password, Phone, Role } from "../../../domain/value-objects";
 import { ChangePasswordRequestI, UserResponseDtoI } from "../../dtos/user.dto";
 import { ApplicationError } from "../../errors/application.error";
 
@@ -27,6 +27,7 @@ export class ChangePasswordUseCase {
             lastname: existingUser.lastname,
             name: existingUser.name,
             password: new Password(hashedPassword),
+            phone: new Phone(existingUser.phone.value) ?? '',
             role: new Role( existingUser.role.value ),
             image: existingUser.image,
             createdAt: DatesAdapter.toLocal(existingUser.createdAt),

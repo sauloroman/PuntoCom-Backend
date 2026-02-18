@@ -135,7 +135,7 @@ export class MSSQLUsers implements UserDatasource {
                 .input('user_email', user.email.value)
                 .input('user_phone', user.phone.value)
                 .input('user_is_validated', user.isValidated )
-                .input('user_is_active', user.isActive )
+                .input('user_updatedAt', user.updatedAt )
                 .input('role', user.role.value)
                 .query(`
                     UPDATE [User]
@@ -146,7 +146,7 @@ export class MSSQLUsers implements UserDatasource {
                         user_email = @user_email,
                         user_phone = @user_phone,
                         user_is_validated = @user_is_validated,
-                        user_is_active = @user_is_active,
+                        user_updatedAt = @user_updatedAt,
                         role = @role
                     OUTPUT INSERTED.*
                     WHERE user_id = @user_id
@@ -181,7 +181,7 @@ export class MSSQLUsers implements UserDatasource {
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al cambiar el estado del usuario',
-                'MSSQL_UPDATE_USER_ERROR',
+                'MSSQL_UPDATE_USER_STATUS_ERROR',
                 error
             )
         }
@@ -205,7 +205,7 @@ export class MSSQLUsers implements UserDatasource {
                     `),
                 
                 pool.request()
-                    .query(`SELECT COUNT(*) FROM [User] WHERE ${where}`)
+                    .query(`SELECT COUNT(*) AS total FROM [User] WHERE ${where}`)
             ])
 
             const total = countResult.recordset[0].total

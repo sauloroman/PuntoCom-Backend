@@ -13,13 +13,18 @@ export class ChangePasswordValidator {
             return [undefined, 'La nueva contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un caracter especial'];
         }
 
+        if ( !input.code || input.code.trim().length === 0 ) {
+            return [undefined, 'El código es obligatorio']
+        }
+
         if (!input.token || !input.token.length ) {
             return [undefined, 'El token es obligatorio']
         }
 
         return [{
             token: input.token.trim(),
-            newPassword: input.newPassword.trim()
+            newPassword: input.newPassword.trim(),
+            code: input.code.trim()
         }];
 
     }

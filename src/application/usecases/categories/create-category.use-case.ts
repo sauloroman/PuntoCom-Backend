@@ -1,4 +1,4 @@
-import { DatesAdapter } from "../../../config/plugins";
+import { DatesAdapter, IDAdapter } from "../../../config/plugins";
 import { Category } from "../../../domain/entities";
 import { CategoryRepository } from "../../../domain/repositories";
 import { CategoryResponseDto, CreateCategoryRequestDto } from "../../dtos/category.dto";
@@ -12,13 +12,14 @@ export class CreateCategoryUseCase {
 
     public async execute( data: CreateCategoryRequestDto ): Promise<CategoryResponseDto> {
         
-        const existingCategory = await this.categoryRepository.findByName( data.name )
+        const existingCategory = await this.categoryRepository.exists( data.name )
         if ( existingCategory ) throw new ApplicationError(`La categoría '${data.name}' ya existe. Intente con otro nombre`, this.MESSAGE_ERROR)
 
         const category = new Category({
+            id: IDAdapter.generate(),
             name: data.name.trim(),
             description: data.description,
-            icon: undefined,
+            icon: '',
             isActive: true,
             createdAt: DatesAdapter.now(),
             updatedAt: DatesAdapter.now()

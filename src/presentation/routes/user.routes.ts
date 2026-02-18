@@ -27,19 +27,33 @@ export class UserRoutes {
   private initRoutes(): Router {
     const router = Router()
 
-    // Public routes
+    // ################# Public routes #################
+
     router.post('/login', this.controller.login )
-    router.patch('/validate', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.validateUser )
+
+    router.patch('/validate', [
+      AuthMiddleware.isValidJWBody<{id: string}>()
+    ], this.controller.validateUser )
+
     router.post('/forgot-password', this.controller.forgotPassword )
-    router.post('/change-password', [AuthMiddleware.isValidJWBody<{id: string}>()], this.controller.changePassword)
+
+    router.post('/change-password', [
+      AuthMiddleware.isValidJWBody<{id: string}>()
+    ], this.controller.changePassword)
+    
     router.post('/resend-verification-code', this.controller.resendVerificationCode )
     
-    // Private routes 
+    // ################# Private routes ################# 
+
     router.use([ Auth.Logged ])
     
     router.post('/', [ 
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
     ], this.controller.createUser )
+
+    router.get('/', [
+      ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
+    ], this.controller.getAllUsers )
     
     router.post('/check-admin-password', [
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )

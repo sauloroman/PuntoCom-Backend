@@ -9,11 +9,9 @@ import {
     UpdateImageCategoryUseCase 
 } from "../application/usecases/categories"
 import { DestroyImageUseCase, UploadImageUseCase } from "../application/usecases/upload"
-
-import { PrismaCategoryDatasource, PrismaDatasource } from "../infrastructure/datasource/prisma"
+import { MSSQLCategory } from "../infrastructure/datasource/ms-sql"
 import { CategoryRepositoryImp } from "../infrastructure/repositories"
 import { CloudinaryFileUploadService } from "../infrastructure/services"
-
 import { CategoryController } from "../presentation/controllers"
 import { CategoryRoutes } from "../presentation/routes"
 
@@ -23,23 +21,25 @@ export class CategoryContainer {
 
     constructor() {
 
-        const categoryRepository = new CategoryRepositoryImp(
-            new PrismaCategoryDatasource( PrismaDatasource.getInstance() )
-        )
-
+        // #################### Repositories #################### 
+        
+        // const categoryRepositoryPrisma = new CategoryRepositoryImp( new PrismaCategoryDatasource( PrismaDatasource.getInstance() ) )
+        const categoryRepositoryMSSQL = new CategoryRepositoryImp( new MSSQLCategory() )
         const uploadFileService = new CloudinaryFileUploadService()
-
-        const createCategoryUseCase = new CreateCategoryUseCase(categoryRepository)
-        const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryRepository)
-        const getAllCategoriesUseCase = new GetAllCategoriesUseCase(categoryRepository)
-        const updateCategoryUseCase = new UpdateCategoryUseCase(categoryRepository)
-        const changeCategoryStatusUseCase = new ChangeCategoryStatusUseCase(categoryRepository)
-        const listCategoriesUseCase = new ListCategoriesUseCase(categoryRepository)
-        const updateCategoryImageUseCase = new UpdateImageCategoryUseCase(categoryRepository)
+        
+        // #################### Use Cases ####################
+        const createCategoryUseCase = new CreateCategoryUseCase(categoryRepositoryMSSQL)
+        const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryRepositoryMSSQL)
+        const getAllCategoriesUseCase = new GetAllCategoriesUseCase(categoryRepositoryMSSQL)
+        const updateCategoryUseCase = new UpdateCategoryUseCase(categoryRepositoryMSSQL)
+        const changeCategoryStatusUseCase = new ChangeCategoryStatusUseCase(categoryRepositoryMSSQL)
+        const listCategoriesUseCase = new ListCategoriesUseCase(categoryRepositoryMSSQL)
+        const updateCategoryImageUseCase = new UpdateImageCategoryUseCase(categoryRepositoryMSSQL)
 
         const uploadCategoryImageUseCase = new UploadImageUseCase( uploadFileService )
         const destroyCategoryImageUseCase = new DestroyImageUseCase( uploadFileService )
 
+        // #################### Services ####################
         const categoryService = new CategoryService({   
             createCategoryUC: createCategoryUseCase,
             getCategoryByIdUC: getCategoryByIdUseCase,
@@ -55,10 +55,7 @@ export class CategoryContainer {
 
         const categoryController = new CategoryController(categoryService)
 
-        this.categoryRoutes = new CategoryRoutes({
-            controller: categoryController
-        })
-
+        this.categoryRoutes = new CategoryRoutes({ controller: categoryController })
     }
 
 }

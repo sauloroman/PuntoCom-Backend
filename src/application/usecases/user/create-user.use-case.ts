@@ -1,4 +1,4 @@
-import { HashAdapter, DatesAdapter } from '../../../config/plugins';
+import { HashAdapter, DatesAdapter, IDAdapter } from '../../../config/plugins';
 
 import { UserRepository } from '../../../domain/repositories';
 import { Email, Password, Phone, Role } from '../../../domain/value-objects';
@@ -21,6 +21,7 @@ export class CreateUserUseCase {
     const hashedPassword = HashAdapter.hash(data.password)
 
     const user = new User({
+      id: IDAdapter.generate(),
       name: data.name,
       lastname: data.lastname,
       email: new Email(data.email),

@@ -96,6 +96,34 @@ export interface ProductResponseIncludeDto {
     }
 }
 
+export interface ProductRaw {
+    product_id: string,
+    product_name: string,
+    product_description: string,
+    product_code: string,
+    product_selling_price: number,
+    product_stock: number,
+    product_stock_min: number,
+    product_image: string,
+    product_image_code: string,
+    product_createdAt: Date,
+    product_updatedAt: Date,
+    product_is_active: boolean,
+    category_id: string,
+    supplier_id: string,
+    category_name: string | null,
+    category_description: string | null,
+    category_icon: string | null,
+    category_is_active: boolean | null,
+    supplier_name: string | null,
+    supplier_lastname: string | null,
+    supplier_company: string | null,
+    supplier_phone: string | null,
+    supplier_email: string | null,
+    supplier_address: string | null,
+    supplier_is_active: boolean | null,
+}
+
 export enum StockCriteria {
     low = 'low',
     warning = 'warning',

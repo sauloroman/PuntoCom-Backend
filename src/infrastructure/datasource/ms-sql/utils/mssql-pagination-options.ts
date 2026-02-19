@@ -1,11 +1,11 @@
 import { PaginationDTO } from "../../../../application/dtos/pagination.dto";
 
-export const buildMssqlPaginationOptions = ( dto: PaginationDTO ) => {
+export const buildMssqlPaginationOptions = ( dto: PaginationDTO, entity: string ) => {        
     const page = Number(dto.page) || 1
     const limit = Number(dto.limit) || 10
     const offset = ( page - 1 ) * limit
 
-    let orderBy = 'user_createdAt DESC'
+    let orderBy = `${entity}_createdAt DESC`
     if ( dto.sort ) {
         orderBy = dto.sort
     }

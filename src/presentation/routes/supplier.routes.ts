@@ -22,7 +22,7 @@ export class SupplierRoutes {
 
         router.use([Auth.Logged])
 
-        router.get('/all', this.controller.getAllSuppliers )
+        router.get('/', this.controller.getAllSuppliers )
 
         router.get('/companies', this.controller.getUniqueCompanies )
 
@@ -30,14 +30,9 @@ export class SupplierRoutes {
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.postSupplier )
 
-        router.get('/', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToPrisma()
-        ], this.controller.getSuppliers )
-
         router.get('/search', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToPrismaContains()
+            MapperFilterMiddleware.ToMssqlContains()
         ], this.controller.getSuppliers )
 
         router.get('/:id', [

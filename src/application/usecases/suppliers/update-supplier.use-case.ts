@@ -23,12 +23,12 @@ export class UpdateSupplierUseCase {
         
         const supplier = new Supplier({
             id: supplierToUpdate.id,
-            name: data.name ? data.name : supplierToUpdate.name,
-            lastname: data.lastname ? data.lastname : supplierToUpdate.lastname,
-            company: data.company ? data.company : supplierToUpdate.company,
+            name: data.name ?? supplierToUpdate.name,
+            lastname: data.lastname ?? supplierToUpdate.lastname,
+            company: data.company ?? supplierToUpdate.company,
             email: data.email ? new Email(data.email) : supplierToUpdate.email,
             phone: data.phone ? new Phone(data.phone): supplierToUpdate.phone,
-            address: data.address ? data.address: supplierToUpdate.address,
+            address: data.address ?? supplierToUpdate.address,
             isActive: supplierToUpdate.isActive,
             createdAt: DatesAdapter.toLocal( supplierToUpdate.createdAt ),
             updatedAt: DatesAdapter.toLocal( DatesAdapter.now() )

@@ -8,10 +8,8 @@ import {
     ListSuppliersUseCase, 
     UpdateSupplierUseCase 
 } from "../application/usecases/suppliers"
-
-import { PrismaDatasource, PrismaSupplierDatasource } from "../infrastructure/datasource/prisma"
+import { MSSQLSuppliers } from "../infrastructure/datasource/ms-sql/mssql-supplier.datasource"
 import { SupplierRepositoryImpl } from "../infrastructure/repositories"
-
 import { SupplierController } from "../presentation/controllers"
 import { SupplierRoutes } from "../presentation/routes"
 
@@ -21,17 +19,16 @@ export class SupplierContainer {
 
     constructor() {
 
-        const supplierRepository = new SupplierRepositoryImpl(
-            new PrismaSupplierDatasource( PrismaDatasource.getInstance() )
-        )   
+        // const supplierRepository = new SupplierRepositoryImpl( new PrismaSupplierDatasource( PrismaDatasource.getInstance()))
+        const supplierRepositoryMSSQL = new SupplierRepositoryImpl( new MSSQLSuppliers() )   
 
-        const createSupplierUseCase = new CreateSupplierUseCase( supplierRepository ) 
-        const updateSupplierUseCase = new UpdateSupplierUseCase( supplierRepository )
-        const changeSupplierStatusUseCase = new ChangeStatusSupplierUseCase( supplierRepository )
-        const getSupplierByIdUseCase = new GetSupplierByIdUseCase(supplierRepository)
-        const getAllSuppliersUseCase = new GetAllSuppliersUseCase(supplierRepository)
-        const listSuppliersUseCase = new ListSuppliersUseCase( supplierRepository )
-        const getUniqueCompaniesUseCase = new GetUniqueCompaniesSupplier( supplierRepository )
+        const createSupplierUseCase = new CreateSupplierUseCase( supplierRepositoryMSSQL ) 
+        const updateSupplierUseCase = new UpdateSupplierUseCase( supplierRepositoryMSSQL )
+        const changeSupplierStatusUseCase = new ChangeStatusSupplierUseCase( supplierRepositoryMSSQL )
+        const getSupplierByIdUseCase = new GetSupplierByIdUseCase(supplierRepositoryMSSQL )
+        const getAllSuppliersUseCase = new GetAllSuppliersUseCase(supplierRepositoryMSSQL )
+        const listSuppliersUseCase = new ListSuppliersUseCase( supplierRepositoryMSSQL )
+        const getUniqueCompaniesUseCase = new GetUniqueCompaniesSupplier( supplierRepositoryMSSQL )
 
         const supplierService = new SupplierService({
             createSupplierUC: createSupplierUseCase,

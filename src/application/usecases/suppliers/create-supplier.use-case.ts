@@ -1,4 +1,4 @@
-import { DatesAdapter } from "../../../config/plugins";
+import { DatesAdapter, IDAdapter } from "../../../config/plugins";
 import { Supplier } from "../../../domain/entities";
 import { SupplierRepository } from "../../../domain/repositories";
 import { Email, Phone } from "../../../domain/value-objects";
@@ -22,6 +22,7 @@ export class CreateSupplierUseCase {
         }
         
         const supplier = new Supplier({
+            id: IDAdapter.generate(),
             name: data.name,
             lastname: data.lastname,
             email: new Email(data.email),

@@ -1,4 +1,4 @@
-import { CodeGeneratorAdapter, DatesAdapter } from "../../../config/plugins";
+import { CodeGeneratorAdapter, DatesAdapter, IDAdapter } from "../../../config/plugins";
 import { Product } from "../../../domain/entities";
 import { ProductRepository } from "../../../domain/repositories";
 import { Money, Stock } from "../../../domain/value-objects";
@@ -13,15 +13,14 @@ export class CreateProductUseCase {
 
     public async execute( data: CreateProduct ): Promise<ProductResponseIncludeDto> {
         
-        const existingProduct = await this.productRepository.findByName(data.name)
+        const existingProduct = await this.productRepository.exists(data.name)
         if ( existingProduct ) throw new ApplicationError(`El nombre ${data.name} ya corresponde a un producto`,this.MESSAGE_ERROR)
 
-        const productCode = CodeGeneratorAdapter.generateProductCode()
-
         const product = new Product({
+            id: IDAdapter.generate(),
             name: data.name.trim(),
             description: data.description?.trim(),
-            code: productCode,
+            code: CodeGeneratorAdapter.generateProductCode(),
             stock: new Stock(data.stock),
             stockMin: new Stock(data.stockMin),
             sellingPrice: new Money(data.sellingPrice),

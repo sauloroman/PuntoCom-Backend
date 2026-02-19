@@ -5,6 +5,7 @@ import { Product } from "../entities";
 export abstract class ProductRepository {
     abstract findById( productId: string ): Promise<ProductResponseIncludeDto | null> 
     abstract findByName( productName: string ): Promise<ProductResponseIncludeDto | null>
+    abstract exists( productName: string ): Promise<boolean>
     abstract create( product: Product ): Promise<ProductResponseIncludeDto>
     abstract update( product: Product ): Promise<ProductResponseIncludeDto>
     abstract changeStatus( productId: string, status: boolean ): Promise<ProductResponseIncludeDto>

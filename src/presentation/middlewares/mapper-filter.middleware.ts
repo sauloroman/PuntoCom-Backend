@@ -170,7 +170,7 @@ export class MapperFilterMiddleware {
                 }
             }
 
-            (req as any).sort = mappedSort || "user_createdAt DESC";
+            (req as any).sort = mappedSort || "";
             (req as any).filter = mappedFilter || "1=1";
 
             next();
@@ -214,7 +214,7 @@ export class MapperFilterMiddleware {
                 }
             }
 
-            (req as any).sort = mappedSort || "user_createdAt DESC";
+            (req as any).sort = mappedSort || "";
             (req as any).filter = mappedFilter || "1=1";
 
             next();

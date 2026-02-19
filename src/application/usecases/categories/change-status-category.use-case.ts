@@ -14,7 +14,7 @@ export class ChangeCategoryStatusUseCase {
         const existingCategory = await this.categoryRepository.findById( data.id )
         if (!existingCategory) throw new ApplicationError(`La categoría con id ${data.id} no existe`, this.MESSAGE_ERROR )
         if ( status && existingCategory.isActive ) throw new ApplicationError('La categoría ya está activa')
-        if ( !status && !existingCategory.isActive ) throw new ApplicationError('La categoría ya está desactivada')
+        if ( !status && !existingCategory.isActive ) throw new ApplicationError('La categoría ya está inactiva')
 
         const category = await this.categoryRepository.changeStatus(data.id, status)
     

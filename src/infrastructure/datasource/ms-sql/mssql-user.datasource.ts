@@ -87,6 +87,7 @@ export class MSSQLUsers implements UserDatasource {
                 .input('role', user.role.value)
                 .query(`
                     INSERT INTO [User] (
+                        user_id,
                         user_name,
                         user_lastname,
                         user_image,
@@ -99,6 +100,7 @@ export class MSSQLUsers implements UserDatasource {
                     ) 
                     OUTPUT INSERTED.*
                     VALUES (
+                        @user_id,
                         @user_name, 
                         @user_lastname,
                         @user_image,
@@ -190,7 +192,7 @@ export class MSSQLUsers implements UserDatasource {
     async getUsers(pagination: PaginationDTO): Promise<PaginationResponseDto<User>> {
         try {
             const pool = await MssqlClient.getConnection()
-            const { page, limit, orderBy, offset, where } = buildMssqlPaginationOptions( pagination )
+            const { page, limit, orderBy, offset, where } = buildMssqlPaginationOptions( pagination, 'user' )
             
             const [ usersResults, countResult ] = await Promise.all([
                 pool.request()

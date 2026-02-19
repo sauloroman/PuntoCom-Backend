@@ -12,8 +12,11 @@ export class ChangeStatusSupplierUseCase {
     public async execute( supplierId: string, status: boolean ): Promise<SupplierResponseDto> {
 
         const existingSupplier = await this.supplierRepository.findById( supplierId )
+        
         if ( !existingSupplier ) throw new ApplicationError(`El proveedor con id: ${supplierId} no existe`, this.MESSAGE_ERROR)
-
+        if ( status && existingSupplier.isActive ) throw new ApplicationError('El proveedor ya está activo')
+        if ( !status && !existingSupplier.isActive ) throw new ApplicationError('El proveedor ya está inactivo')
+            
         const supplierUpdated = await this.supplierRepository.changeStatus(supplierId, status)
 
         return {

@@ -15,9 +15,13 @@ export class ProductRepositoryImp implements ProductRepository {
     async getProductsByStock(stockCriteria: StockCriteria): Promise<ProductResponseIncludeDto[]> {
         return await this.productDatasource.getProductsByStock(stockCriteria)
     }
-
+    
     async findById(productId: string): Promise<ProductResponseIncludeDto | null> {
         return await this.productDatasource.findById(productId)
+    }
+    
+    async exists(productName: string): Promise<boolean> {
+        return await this.productDatasource.exists(productName)
     }
 
     async findByName(productName: string): Promise<ProductResponseIncludeDto | null> {

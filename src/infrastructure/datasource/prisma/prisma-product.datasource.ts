@@ -91,6 +91,21 @@ export class PrismaProductDatasource implements ProductDatasource {
         }
     }
 
+    async exists(productName: string): Promise<boolean> {
+        try {
+            const product = await this.prisma.product.findUnique({
+                where: { product_name: productName }
+            })
+            return product !== null
+        } catch( error ) {
+            throw new InfrastructureError(
+                'Error al verificar existencia de producto por nombre',
+                'PRISMA_EXISTS_PRODUCT_ERROR',
+                error
+            )
+        }
+    }
+
     async findByName(productName: string): Promise<ProductResponseIncludeDto | null> {
         try {
             const product = await this.prisma.product.findUnique({

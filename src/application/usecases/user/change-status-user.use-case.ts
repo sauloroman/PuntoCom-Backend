@@ -14,7 +14,9 @@ export class ChangeStatusUserUseCase {
 
         const existingUser = await this.userRepository.findById( userId )
         if (!existingUser) throw new ApplicationError(`El usuario con ${userId} no existe`, this.MESSAGE_ERROR)
-        
+        if ( status && existingUser.isActive ) throw new ApplicationError('El usuario ya está activo')
+        if ( !status && !existingUser.isActive ) throw new ApplicationError('El usuario ya está inactivo')
+
         const user = await this.userRepository.changeStatus(userId, status)
     
         return {

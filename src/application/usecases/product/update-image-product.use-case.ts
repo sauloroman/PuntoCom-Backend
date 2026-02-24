@@ -27,10 +27,11 @@ export class UpdateProductImageUseCase {
             categoryId: existingProduct.categoryId,
             supplierId: existingProduct.supplierId,
             isActive: existingProduct.isActive,
-            createdAt: DatesAdapter.toLocal( typeof existingProduct.createdAt === 'string' ? new Date(existingProduct.createdAt) : existingProduct.createdAt
-         ),
+            createdAt: DatesAdapter.toLocal( typeof existingProduct.createdAt === 'string' ? new Date(existingProduct.createdAt) : existingProduct.createdAt),
             updatedAt: DatesAdapter.toLocal( DatesAdapter.now() ),
         })
+
+        console.log(product)
 
         const updatedProduct = await this.productRepository.update(product)
 

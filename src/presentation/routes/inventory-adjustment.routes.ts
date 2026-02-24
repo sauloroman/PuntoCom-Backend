@@ -28,7 +28,7 @@ export class InventoryAdjustmentRoutes {
         
         router.get('/', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor),
-            MapperFilterMiddleware.ToPrisma()
+            MapperFilterMiddleware.ToMssql()
         ], this.controller.getInventoryAdjustments )
 
         return router

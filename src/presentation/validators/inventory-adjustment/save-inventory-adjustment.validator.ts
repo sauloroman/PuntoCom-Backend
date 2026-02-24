@@ -8,10 +8,6 @@ export class SaveInventoryAdjustmentValidator {
             return [ undefined, 'El id del producto es obligatorio' ]
         }                
 
-        if ( input.userId === null || input.userId === undefined || input.userId.trim() === '' ) {
-            return [ undefined, 'El id del usuario es obligatorio']
-        }
-
         if ( input.adjustmentType === null || input.adjustmentType === undefined || input.adjustmentType.trim() === '' ) {
             return [ undefined, 'El tipo de ajuste es obligatorio' ]
         }
@@ -43,7 +39,6 @@ export class SaveInventoryAdjustmentValidator {
 
         const validatedData: SaveInventoryAdjustment = {
             productId: input.productId.trim(),
-            userId: input.userId.trim(),
             adjustmentType: input.adjustmentType,
             adjustmentQuantity: input.adjustmentQuantity,
             adjustmentReason: input.adjustmentReason.trim()

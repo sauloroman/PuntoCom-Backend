@@ -5,14 +5,7 @@ import { DeleteReportUseCase, GetAllReportsUseCase, GetReportByIdUseCase } from 
 import { GetAllSuppliersUseCase } from "../application/usecases/suppliers"
 import { UploadPdfUseCase } from "../application/usecases/upload"
 import { GetAllUsersUseCase } from "../application/usecases/user"
-
-import { 
-    PrismaDatasource, 
-    PrismaInventoryAdjustmentDatasource, 
-    PrismaProductDatasource, 
-    PrismaSupplierDatasource, 
-    PrismaUserDatasource 
-} from "../infrastructure/datasource/prisma"
+import { MSSQLInventoryAdjustment, MSSQLProduct, MSSQLSuppliers, MSSQLUsers } from "../infrastructure/datasource/ms-sql"
 import { 
     InventoryAdjustmentImp, 
     ProductRepositoryImp, 
@@ -27,27 +20,16 @@ import {
 import { ReportController } from "../presentation/controllers"
 import { ReportRoutes } from "../presentation/routes"
 
-const prismaClient = PrismaDatasource.getInstance() 
-
 export class ReportContainer {
 
     public readonly reportRoutes: ReportRoutes
 
     constructor() {
 
-        const userRepository = new UserRepositoryImpl(
-            new PrismaUserDatasource( prismaClient )
-        )
-        const productRepository = new ProductRepositoryImp(
-            new PrismaProductDatasource( prismaClient )
-        )
-        const supplierRepository = new SupplierRepositoryImpl(
-            new PrismaSupplierDatasource( prismaClient )
-        )
-
-        const inventoryAdjustmentRepository = new InventoryAdjustmentImp(
-            new PrismaInventoryAdjustmentDatasource(prismaClient)
-        )
+        const userRepository = new UserRepositoryImpl( new MSSQLUsers() )
+        const supplierRepository = new SupplierRepositoryImpl( new MSSQLSuppliers() )
+        const productRepository = new ProductRepositoryImp( new MSSQLProduct() )
+        const inventoryAdjustmentRepository = new InventoryAdjustmentImp( new MSSQLInventoryAdjustment() ) 
 
         const uploadFileService = new LocalFileUploadService()
         const pdfFileService = new PuppeteerPdfService()

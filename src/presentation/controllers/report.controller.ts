@@ -21,7 +21,6 @@ export class ReportController {
         const {download} = req.query
 
         const filePath = await this.reportService.getReportById(entity, id)
-        console.log(filePath)
 
         if ( download === 'true' ) {
             return res.download(filePath, `${id}.pdf`)

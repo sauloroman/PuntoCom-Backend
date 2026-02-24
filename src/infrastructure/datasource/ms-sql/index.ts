@@ -1,5 +1,6 @@
 export { MSSQLCategory } from './mssql-category.datasource'
 export { MssqlClient } from './mssql-client'
+export { MSSQLInventoryAdjustment } from './mssql-inventory-adjustment.datasource'
 export { MSSQLProduct } from './mssql-product.datasource'
 export { MSSQLResetPasswordCode } from './mssql-reset-pass-code.datasource'
 export { MSSQLSuppliers } from './mssql-supplier.datasource'

@@ -1,14 +1,12 @@
 import { SaleService } from "../application/services"
 import { ReduceStockUseCase } from "../application/usecases/product"
 import { FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../application/usecases/sale"
-
-import { PrismaDatasource, PrismaProductDatasource, PrismaSalesDatasource, PrismaUserDatasource } from "../infrastructure/datasource/prisma"
-import { ProductRepositoryImp, SalesRepositoryImpl, UserRepositoryImpl } from "../infrastructure/repositories"
+import { MSSQLProduct } from "../infrastructure/datasource/ms-sql"
+import { MSSQLSales } from "../infrastructure/datasource/ms-sql/mssql-sale.datasource"
+import { ProductRepositoryImp, SalesRepositoryImpl } from "../infrastructure/repositories"
 
 import { SalesController } from "../presentation/controllers"
 import { SaleRoutes } from "../presentation/routes"
-
-const prismaClient = PrismaDatasource.getInstance()
 
 export class SaleContainer {
 
@@ -16,17 +14,8 @@ export class SaleContainer {
 
     constructor() {
 
-        const saleRepository = new SalesRepositoryImpl( 
-            new PrismaSalesDatasource( prismaClient )
-        )
-
-        const userRepository = new UserRepositoryImpl(
-            new PrismaUserDatasource( prismaClient )
-        )
-
-        const productRepository = new ProductRepositoryImp(
-            new PrismaProductDatasource( prismaClient )
-        )
+        const saleRepository = new SalesRepositoryImpl( new MSSQLSales() )
+        const productRepository = new ProductRepositoryImp( new MSSQLProduct())
 
         const saveSaleUC = new SaveSaleUseCase( saleRepository )
         const saveSaleDetailUC = new SaveDetailSaleUseCase( saleRepository )

@@ -193,15 +193,7 @@ export class MSSQLCategory implements CategoryDatasource {
 
             const pool = await MssqlClient.getConnection()
 
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions( pagination, 'category' )
-
-            console.log({
-                limit,
-                offset,
-                orderBy,
-                page,
-                where
-            })
+            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions( pagination, 'category_createdAt' )
 
             const [ categoryResults, countResults ] = await Promise.all([
                 pool.request()

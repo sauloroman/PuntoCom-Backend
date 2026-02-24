@@ -9,10 +9,12 @@ export class InventoryAdjustmentController {
     constructor(private readonly inventoryAdjustmentService: InventoryAdjustmentService ){}
 
     public postInventoryAdjustment = async ( req: Request, res: Response ) => {
+        const { id: userId } = req.body.user
+
         const [ dto, errorMessage ] = SaveInventoryAdjustmentValidator.validate( req.body )
         if ( errorMessage ) throw new ApplicationError(errorMessage, 'SAVE_INVENTORY_ADJUSTMENT_ERROR')
 
-        const adjustmentSaved = await this.inventoryAdjustmentService.saveInventoryAdjustment( dto! )
+        const adjustmentSaved = await this.inventoryAdjustmentService.saveInventoryAdjustment(dto!, userId)
 
         res.status(201).json({
             ok: true,

@@ -5,7 +5,7 @@ export const buildMssqlPaginationOptions = ( dto: PaginationDTO, entity: string 
     const limit = Number(dto.limit) || 10
     const offset = ( page - 1 ) * limit
 
-    let orderBy = `${entity}_createdAt DESC`
+    let orderBy = `${entity} DESC`
     if ( dto.sort ) {
         orderBy = dto.sort
     }

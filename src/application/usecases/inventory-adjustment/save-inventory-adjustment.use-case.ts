@@ -1,4 +1,4 @@
-import { DatesAdapter } from "../../../config/plugins";
+import { DatesAdapter, IDAdapter } from "../../../config/plugins";
 import { InventoryAdjustment } from "../../../domain/entities";
 import { InventoryAdjustmentRepository } from "../../../domain/repositories";
 import { ProductRepository, UserRepository } from "../../../domain/repositories";
@@ -14,9 +14,9 @@ export class SaveInventoryAdjustmentUseCase {
         private readonly userRepository: UserRepository,
     ){}
 
-    public async execute( data: SaveInventoryAdjustment ): Promise<InventoryAdjustmentResponse> {
+    public async execute( data: SaveInventoryAdjustment, userId: string ): Promise<InventoryAdjustmentResponse> {
 
-        const { productId, userId } = data
+        const { productId } = data
         
         const product = await this.productRepository.findById( productId )
         if ( !product ) throw new ApplicationError(`El producto con id ${productId} no existe`, 'PRODUCT_NOT_FOUND')
@@ -25,16 +25,17 @@ export class SaveInventoryAdjustmentUseCase {
         if ( !user ) throw new ApplicationError(`El usuario con id ${userId} no existe`, 'USER_NOT_FOUND')
 
         const inventoryAdjustment = new InventoryAdjustment({
+            id: IDAdapter.generate(),
             adjustmentPrevQuantity: new Quantity(product.stock),
             adjustmentQuantity: new Quantity( data.adjustmentQuantity ),
             adjustmentReason: data.adjustmentReason,
             adjustmentType: new AdjustmentType( data.adjustmentType ),
             adjustmentDate: DatesAdapter.now(),
             productId: data.productId,
-            userId: data.userId,
+            userId: userId,
         })
 
-        return this.inventoryAdjustmentRepository.save( inventoryAdjustment )
+        return await this.inventoryAdjustmentRepository.save( inventoryAdjustment )
     }
 
 }

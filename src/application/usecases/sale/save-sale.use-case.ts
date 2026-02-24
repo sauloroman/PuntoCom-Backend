@@ -1,4 +1,4 @@
-import { CodeGeneratorAdapter, DatesAdapter } from "../../../config/plugins";
+import { CodeGeneratorAdapter, DatesAdapter, IDAdapter } from "../../../config/plugins";
 import { Sale } from "../../../domain/entities";
 import { SalesRepository } from "../../../domain/repositories";
 import { Money } from "../../../domain/value-objects";
@@ -12,7 +12,9 @@ export class SaveSaleUseCase {
     constructor(private readonly salesRepository: SalesRepository ){}
 
     public async execute( data: SaveSale ): Promise<SaleResponse> {
+
         const newSale = new Sale({
+            id: IDAdapter.generate(),
             date: DatesAdapter.now(),
             total: new Money(data.total),
             code: CodeGeneratorAdapter.generateSaleCode(),

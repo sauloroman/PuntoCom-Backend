@@ -24,13 +24,13 @@ export class SaleRoutes {
 
         router.get('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToPrisma()
+            MapperFilterMiddleware.ToMssql()
         ], this.controller.listSales )
 
         router.get('/filter', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             ValidateFiltersMiddleware.validateSaleFilters(),
-            MapperFilterMiddleware.ToPrisma(),
+            MapperFilterMiddleware.ToMssql(),
         ], this.controller.filterSales )
 
         router.get('/:id', [

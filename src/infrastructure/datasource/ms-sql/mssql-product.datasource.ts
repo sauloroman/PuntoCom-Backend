@@ -9,7 +9,7 @@ import { buildMssqlPaginationOptions } from "./utils/mssql-pagination-options";
 
 const BASE_QUERY = `
     SELECT
-       p.product_id,
+        p.product_id,
         p.product_name,
         p.product_description,
         p.product_code,
@@ -57,14 +57,14 @@ export class MSSQLProduct implements ProductDatasource {
             isActive: row.product_is_active,
             categoryId: row.category_id,
             supplierId: row.supplier_id,
-            Category: {
-                id: row.category_id,
+            Category: row.category_id ? {
+                id: row.category_id ,
                 name: row.category_name ?? '',
                 description: row.category_description ?? '',
                 icon: row.category_icon ?? '',
                 isActive: row.category_is_active ?? false
-            },
-            Supplier:{
+            }: undefined,
+            Supplier: row.supplier_id ? {
                 id: row.supplier_id,
                 name: row.supplier_name ?? '',
                 lastname: row.supplier_lastname ?? '',
@@ -73,7 +73,7 @@ export class MSSQLProduct implements ProductDatasource {
                 email: row.supplier_email ?? '',
                 address: row.supplier_address ?? '',
                 isActive: row.supplier_is_active ?? false
-            } 
+            }: undefined
         }
     }
 
@@ -145,7 +145,7 @@ export class MSSQLProduct implements ProductDatasource {
         try {
             const pool = await MssqlClient.getConnection()
 
-            const result = await pool.request()
+            await pool.request()
                 .input('product_id', product.id)
                 .input('product_name',          product.name)
                 .input('product_description',   product.description)
@@ -177,7 +177,6 @@ export class MSSQLProduct implements ProductDatasource {
                         product_createdAt,
                         product_updatedAt
                     )
-                    OUTPUT INSERTED.*
                     VALUES (
                         @product_id,
                         @product_name,
@@ -196,7 +195,7 @@ export class MSSQLProduct implements ProductDatasource {
                     )
                 `)
 
-            return this.toDomain( result.recordset[0] )
+            return (await this.findById(product.id))!
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al crear un producto',
@@ -210,7 +209,7 @@ export class MSSQLProduct implements ProductDatasource {
         try {   
             const pool = await MssqlClient.getConnection()
 
-            const result = await pool.request()
+            await pool.request()
                 .input('product_id',            product.id)
                 .input('product_name',          product.name)
                 .input('product_description',   product.description)
@@ -234,16 +233,13 @@ export class MSSQLProduct implements ProductDatasource {
                         product_stock_min     = @product_stock_min,
                         product_image         = @product_image,
                         product_image_code    = @product_image_code,
-                        product_is_active     = @product_is_active,
                         category_id           = @category_id,
                         supplier_id           = @supplier_id,
                         product_updatedAt     = @product_updatedAt
-                    OUTPUT INSERTED.*
                     WHERE product_id = @product_id   
                 `)
             
-            return this.toDomain( result.recordset[0] )
-
+            return (await this.findById(product.id))!
         } catch(error) {
             throw new InfrastructureError(
                 'Error al actualizar el producto',
@@ -256,17 +252,16 @@ export class MSSQLProduct implements ProductDatasource {
     async changeStatus(productId: string, status: boolean): Promise<ProductResponseIncludeDto> {
         try {
             const pool = await MssqlClient.getConnection()
-            const result = await pool.request()
+            await pool.request()
                 .input('product_id', productId)
                 .input('status', status)
                 .query(`
                     UPDATE Product
                     SET product_is_active = @status
-                    OUTPUT INSERTED.*
                     WHERE product_id = @product_id
                 `);
 
-            return this.toDomain(result.recordset[0])
+            return (await this.findById(productId))!
         } catch(error) {
             throw new InfrastructureError(
                 'Error al cambiar el estado del producto',
@@ -299,7 +294,7 @@ export class MSSQLProduct implements ProductDatasource {
         try {
             const pool = await MssqlClient.getConnection();
 
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'product');
+            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'product_createdAt');
 
             const [ productsResult, countResult ] = await Promise.all([
                 pool.request()

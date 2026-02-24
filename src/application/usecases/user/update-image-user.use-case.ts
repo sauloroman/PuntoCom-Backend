@@ -12,8 +12,6 @@ export class UpdateUserImageUseCase {
 
         const { id, url } = data
 
-        console.log(url)
-
         const existingUser = await this.userRepository.findById( id )
         if ( !existingUser ) return null
 

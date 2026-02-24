@@ -192,7 +192,7 @@ export class MSSQLUsers implements UserDatasource {
     async getUsers(pagination: PaginationDTO): Promise<PaginationResponseDto<User>> {
         try {
             const pool = await MssqlClient.getConnection()
-            const { page, limit, orderBy, offset, where } = buildMssqlPaginationOptions( pagination, 'user' )
+            const { page, limit, orderBy, offset, where } = buildMssqlPaginationOptions( pagination, 'user_createdAt' )
             
             const [ usersResults, countResult ] = await Promise.all([
                 pool.request()

@@ -191,7 +191,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
 
             const pool = await MssqlClient.getConnection()
 
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'supplier') 
+            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'supplier_createdAt') 
 
             const [ supplierResults, countResult ] = await Promise.all([
                 pool.request()

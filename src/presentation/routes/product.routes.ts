@@ -28,19 +28,14 @@ export class ProductRoutes {
         const router = Router()
 
         router.use([Auth.Logged])
-
-        router.get('/', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToPrisma()
-        ], this.controller.getProducts )
         
-        router.get('/all', this.controller.getAllProducts )
+        router.get('/', this.controller.getAllProducts )
 
-        router.get('/all-minimal', this.controller.getAllProductsMinimalInformation)
+        router.get('/minimal', this.controller.getAllProductsMinimalInformation)
         
         router.get('/search', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToPrismaContains()
+            MapperFilterMiddleware.ToMssqlContains()
         ], this.controller.getProducts )
 
         router.get('/:id', this.controller.getProductById )

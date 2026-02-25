@@ -60,7 +60,7 @@ export class Sale {
   }
 
   get id(): string {
-    return this._id && '';
+    return this._id ?? '';
   }
 
   get date(): Date {

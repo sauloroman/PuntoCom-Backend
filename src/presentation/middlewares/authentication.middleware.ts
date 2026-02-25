@@ -32,7 +32,7 @@ export class AuthMiddleware {
           const user = await userRepository.findById( payload.id )
           
           if ( !user ) return res.status(401).json({ ok: false, error: 'Token Invalido - Usuario no existente'})
-    
+            
           req.body.user = user
           next()
 

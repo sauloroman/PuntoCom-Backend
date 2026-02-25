@@ -6,7 +6,7 @@ export function welcomeEmailTemplate(
   validationCode: string | number
 ): string {
 
-  const url = `${EnvAdapter.FRONTEND_URL}/${token}` 
+  const url = `${EnvAdapter.FRONTEND_URL}/auth/validate-account/${token}` 
   const year = new Date().getFullYear();
 
   return `

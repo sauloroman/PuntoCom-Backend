@@ -35,10 +35,10 @@ export class CreateUserUseCase {
       updatedAt: DatesAdapter.now()
     })
 
-    const createdUser = await this.userRepository.create(user)
+    await this.userRepository.create(user)
 
     return {
-      id: createdUser.id,
+      id: user.id,
       name: user.name,
       lastname: user.lastname,
       email: user.email.value,

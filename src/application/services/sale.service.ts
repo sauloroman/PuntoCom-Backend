@@ -50,7 +50,7 @@ export class SaleService {
     }
 
     async saveSale( dto: SaveSale, details: SaleDetail[] ): Promise<SaleDetailsResponse> {
-        
+
         for( const detail of details ) {
             await this.reduceStockUC.validate(detail.productId, detail.quantity)
         }

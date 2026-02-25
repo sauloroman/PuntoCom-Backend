@@ -18,19 +18,15 @@ export class SaleRoutes {
 
     private initRoutes(): Router {
         const router = Router()
+
         router.use([Auth.Logged])
 
         router.post('/', this.controller.saveSale )
 
         router.get('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToMssql()
-        ], this.controller.listSales )
-
-        router.get('/filter', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
             ValidateFiltersMiddleware.validateSaleFilters(),
-            MapperFilterMiddleware.ToMssql(),
+            MapperFilterMiddleware.ToMssql()
         ], this.controller.filterSales )
 
         router.get('/:id', [

@@ -1,3 +1,4 @@
+import sql from 'mssql'
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
 import { SaleResponse, SaleProductDetailResponse, SaleDetailsResponse, SaleFilters, SaleRaw, SaleDetailRaw } from "../../../application/dtos/sale.dto";
 import { DatesAdapter } from "../../../config/plugins";
@@ -17,10 +18,10 @@ const BASE_QUERY = `
         u.user_id,
         u.user_name,
         u.user_lastname,
-        u.user_role,
+        u.role,
         u.user_image
     FROM Sale s
-    LEFT JOIN Users u ON u.user_id = s.user_id 
+    LEFT JOIN [User] u ON u.user_id = s.user_id 
 `
 
 const DETAIL_SELECT_QUERY = `
@@ -48,7 +49,7 @@ export class MSSQLSales implements SalesDatasource {
             User: saleData.user_id ? {
                 id: saleData.user_id ?? '',
                 name: `${saleData.user_name} ${saleData.user_lastname}`,
-                role: saleData.user_role ?? '',
+                role: saleData.role ?? '',
                 image: saleData.user_image ?? ''
             } : undefined
         }
@@ -59,7 +60,7 @@ export class MSSQLSales implements SalesDatasource {
             id: saleDetailData.sale_product_detail_id,
             saleQuantity: saleDetailData.sale_product_detail_quantity,
             saleUnitPrice: new Money(parseFloat(`${saleDetailData.sale_product_detail_unit_price}`)).value,
-            saleDiscount: new Money(parseFloat(`${saleDetailData.sale_product_discount}`)).value,
+            saleDiscount: new Money(parseFloat(`${saleDetailData.sale_product_detail_discount}`)).value,
             productId: saleDetailData.product_id,
             saleId: saleDetailData.sale_id,
             Product: saleDetailData.product_id ? {
@@ -74,7 +75,7 @@ export class MSSQLSales implements SalesDatasource {
         const pool = await MssqlClient.getConnection()
 
         const result = await pool.request()
-            .input('sale_id', saleId)
+            .input('sale_id', sql.UniqueIdentifier, saleId)
             .query<SaleRaw>(`
                 ${BASE_QUERY}
                 WHERE s.sale_id = @sale_id    
@@ -88,7 +89,7 @@ export class MSSQLSales implements SalesDatasource {
         const pool = await MssqlClient.getConnection()
 
         const result = await pool.request()
-            .input('sale_product_detail_id', saleDetailId)
+            .input('sale_product_detail_id', sql.UniqueIdentifier, saleDetailId)
             .query<SaleDetailRaw>(`
                 ${DETAIL_SELECT_QUERY}
                 WHERE d.sale_product_detail_id = @sale_product_detail_id    
@@ -130,15 +131,14 @@ export class MSSQLSales implements SalesDatasource {
 
     async saveSale(data: Sale): Promise<SaleResponse> {
         try {
-
             const pool = await MssqlClient.getConnection()
 
             await pool.request()
-                .input('sale_id', data.id)
+                .input('sale_id', sql.UniqueIdentifier, data.id)
                 .input('sale_total', data.total.value )
                 .input('sale_date', data.date)
                 .input('sale_code', data.code.value )
-                .input('user_id', data.userId)
+                .input('user_id', sql.UniqueIdentifier, data.userId)
                 .query(`
                     INSERT INTO Sale (
                         sale_id,
@@ -172,12 +172,12 @@ export class MSSQLSales implements SalesDatasource {
             const pool = await MssqlClient.getConnection()
 
             await pool.request()
-                .input('sale_product_detail_id', data.id)
-                .input('sale_product_detail_quantity', data.saleQuantity)
-                .input('sale_product_detail_unit_price', data.saleUnitPrice)
-                .input('sale_product_detail_discount', data.saleDiscount)
-                .input('product_id', data.productId)
-                .input('sale_id', data.saleId)
+                .input('sale_product_detail_id', sql.UniqueIdentifier, data.id)
+                .input('sale_product_detail_quantity', data.saleQuantity.value )
+                .input('sale_product_detail_unit_price', data.saleUnitPrice.value)
+                .input('sale_product_detail_discount', data.saleDiscount.value)
+                .input('product_id', sql.UniqueIdentifier, data.productId)
+                .input('sale_id', sql.UniqueIdentifier, data.saleId)
                 .query(`
                     INSERT INTO Sale_Product_Detail (
                         sale_product_detail_id,
@@ -213,14 +213,14 @@ export class MSSQLSales implements SalesDatasource {
 
             const [saleResult, detailsResult] = await Promise.all([
                 pool.request()
-                    .input('sale_id', id)
+                    .input('sale_id', sql.UniqueIdentifier, id)
                     .query<SaleRaw>(`
                         ${BASE_QUERY}
                         WHERE s.sale_id = @sale_id    
                     `),
 
                 pool.request()
-                    .input('sale_id', id)
+                    .input('sale_id', sql.UniqueIdentifier, id)
                     .query<SaleDetailRaw>(`
                         ${DETAIL_SELECT_QUERY}
                         WHERE d.sale_id = @sale_id
@@ -243,9 +243,7 @@ export class MSSQLSales implements SalesDatasource {
         }
     }
 
-    async getSales(
-        pagination: PaginationDTO
-    ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    async getSales( pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
 
         try {
 
@@ -256,12 +254,12 @@ export class MSSQLSales implements SalesDatasource {
                 .input('limit', limit)
                 .input('offset', offset)
                 .query<SaleRaw>(`
-                ${BASE_QUERY}
-                WHERE ${where}
-                ORDER BY ${orderBy}
-                OFFSET @offset ROWS
-                FETCH NEXT @limit ROWS ONLY
-            `)
+                    ${BASE_QUERY}
+                    WHERE ${where}
+                    ORDER BY ${orderBy}
+                    OFFSET @offset ROWS
+                    FETCH NEXT @limit ROWS ONLY
+                `)
 
             if (salesResult.recordset.length === 0) {
                 return {

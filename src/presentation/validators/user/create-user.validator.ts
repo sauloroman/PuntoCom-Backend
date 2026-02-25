@@ -26,7 +26,7 @@ export class CreateUserValidator {
 
         if (!input.phone || input.phone.trim().length === 0) {
             return [undefined, 'El número telefónico es obligatorio'];
-        } else if (input.lastname.length > this.MAX_PHONE_LENGTH) {
+        } else if (input.phone.length > this.MAX_PHONE_LENGTH) {
             return [undefined, `El número telefónico no puede exceder ${this.MAX_PHONE_LENGTH} caracteres`];
         }
 

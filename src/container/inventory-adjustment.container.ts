@@ -1,7 +1,7 @@
 import { InventoryAdjustmentService } from "../application/services/inventory-adjustment.service";
 import { ListInventoryAdjustmentUseCase, SaveInventoryAdjustmentUseCase } from "../application/usecases/inventory-adjustment";
 import { UpdateProductUseCase } from "../application/usecases/product";
-import { MSSQLInventoryAdjustment, MSSQLProduct, MSSQLUsers } from "../infrastructure/datasource/ms-sql";
+import { MSSQLInventoryAdjustment, MSSQLProduct, MSSQLUsers } from "../infrastructure/datasource/ms-sql/datasources";
 import { InventoryAdjustmentImp } from "../infrastructure/repositories/inventory-adjustment.impl";
 import { ProductRepositoryImp } from "../infrastructure/repositories/product.repository.impl";
 import { UserRepositoryImpl } from "../infrastructure/repositories/user.repository.impl";

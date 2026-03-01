@@ -1,11 +1,14 @@
-import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { CategoryDatasource } from "../../../domain/datasources";
-import { Category } from "../../../domain/entities";
-import { InfrastructureError } from "../../errors/infrastructure-error";
+import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { CategoryDatasource } from "../../../../domain/datasources";
+import { Category } from "../../../../domain/entities";
+import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "./utils/mssql-pagination-options";
+import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
 
 export class MSSQLCategory implements CategoryDatasource {
+    getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
+        throw new Error("Method not implemented.");
+    }
 
     private toDomain(categoryData: any): Category {
         return new Category({
@@ -188,48 +191,48 @@ export class MSSQLCategory implements CategoryDatasource {
         }
     }
     
-    async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
-        try {
+    // async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
+    //     try {
 
-            const pool = await MssqlClient.getConnection()
+    //         const pool = await MssqlClient.getConnection()
 
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions( pagination, 'category_createdAt' )
+    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions( pagination, 'category_createdAt' )
 
-            const [ categoryResults, countResults ] = await Promise.all([
-                pool.request()
-                    .input('limit', limit)
-                    .input('offset', offset )
-                    .query(`
-                        SELECT *
-                        FROM Category
-                        WHERE ${where}
-                        ORDER BY ${orderBy}
-                        OFFSET @offset ROWS
-                        FETCH NEXT @limit ROWS ONLY    
-                    `),
+    //         const [ categoryResults, countResults ] = await Promise.all([
+    //             pool.request()
+    //                 .input('limit', limit)
+    //                 .input('offset', offset )
+    //                 .query(`
+    //                     SELECT *
+    //                     FROM Category
+    //                     WHERE ${where}
+    //                     ORDER BY ${orderBy}
+    //                     OFFSET @offset ROWS
+    //                     FETCH NEXT @limit ROWS ONLY    
+    //                 `),
 
-                pool.request()
-                    .query(`SELECT COUNT(*) AS total FROM Category WHERE ${where}`)
-            ])
+    //             pool.request()
+    //                 .query(`SELECT COUNT(*) AS total FROM Category WHERE ${where}`)
+    //         ])
 
-            const total = countResults.recordset[0].total
-            const totalPages = Math.ceil( total / limit )
+    //         const total = countResults.recordset[0].total
+    //         const totalPages = Math.ceil( total / limit )
 
-            return {
-                items: categoryResults.recordset.map( this.toDomain ),
-                page: page,
-                total: total,
-                totalPages: totalPages
-            }
+    //         return {
+    //             items: categoryResults.recordset.map( this.toDomain ),
+    //             page: page,
+    //             total: total,
+    //             totalPages: totalPages
+    //         }
 
-        } catch( error ) {
-            throw new InfrastructureError(
-                'Error al obtener las categorías',
-                'MSSQL_GET_CATEGORIES_ERROR',
-                error
-            )
-        }
-    }
+    //     } catch( error ) {
+    //         throw new InfrastructureError(
+    //             'Error al obtener las categorías',
+    //             'MSSQL_GET_CATEGORIES_ERROR',
+    //             error
+    //         )
+    //     }
+    // }
     
     async getAllCategories(): Promise<Category[]> {
         try {

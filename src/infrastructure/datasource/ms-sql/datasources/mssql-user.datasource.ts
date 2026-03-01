@@ -1,30 +1,15 @@
-import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { UserDatasource } from "../../../domain/datasources";
-import { User } from "../../../domain/entities";
-import { Email, Password, Phone } from "../../../domain/value-objects";
-import { InfrastructureError } from "../../errors/infrastructure-error";
-import { Role, RoleEnum } from "../../../domain/value-objects/Role";
+import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { UserDatasource } from "../../../../domain/datasources";
+import { User } from "../../../../domain/entities";
+import { Email } from "../../../../domain/value-objects";
+import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "./utils/mssql-pagination-options";
+import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
+import { FilterUsers } from "../../../../application/dtos/user.dto";
+import { buildUserFilter } from "../utils/mssql-build-filter-users";
+import { UserMapper } from "../mappers";
 
 export class MSSQLUsers implements UserDatasource {
-
-    private toDomain(userData: any): User {
-        return new User({
-          id: userData.user_id,
-          name: userData.user_name,
-          lastname: userData.user_lastname,
-          image: userData.user_image,
-          email: new Email(userData.user_email),
-          phone: new Phone(userData.user_phone),
-          password: new Password(userData.user_password),
-          role: new Role(userData.role as RoleEnum),
-          isActive: userData.user_is_active,
-          isValidated: userData.user_is_validated,
-          createdAt: userData.user_createdAt,
-          updatedAt: userData.user_updatedAt
-        });
-      }
 
     async findById(userId: string): Promise<User | null> {
         try {
@@ -35,7 +20,7 @@ export class MSSQLUsers implements UserDatasource {
                 .query(`SELECT * FROM [User] WHERE user_id = @user_id`)
 
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return UserMapper.fromSQL( result.recordset[0] )
 
         } catch( error ) {
             throw new InfrastructureError(
@@ -58,7 +43,7 @@ export class MSSQLUsers implements UserDatasource {
                 .query(`SELECT * FROM [User] WHERE user_email = @user_email`)
 
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return UserMapper.fromSQL( result.recordset[0] )
 
         } catch( error ) {
             throw new InfrastructureError(
@@ -113,7 +98,7 @@ export class MSSQLUsers implements UserDatasource {
                     )
                 `)
             
-            return this.toDomain(result.recordset[0])
+            return UserMapper.fromSQL(result.recordset[0])
 
         } catch( error ) {
             throw new InfrastructureError(
@@ -154,7 +139,7 @@ export class MSSQLUsers implements UserDatasource {
                     WHERE user_id = @user_id
                 `)
 
-            return this.toDomain(result.recordset[0])
+            return UserMapper.fromSQL(result.recordset[0])
 
         } catch ( error ) {
             throw new InfrastructureError(
@@ -179,7 +164,7 @@ export class MSSQLUsers implements UserDatasource {
                     WHERE user_id = @user_id
                 `)
 
-            return this.toDomain( result.recordset[0] )
+            return UserMapper.fromSQL( result.recordset[0] )
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al cambiar el estado del usuario',
@@ -189,32 +174,38 @@ export class MSSQLUsers implements UserDatasource {
         }
     }
     
-    async getUsers(pagination: PaginationDTO): Promise<PaginationResponseDto<User>> {
+    async filterUsers(pagination: PaginationDTO, filter: FilterUsers ): Promise<PaginationResponseDto<User>> {
         try {
             const pool = await MssqlClient.getConnection()
-            const { page, limit, orderBy, offset, where } = buildMssqlPaginationOptions( pagination, 'user_createdAt' )
-            
-            const [ usersResults, countResult ] = await Promise.all([
-                pool.request()
-                    .input('limit', limit)
-                    .input('offset', offset)
-                    .query(`
-                        SELECT * FROM [User]
-                        WHERE ${where}
-                        ORDER BY ${orderBy}
-                        OFFSET @offset ROWS
-                        FETCH NEXT @limit ROWS ONLY    
-                    `),
-                
-                pool.request()
-                    .query(`SELECT COUNT(*) AS total FROM [User] WHERE ${where}`)
-            ])
+            const { page, limit, offset } = buildMssqlPaginationOptions( pagination )
+
+            const countRequest = pool.request()
+            const dataRequest = pool.request()
+
+            const countWhere = buildUserFilter(countRequest, filter)
+            const dataWhere = buildUserFilter(dataRequest, filter)
+
+            const countResult = await countRequest.query(`
+                SELECT COUNT(*) AS total
+                FROM [User] 
+                WHERE ${countWhere}    
+            `)
+
+            dataRequest.input('offset', offset).input('limit', limit)
+            const dataResult = await dataRequest.query(`
+                SELECT * 
+                FROM [User]
+                WHERE ${dataWhere}
+                ORDER BY user_createdAt DESC
+                OFFSET @offset ROWS 
+                FETCH NEXT @limit ROWS ONLY
+            `)
 
             const total = countResult.recordset[0].total
-            const totalPages = Math.ceil( total / limit )
-
+            const totalPages = Math.ceil(total / limit)
+            
             return {
-                items: usersResults.recordset.map( this.toDomain ),
+                items: dataResult.recordset.map( UserMapper.fromSQL ),
                 page: page,
                 total: total,
                 totalPages: totalPages
@@ -233,7 +224,7 @@ export class MSSQLUsers implements UserDatasource {
         try {
             const pool = await MssqlClient.getConnection() 
             const result = await pool.request().query(`SELECT * FROM [User] ORDER BY user_createdAt DESC`)
-            return result.recordset.map( this.toDomain )
+            return result.recordset.map( UserMapper.fromSQL )
         } catch( error ) {
              throw new InfrastructureError(
                 'Error al obtener todos los usuarios',

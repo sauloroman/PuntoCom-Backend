@@ -66,10 +66,9 @@ export class UserRoutes {
       FileUploadMiddleware.validateContainFiles 
     ], this.controller.uploadUserImage )
 
-    router.get('/search', [
+    router.get('/filter', [
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-      MapperFilterMiddleware.ToMssqlContains()
-    ], this.controller.getUsers )
+    ], this.controller.filterUsers )
 
     router.get('/:id', [
       ParamsHandlerMiddleware.hasIDItem(),

@@ -28,6 +28,7 @@ import {
   ChangePasswordRequestDtoI, 
   CheckAdminPasswordDtoI, 
   CreateUserRequestDtoI, 
+  FilterUsers, 
   ForgotPasswordRequestI, 
   ResendVerificationCodeRequestI, 
   UpdateUserRequestDTOI } from '../dtos/user.dto';
@@ -169,8 +170,8 @@ export class UserService {
     return updatedUser
   }
 
-  async listUsers( dto: PaginationDTO ) {
-    return await this.listUsersUC.execute( dto )
+  async listUsers( dto: PaginationDTO, filter: FilterUsers ) {
+    return await this.listUsersUC.execute( dto, filter )
   }
 
   async registerUser(dto: CreateUserRequestDtoI) {

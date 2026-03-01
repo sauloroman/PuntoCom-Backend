@@ -1,4 +1,5 @@
 import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
+import { FilterUsers } from "../../application/dtos/user.dto";
 import { User } from "../entities";
 import { Email } from '../value-objects';
 
@@ -8,6 +9,6 @@ export abstract class UserRepository {
   abstract create( user: User ): Promise<User>
   abstract update( user: User ): Promise<User>
   abstract changeStatus( userId: string, status: boolean ): Promise<User>
-  abstract getUsers( pagination: PaginationDTO ): Promise<PaginationResponseDto<User>>
+  abstract filterUsers( pagination: PaginationDTO, filter: FilterUsers ): Promise<PaginationResponseDto<User>>
   abstract getAllUsers(): Promise<User[]>
 }

@@ -76,6 +76,11 @@ export interface UpdateUserImageDto {
   url: string
 }
 
+export interface FilterUsers {
+  status?: boolean | number,
+  role?: RoleEnum
+}
+
 // Response
 export interface UserResponseDtoI {
   id: string,

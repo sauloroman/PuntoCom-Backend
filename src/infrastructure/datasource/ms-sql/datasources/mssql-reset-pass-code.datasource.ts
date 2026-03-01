@@ -1,7 +1,7 @@
-import { ResetPasswordCodeDatasource } from "../../../domain/datasources";
-import { PasswordResetCode } from "../../../domain/entities";
-import { CodeValue } from "../../../domain/value-objects";
-import { InfrastructureError } from "../../errors/infrastructure-error";
+import { ResetPasswordCodeDatasource } from "../../../../domain/datasources";
+import { PasswordResetCode } from "../../../../domain/entities";
+import { CodeValue } from "../../../../domain/value-objects";
+import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
 
 export class MSSQLResetPasswordCode implements ResetPasswordCodeDatasource {

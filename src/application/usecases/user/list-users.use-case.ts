@@ -2,14 +2,14 @@ import { DatesAdapter } from "../../../config/plugins";
 import { User } from "../../../domain/entities";
 import { UserRepository } from "../../../domain/repositories";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
-import { UserResponseDtoI } from "../../dtos/user.dto";
+import { FilterUsers, UserResponseDtoI } from "../../dtos/user.dto";
 
 export class ListUsersUseCase {
 
     constructor( private readonly userRepository: UserRepository ){}
 
-    public async execute( pagination: PaginationDTO ): Promise<PaginationResponseDto<UserResponseDtoI>> {
-        const {items, page, total, totalPages} = await this.userRepository.getUsers( pagination )
+    public async execute( pagination: PaginationDTO, filter: FilterUsers ): Promise<PaginationResponseDto<UserResponseDtoI>> {
+        const {items, page, total, totalPages} = await this.userRepository.filterUsers( pagination, filter )
 
         const users = items.map( (user: User): UserResponseDtoI => {
             return {

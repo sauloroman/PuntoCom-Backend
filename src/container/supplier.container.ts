@@ -8,7 +8,7 @@ import {
     ListSuppliersUseCase, 
     UpdateSupplierUseCase 
 } from "../application/usecases/suppliers"
-import { MSSQLSuppliers } from "../infrastructure/datasource/ms-sql/mssql-supplier.datasource"
+import { MSSQLSuppliers } from "../infrastructure/datasource/ms-sql/datasources/mssql-supplier.datasource"
 import { SupplierRepositoryImpl } from "../infrastructure/repositories"
 import { SupplierController } from "../presentation/controllers"
 import { SupplierRoutes } from "../presentation/routes"

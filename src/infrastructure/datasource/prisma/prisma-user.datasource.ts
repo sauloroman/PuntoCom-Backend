@@ -8,6 +8,7 @@ import { PrismaClient, User as PrismaUser } from '../../../../generated/prisma';
 import { UserDatasource } from '../../../domain/datasources/user.datasource';
 import { PaginationDTO, PaginationResponseDto } from '../../../application/dtos/pagination.dto';
 import { buildPaginationOptions } from './utils/pagination-options';
+import { FilterUsers } from '../../../application/dtos/user.dto';
 
 export class PrismaUserDatasource implements UserDatasource {
 
@@ -15,6 +16,10 @@ export class PrismaUserDatasource implements UserDatasource {
 
   constructor(prismaClient: PrismaClient) {
     this.prisma = prismaClient;
+  }
+  
+  filterUsers(pagination: PaginationDTO, filter: FilterUsers): Promise<PaginationResponseDto<User>> {
+    throw new Error('Method not implemented.');
   }
 
   async getAllUsers(): Promise<User[]> {

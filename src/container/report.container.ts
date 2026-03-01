@@ -5,7 +5,7 @@ import { DeleteReportUseCase, GetAllReportsUseCase, GetReportByIdUseCase } from 
 import { GetAllSuppliersUseCase } from "../application/usecases/suppliers"
 import { UploadPdfUseCase } from "../application/usecases/upload"
 import { GetAllUsersUseCase } from "../application/usecases/user"
-import { MSSQLInventoryAdjustment, MSSQLProduct, MSSQLSuppliers, MSSQLUsers } from "../infrastructure/datasource/ms-sql"
+import { MSSQLInventoryAdjustment, MSSQLProduct, MSSQLSuppliers, MSSQLUsers } from "../infrastructure/datasource/ms-sql/datasources"
 import { 
     InventoryAdjustmentImp, 
     ProductRepositoryImp, 

@@ -1,8 +1,8 @@
 import { SaleService } from "../application/services"
 import { ReduceStockUseCase } from "../application/usecases/product"
 import { FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../application/usecases/sale"
-import { MSSQLProduct } from "../infrastructure/datasource/ms-sql"
-import { MSSQLSales } from "../infrastructure/datasource/ms-sql/mssql-sale.datasource"
+import { MSSQLProduct } from "../infrastructure/datasource/ms-sql/datasources"
+import { MSSQLSales } from "../infrastructure/datasource/ms-sql/datasources/mssql-sale.datasource"
 import { ProductRepositoryImp, SalesRepositoryImpl } from "../infrastructure/repositories"
 
 import { SalesController } from "../presentation/controllers"

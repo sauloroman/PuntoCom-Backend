@@ -1,11 +1,10 @@
-import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { ProductResponseIncludeDto, ProductInfo, StockCriteria, ProductRaw } from "../../../application/dtos/product.dto";
-import { ProductDatasource } from "../../../domain/datasources";
-import { Product } from "../../../domain/entities";
-import { Money, ProductCode, Stock } from "../../../domain/value-objects";
-import { InfrastructureError } from "../../errors/infrastructure-error";
+import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { ProductResponseIncludeDto, ProductInfo, StockCriteria, ProductRaw } from "../../../../application/dtos/product.dto";
+import { ProductDatasource } from "../../../../domain/datasources";
+import { Product } from "../../../../domain/entities";
+import { Money, ProductCode, Stock } from "../../../../domain/value-objects";
+import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "./utils/mssql-pagination-options";
 
 const BASE_QUERY = `
     SELECT
@@ -40,6 +39,9 @@ const BASE_QUERY = `
 `
 
 export class MSSQLProduct implements ProductDatasource {
+    getProducts(pagination: PaginationDTO): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
+        throw new Error("Method not implemented.");
+    }
     
     private toDomain(row: ProductRaw): ProductResponseIncludeDto {
         return {
@@ -290,44 +292,44 @@ export class MSSQLProduct implements ProductDatasource {
         }
     }
 
-    async getProducts(pagination: PaginationDTO): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
-        try {
-            const pool = await MssqlClient.getConnection();
+    // async getProducts(pagination: PaginationDTO): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
+    //     try {
+    //         const pool = await MssqlClient.getConnection();
 
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'product_createdAt');
+    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'product_createdAt');
 
-            const [ productsResult, countResult ] = await Promise.all([
-                pool.request()
-                    .input('limit',  limit)
-                    .input('offset', offset)
-                    .query<ProductRaw>(`
-                        ${BASE_QUERY}
-                        WHERE ${where}
-                        ORDER BY ${orderBy}
-                        OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
-                    `),
+    //         const [ productsResult, countResult ] = await Promise.all([
+    //             pool.request()
+    //                 .input('limit',  limit)
+    //                 .input('offset', offset)
+    //                 .query<ProductRaw>(`
+    //                     ${BASE_QUERY}
+    //                     WHERE ${where}
+    //                     ORDER BY ${orderBy}
+    //                     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
+    //                 `),
 
-                pool.request()
-                    .query(`SELECT COUNT(*) AS total FROM Product p WHERE ${where}`)
-            ]);
+    //             pool.request()
+    //                 .query(`SELECT COUNT(*) AS total FROM Product p WHERE ${where}`)
+    //         ]);
 
-            const total      = countResult.recordset[0].total;
-            const totalPages = Math.ceil(total / limit);
+    //         const total      = countResult.recordset[0].total;
+    //         const totalPages = Math.ceil(total / limit);
 
-            return {
-                items: productsResult.recordset.map(row => this.toDomain(row)),
-                total,
-                page,
-                totalPages
-            };
-        } catch (error) {
-            throw new InfrastructureError(
-                'Error al obtener los productos paginados',
-                'MSSQL_GET_PRODUCTS_PAGINATED_ERROR',
-                error
-            );
-        }
-    }
+    //         return {
+    //             items: productsResult.recordset.map(row => this.toDomain(row)),
+    //             total,
+    //             page,
+    //             totalPages
+    //         };
+    //     } catch (error) {
+    //         throw new InfrastructureError(
+    //             'Error al obtener los productos paginados',
+    //             'MSSQL_GET_PRODUCTS_PAGINATED_ERROR',
+    //             error
+    //         );
+    //     }
+    // }
 
     async getMinimalInformationProducts(): Promise<ProductInfo[]> {
         try {

@@ -9,7 +9,7 @@ import {
     UpdateImageCategoryUseCase 
 } from "../application/usecases/categories"
 import { DestroyImageUseCase, UploadImageUseCase } from "../application/usecases/upload"
-import { MSSQLCategory } from "../infrastructure/datasource/ms-sql"
+import { MSSQLCategory } from "../infrastructure/datasource/ms-sql/datasources"
 import { CategoryRepositoryImp } from "../infrastructure/repositories"
 import { CloudinaryFileUploadService } from "../infrastructure/services"
 import { CategoryController } from "../presentation/controllers"

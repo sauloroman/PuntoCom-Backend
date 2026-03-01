@@ -1,5 +1,5 @@
 import { HashAdapter } from '../../../../config/plugins';
-import { MssqlClient } from '../mssql-client';
+import { MssqlClient } from '../datasources/mssql-client';
 
 // const users = [
 //   {

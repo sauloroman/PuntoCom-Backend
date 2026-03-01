@@ -25,9 +25,9 @@ import {
 import { CreateVerificationCodeUseCase, GetVerificationCodeUseCase } from "../application/usecases/verification-code";
 
 import { EnvAdapter } from "../config/plugins";
-import { MSSQLResetPasswordCode } from "../infrastructure/datasource/ms-sql/mssql-reset-pass-code.datasource";
-import { MSSQLUsers } from "../infrastructure/datasource/ms-sql/mssql-user.datasource";
-import { MSSQLVerificationCode } from "../infrastructure/datasource/ms-sql/mssql-verification-code.datasource";
+import { MSSQLResetPasswordCode } from "../infrastructure/datasource/ms-sql/datasources/mssql-reset-pass-code.datasource";
+import { MSSQLUsers } from "../infrastructure/datasource/ms-sql/datasources/mssql-user.datasource";
+import { MSSQLVerificationCode } from "../infrastructure/datasource/ms-sql/datasources/mssql-verification-code.datasource";
 
 import { ResetPassCodeImpl, UserRepositoryImpl, VerificationCodeRepositoryImpl } from "../infrastructure/repositories";
 import { CloudinaryFileUploadService, NodeMailerService } from "../infrastructure/services";

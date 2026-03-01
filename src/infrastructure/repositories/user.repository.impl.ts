@@ -3,17 +3,18 @@ import { UserRepository } from '../../domain/repositories/user.repository';
 import { Email } from '../../domain/value-objects';
 import { UserDatasource } from '../../domain/datasources/user.datasource';
 import { PaginationDTO, PaginationResponseDto } from '../../application/dtos/pagination.dto';
+import { FilterUsers } from '../../application/dtos/user.dto';
 
 export class UserRepositoryImpl implements UserRepository {
 
   constructor( private readonly userDatasource: UserDatasource ){}
   
-  async getAllUsers(): Promise<User[]> {
-    return await this.userDatasource.getAllUsers()
+  async filterUsers(pagination: PaginationDTO, filter: FilterUsers): Promise<PaginationResponseDto<User>> {
+    return await this.userDatasource.filterUsers(pagination, filter)
   }
   
-  async getUsers(pagination: PaginationDTO): Promise<PaginationResponseDto<User>> {
-    return await this.userDatasource.getUsers( pagination )
+  async getAllUsers(): Promise<User[]> {
+    return await this.userDatasource.getAllUsers()
   }
 
   async findById(userId: string): Promise<User | null> {

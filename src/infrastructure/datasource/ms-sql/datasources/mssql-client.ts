@@ -1,5 +1,5 @@
 import sql, { ConnectionPool, config as SqlConfig } from "mssql";
-import { EnvAdapter } from "../../../config/plugins";
+import { EnvAdapter } from "../../../../config/plugins";
 
 export class MssqlClient {
 

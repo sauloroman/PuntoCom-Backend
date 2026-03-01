@@ -3,7 +3,6 @@ import {
   ChangePasswordValidator, 
   CreateUserValidator, 
   LoginUserValidator, 
-  PasswordResetCodeValidator, 
   ResendVerificationCodeValidator, 
   UpdateUserValidator, 
   ValidateUserValidator,
@@ -12,6 +11,8 @@ import {
 } from '../validators/user';
 import { ValidationError } from '../../application/errors/validation.error';
 import { UserService } from '../../application/services';
+import { FilterUsers } from '../../application/dtos/user.dto';
+import { RoleEnum } from '../../domain/value-objects/Role';
 
 export class UserController {
   
@@ -41,19 +42,22 @@ export class UserController {
     })
   }
 
-  public getUsers = async (req: Request, res: Response) => {
-    const { page, limit } = req.query
+  public filterUsers = async (req: Request, res: Response) => {
+    const { page, limit, role, status } = req.query
     const sort = (req as any).sort
-    const filter = (req as any).filter
+
+    const filter: FilterUsers = {
+      role: (role ?? '') as RoleEnum,
+      status: Number(status)
+    }
 
     const pagination = {
       page: Number(page),
       limit: Number(limit),
       sort: sort as string,
-      filter: filter as string,
     }
-    
-    const { items, page: currentPage, total, totalPages }  = await this.userService.listUsers( pagination )
+        
+    const { items, page: currentPage, total, totalPages }  = await this.userService.listUsers( pagination, filter )
     
     return res.status(200).json({
       ok: true,

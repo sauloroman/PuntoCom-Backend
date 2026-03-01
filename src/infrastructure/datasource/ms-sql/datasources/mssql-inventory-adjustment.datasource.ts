@@ -1,11 +1,11 @@
-import { InventoryAdjustmentRaw, InventoryAdjustmentResponse } from "../../../application/dtos/inventory-adjustment.dto";
-import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { InventoryAdjustmentDatasource } from "../../../domain/datasources";
-import { InventoryAdjustment } from "../../../domain/entities";
-import { AdjustmentEnum } from "../../../domain/value-objects";
-import { InfrastructureError } from "../../errors/infrastructure-error";
+import { InventoryAdjustmentRaw, InventoryAdjustmentResponse } from "../../../../application/dtos/inventory-adjustment.dto";
+import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { InventoryAdjustmentDatasource } from "../../../../domain/datasources";
+import { InventoryAdjustment } from "../../../../domain/entities";
+import { AdjustmentEnum } from "../../../../domain/value-objects";
+import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "./utils/mssql-pagination-options";
+import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
 
 const BASE_QUERY = `
     SELECT 
@@ -32,6 +32,9 @@ const BASE_QUERY = `
 `
 
 export class MSSQLInventoryAdjustment implements InventoryAdjustmentDatasource {
+    listInventoryAdjustments(pagination: PaginationDTO): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
+        throw new Error("Method not implemented.");
+    }
 
     private toDomain( row: InventoryAdjustmentRaw ): InventoryAdjustmentResponse {
         return {
@@ -128,46 +131,46 @@ export class MSSQLInventoryAdjustment implements InventoryAdjustmentDatasource {
         }
     }
     
-    async listInventoryAdjustments(pagination: PaginationDTO): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
-        try {
-            const pool = await MssqlClient.getConnection()
+    // async listInventoryAdjustments(pagination: PaginationDTO): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
+    //     try {
+    //         const pool = await MssqlClient.getConnection()
 
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'adjustment_date')
+    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'adjustment_date')
 
-            const [ adjustmentsResult, countResult ] = await Promise.all([
-                pool.request()
-                    .input('limit', limit)
-                    .input('offset', offset)
-                    .query<InventoryAdjustmentRaw>(`
-                        ${BASE_QUERY}
-                        WHERE ${where}
-                        ORDER BY ${orderBy}
-                        OFFSET @offset ROWS
-                        FETCH NEXT @limit ROWS ONLY
-                    `),
+    //         const [ adjustmentsResult, countResult ] = await Promise.all([
+    //             pool.request()
+    //                 .input('limit', limit)
+    //                 .input('offset', offset)
+    //                 .query<InventoryAdjustmentRaw>(`
+    //                     ${BASE_QUERY}
+    //                     WHERE ${where}
+    //                     ORDER BY ${orderBy}
+    //                     OFFSET @offset ROWS
+    //                     FETCH NEXT @limit ROWS ONLY
+    //                 `),
 
-                pool.request()
-                    .query(`SELECT COUNT(*) AS total FROM Inventory_Adjustment ia WHERE ${where}`)
-            ])
+    //             pool.request()
+    //                 .query(`SELECT COUNT(*) AS total FROM Inventory_Adjustment ia WHERE ${where}`)
+    //         ])
 
-            const total = countResult.recordset[0].total
-            const totalPages = Math.ceil( total / limit )
+    //         const total = countResult.recordset[0].total
+    //         const totalPages = Math.ceil( total / limit )
 
-            return {
-                items: adjustmentsResult.recordset.map( this.toDomain ),
-                page: page,
-                total: total,
-                totalPages: totalPages
-            }
+    //         return {
+    //             items: adjustmentsResult.recordset.map( this.toDomain ),
+    //             page: page,
+    //             total: total,
+    //             totalPages: totalPages
+    //         }
 
-        } catch(error) {
-            throw new InfrastructureError(
-                'Error al obtener los ajustes de inventario',
-                'MSSQl_GET_ALL_INVENTORY_ADJUSTMENTS_ERROR',
-                error
-            )
-        }
-    }
+    //     } catch(error) {
+    //         throw new InfrastructureError(
+    //             'Error al obtener los ajustes de inventario',
+    //             'MSSQl_GET_ALL_INVENTORY_ADJUSTMENTS_ERROR',
+    //             error
+    //         )
+    //     }
+    // }
     
     async getAllInventoryAdjustments(): Promise<InventoryAdjustmentResponse[]> {
         try {

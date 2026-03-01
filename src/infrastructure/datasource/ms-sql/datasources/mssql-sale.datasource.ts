@@ -1,13 +1,13 @@
 import sql from 'mssql'
-import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { SaleResponse, SaleProductDetailResponse, SaleDetailsResponse, SaleFilters, SaleRaw, SaleDetailRaw } from "../../../application/dtos/sale.dto";
-import { DatesAdapter } from "../../../config/plugins";
-import { SalesDatasource } from "../../../domain/datasources";
-import { Sale, SaleProductDetail } from "../../../domain/entities";
-import { Money } from "../../../domain/value-objects";
-import { InfrastructureError } from "../../errors/infrastructure-error";
+import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { SaleResponse, SaleProductDetailResponse, SaleDetailsResponse, SaleFilters, SaleRaw, SaleDetailRaw } from "../../../../application/dtos/sale.dto";
+import { DatesAdapter } from "../../../../config/plugins";
+import { SalesDatasource } from "../../../../domain/datasources";
+import { Sale, SaleProductDetail } from "../../../../domain/entities";
+import { Money } from "../../../../domain/value-objects";
+import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "./utils/mssql-pagination-options";
+import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
 
 const BASE_QUERY = `
     SELECT 
@@ -39,6 +39,13 @@ const DETAIL_SELECT_QUERY = `
 `
 
 export class MSSQLSales implements SalesDatasource {
+    getSales(pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        throw new Error('Method not implemented.');
+    }
+    
+    filterSales(filter: SaleFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        throw new Error('Method not implemented.');
+    }
 
     private toDomain(saleData: SaleRaw): SaleResponse {
         return {
@@ -243,165 +250,167 @@ export class MSSQLSales implements SalesDatasource {
         }
     }
 
-    async getSales( pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    // async getSales( pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
 
-        try {
+    //     try {
 
-            const pool = await MssqlClient.getConnection()
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'sale_date')
+    //         const pool = await MssqlClient.getConnection()
+    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'sale_date')
 
-            const salesResult = await pool.request()
-                .input('limit', limit)
-                .input('offset', offset)
-                .query<SaleRaw>(`
-                    ${BASE_QUERY}
-                    WHERE ${where}
-                    ORDER BY ${orderBy}
-                    OFFSET @offset ROWS
-                    FETCH NEXT @limit ROWS ONLY
-                `)
+    //         const salesResult = await pool.request()
+    //             .input('limit', limit)
+    //             .input('offset', offset)
+    //             .query<SaleRaw>(`
+    //                 ${BASE_QUERY}
+    //                 WHERE ${where}
+    //                 ORDER BY ${orderBy}
+    //                 OFFSET @offset ROWS
+    //                 FETCH NEXT @limit ROWS ONLY
+    //             `)
 
-            if (salesResult.recordset.length === 0) {
-                return {
-                    items: [],
-                    total: 0,
-                    totalPages: 0,
-                    page
-                }
-            }
+    //         if (salesResult.recordset.length === 0) {
+    //             return {
+    //                 items: [],
+    //                 total: 0,
+    //                 totalPages: 0,
+    //                 page
+    //             }
+    //         }
 
-            const saleIds = salesResult.recordset.map(s => `'${s.sale_id}'`).join(',')
+    //         const saleIds = salesResult.recordset.map(s => `'${s.sale_id}'`).join(',')
 
-            const detailsResult = await pool.request()
-                .query<SaleDetailRaw>(`
-                ${DETAIL_SELECT_QUERY}
-                WHERE d.sale_id IN (${saleIds})
-            `)
+    //         const detailsResult = await pool.request()
+    //             .query<SaleDetailRaw>(`
+    //             ${DETAIL_SELECT_QUERY}
+    //             WHERE d.sale_id IN (${saleIds})
+    //         `)
 
-            const detailsMap = new Map<string, SaleProductDetailResponse[]>()
+    //         const detailsMap = new Map<string, SaleProductDetailResponse[]>()
 
-            for (const detail of detailsResult.recordset) {
+    //         for (const detail of detailsResult.recordset) {
 
-                const mapped = this.toDomainSaleDetail(detail)
+    //             const mapped = this.toDomainSaleDetail(detail)
 
-                if (!detailsMap.has(detail.sale_id)) {
-                    detailsMap.set(detail.sale_id, [])
-                }
+    //             if (!detailsMap.has(detail.sale_id)) {
+    //                 detailsMap.set(detail.sale_id, [])
+    //             }
 
-                detailsMap.get(detail.sale_id)!.push(mapped)
-            }
+    //             detailsMap.get(detail.sale_id)!.push(mapped)
+    //         }
 
-            const salesWithDetails: SaleDetailsResponse[] =
-                salesResult.recordset.map(sale => ({
-                    sale: this.toDomain(sale),
-                    details: detailsMap.get(sale.sale_id) ?? []
-                }))
+    //         const salesWithDetails: SaleDetailsResponse[] =
+    //             salesResult.recordset.map(sale => ({
+    //                 sale: this.toDomain(sale),
+    //                 details: detailsMap.get(sale.sale_id) ?? []
+    //             }))
 
-            const countResult = await pool.request()
-                .query(`SELECT COUNT(*) AS total FROM Sale WHERE ${where}`)
+    //         const countResult = await pool.request()
+    //             .query(`SELECT COUNT(*) AS total FROM Sale WHERE ${where}`)
 
-            const total = countResult.recordset[0].total
-            const totalPages = Math.ceil(total / limit)
+    //         const total = countResult.recordset[0].total
+    //         const totalPages = Math.ceil(total / limit)
 
-            return {
-                items: salesWithDetails,
-                total,
-                totalPages,
-                page
-            }
+    //         return {
+    //             items: salesWithDetails,
+    //             total,
+    //             totalPages,
+    //             page
+    //         }
 
-        } catch (error) {
-            throw new InfrastructureError(
-                'Error al obtener las ventas',
-                'MSSQL_GET_SALES_ERROR',
-                error
-            )
-        }
-    }
+    //     } catch (error) {
+    //         throw new InfrastructureError(
+    //             'Error al obtener las ventas',
+    //             'MSSQL_GET_SALES_ERROR',
+    //             error
+    //         )
+    //     }
+    // }
 
-    async filterSales(
-        filter: SaleFilters,
-        pagination: PaginationDTO
-    ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
-        try {
+    
 
-            const pool = await MssqlClient.getConnection()
-            const { offset, limit, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'sale_date')
+    // async filterSales(
+    //     filter: SaleFilters,
+    //     pagination: PaginationDTO
+    // ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    //     try {
 
-            const salesRequest = pool.request()
-                .input('limit', limit)
-                .input('offset', offset)
+    //         const pool = await MssqlClient.getConnection()
+    //         const { offset, limit, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'sale_date')
 
-            const filterWhere = this.buildFilterWhere(salesRequest, where, filter)
+    //         const salesRequest = pool.request()
+    //             .input('limit', limit)
+    //             .input('offset', offset)
 
-            const salesResult = await salesRequest.query<SaleRaw>(`
-                ${BASE_QUERY}
-                WHERE ${filterWhere}
-                ORDER BY ${orderBy}
-                OFFSET @offset ROWS
-                FETCH NEXT @limit ROWS ONLY
-            `)
+    //         const filterWhere = this.buildFilterWhere(salesRequest, where, filter)
 
-            if (salesResult.recordset.length === 0) {
-                return {
-                    items: [],
-                    total: 0,
-                    totalPages: 0,
-                    page
-                }
-            }
+    //         const salesResult = await salesRequest.query<SaleRaw>(`
+    //             ${BASE_QUERY}
+    //             WHERE ${filterWhere}
+    //             ORDER BY ${orderBy}
+    //             OFFSET @offset ROWS
+    //             FETCH NEXT @limit ROWS ONLY
+    //         `)
 
-            const saleIds = salesResult.recordset.map(s => `'${s.sale_id}'`).join(',')
+    //         if (salesResult.recordset.length === 0) {
+    //             return {
+    //                 items: [],
+    //                 total: 0,
+    //                 totalPages: 0,
+    //                 page
+    //             }
+    //         }
 
-            const detailsResult = await pool.request()
-                .query<SaleDetailRaw>(`
-                    ${DETAIL_SELECT_QUERY}
-                    WHERE d.sale_id IN (${saleIds})
-                `)
+    //         const saleIds = salesResult.recordset.map(s => `'${s.sale_id}'`).join(',')
 
-            const detailsMap = new Map<string, SaleProductDetailResponse[]>()
+    //         const detailsResult = await pool.request()
+    //             .query<SaleDetailRaw>(`
+    //                 ${DETAIL_SELECT_QUERY}
+    //                 WHERE d.sale_id IN (${saleIds})
+    //             `)
 
-            for (const detail of detailsResult.recordset) {
-                const mapped = this.toDomainSaleDetail(detail)
+    //         const detailsMap = new Map<string, SaleProductDetailResponse[]>()
 
-                if (!detailsMap.has(detail.sale_id)) {
-                    detailsMap.set(detail.sale_id, [])
-                }
+    //         for (const detail of detailsResult.recordset) {
+    //             const mapped = this.toDomainSaleDetail(detail)
 
-                detailsMap.get(detail.sale_id)!.push(mapped)
-            }
+    //             if (!detailsMap.has(detail.sale_id)) {
+    //                 detailsMap.set(detail.sale_id, [])
+    //             }
 
-            const salesWithDetails: SaleDetailsResponse[] = salesResult.recordset.map(sale => ({
-                sale: this.toDomain(sale),
-                details: detailsMap.get(sale.sale_id) ?? []
-            }))
+    //             detailsMap.get(detail.sale_id)!.push(mapped)
+    //         }
 
-            const countRequest = pool.request()
-            this.buildFilterWhere(countRequest, where, filter)
+    //         const salesWithDetails: SaleDetailsResponse[] = salesResult.recordset.map(sale => ({
+    //             sale: this.toDomain(sale),
+    //             details: detailsMap.get(sale.sale_id) ?? []
+    //         }))
 
-            const countResult = await countRequest.query(`
-                SELECT COUNT(*) AS total
-                FROM Sale s
-                WHERE ${filterWhere}
-            `)
+    //         const countRequest = pool.request()
+    //         this.buildFilterWhere(countRequest, where, filter)
 
-            const total = countResult.recordset[0].total
-            const totalPages = Math.ceil(total / limit)
+    //         const countResult = await countRequest.query(`
+    //             SELECT COUNT(*) AS total
+    //             FROM Sale s
+    //             WHERE ${filterWhere}
+    //         `)
 
-            return {
-                items: salesWithDetails,
-                total,
-                totalPages,
-                page
-            }
+    //         const total = countResult.recordset[0].total
+    //         const totalPages = Math.ceil(total / limit)
 
-        } catch (error) {
-            throw new InfrastructureError(
-                'Error al filtrar las ventas',
-                'MSSQL_FILTER_SALES_ERROR',
-                error
-            )
-        }
-    }
+    //         return {
+    //             items: salesWithDetails,
+    //             total,
+    //             totalPages,
+    //             page
+    //         }
+
+    //     } catch (error) {
+    //         throw new InfrastructureError(
+    //             'Error al filtrar las ventas',
+    //             'MSSQL_FILTER_SALES_ERROR',
+    //             error
+    //         )
+    //     }
+    // }
 
 }

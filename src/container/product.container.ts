@@ -11,7 +11,7 @@ import {
     UpdateProductUseCase 
 } from "../application/usecases/product"
 import { DestroyImageUseCase, UploadBarCodeUseCase, UploadImageUseCase } from "../application/usecases/upload"
-import { MSSQLProduct } from "../infrastructure/datasource/ms-sql"
+import { MSSQLProduct } from "../infrastructure/datasource/ms-sql/datasources"
 import { ProductRepositoryImp } from "../infrastructure/repositories"
 import { CloudinaryFileUploadService } from "../infrastructure/services"
 import { ProductController } from "../presentation/controllers"

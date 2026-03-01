@@ -1,12 +1,15 @@
-import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { SupplierDatasource } from "../../../domain/datasources";
-import { Supplier } from "../../../domain/entities";
-import { Email, Phone } from "../../../domain/value-objects";
-import { InfrastructureError } from "../../errors/infrastructure-error";
+import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { SupplierDatasource } from "../../../../domain/datasources";
+import { Supplier } from "../../../../domain/entities";
+import { Email, Phone } from "../../../../domain/value-objects";
+import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "./utils/mssql-pagination-options";
+import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
 
 export class MSSQLSuppliers implements SupplierDatasource {
+    getSuppliers(pagination: PaginationDTO): Promise<PaginationResponseDto<Supplier>> {
+        throw new Error("Method not implemented.");
+    }
     
     private toDomain(supplierData: any): Supplier {
         return new Supplier({
@@ -186,47 +189,47 @@ export class MSSQLSuppliers implements SupplierDatasource {
         }
     }
 
-    async getSuppliers(pagination: PaginationDTO): Promise<PaginationResponseDto<Supplier>> {
-        try {
+    // async getSuppliers(pagination: PaginationDTO): Promise<PaginationResponseDto<Supplier>> {
+    //     try {
 
-            const pool = await MssqlClient.getConnection()
+    //         const pool = await MssqlClient.getConnection()
 
-            const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'supplier_createdAt') 
+    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'supplier_createdAt') 
 
-            const [ supplierResults, countResult ] = await Promise.all([
-                pool.request()
-                    .input('limit', limit )
-                    .input('offset', offset )
-                    .query(`
-                        SELECT *
-                        FROM Supplier
-                        WHERE ${where}
-                        ORDER BY ${orderBy}
-                        OFFSET @offset ROWS
-                        FETCH NEXT @limit ROWS ONLY
-                    `),
+    //         const [ supplierResults, countResult ] = await Promise.all([
+    //             pool.request()
+    //                 .input('limit', limit )
+    //                 .input('offset', offset )
+    //                 .query(`
+    //                     SELECT *
+    //                     FROM Supplier
+    //                     WHERE ${where}
+    //                     ORDER BY ${orderBy}
+    //                     OFFSET @offset ROWS
+    //                     FETCH NEXT @limit ROWS ONLY
+    //                 `),
 
-                pool.request().query(`SELECT COUNT(*) AS total FROM Supplier WHERE ${where}`)
-            ]) 
+    //             pool.request().query(`SELECT COUNT(*) AS total FROM Supplier WHERE ${where}`)
+    //         ]) 
 
-            const total = countResult.recordset[0].total
-            const totalPages = Math.ceil( total / limit )
+    //         const total = countResult.recordset[0].total
+    //         const totalPages = Math.ceil( total / limit )
 
-            return {
-                items: supplierResults.recordset.map( this.toDomain ),
-                page: page,
-                total: total,
-                totalPages: totalPages
-            }
+    //         return {
+    //             items: supplierResults.recordset.map( this.toDomain ),
+    //             page: page,
+    //             total: total,
+    //             totalPages: totalPages
+    //         }
 
-        } catch(error) {
-            throw new InfrastructureError(
-                'Error al obtener los proveedores',
-                'MSSQL_GET_SUPPLIERS_ERROR',
-                error
-            )
-        }
-    }
+    //     } catch(error) {
+    //         throw new InfrastructureError(
+    //             'Error al obtener los proveedores',
+    //             'MSSQL_GET_SUPPLIERS_ERROR',
+    //             error
+    //         )
+    //     }
+    // }
     
     async getAllSuppliers(): Promise<Supplier[]> {
         try {

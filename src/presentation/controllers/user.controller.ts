@@ -43,12 +43,13 @@ export class UserController {
   }
 
   public filterUsers = async (req: Request, res: Response) => {
-    const { page, limit, role, status } = req.query
+    const { page, limit, role, status, userName } = req.query
     const sort = (req as any).sort
 
     const filter: FilterUsers = {
       role: (role ?? '') as RoleEnum,
-      status: Number(status)
+      status: Number(status),
+      userName: (userName ?? '') as string,
     }
 
     const pagination = {

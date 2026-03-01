@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql"
 import { SupplierService } from "../application/services"
 import { 
     ChangeStatusSupplierUseCase, 
@@ -12,14 +13,14 @@ import { MSSQLSuppliers } from "../infrastructure/datasource/ms-sql/datasources/
 import { SupplierRepositoryImpl } from "../infrastructure/repositories"
 import { SupplierController } from "../presentation/controllers"
 import { SupplierRoutes } from "../presentation/routes"
+import { Auth } from "../presentation/middlewares"
 
 export class SupplierContainer {
 
     public readonly supplierRoutes: SupplierRoutes
 
-    constructor() {
+    constructor(private readonly pool: ConnectionPool) {
 
-        // const supplierRepository = new SupplierRepositoryImpl( new PrismaSupplierDatasource( PrismaDatasource.getInstance()))
         const supplierRepositoryMSSQL = new SupplierRepositoryImpl( new MSSQLSuppliers() )   
 
         const createSupplierUseCase = new CreateSupplierUseCase( supplierRepositoryMSSQL ) 
@@ -42,8 +43,11 @@ export class SupplierContainer {
 
         const supplierController = new SupplierController( supplierService )
 
+        const auth = new Auth( this.pool )
+
         this.supplierRoutes = new SupplierRoutes({
-            controller: supplierController
+            controller: supplierController,
+            auth: auth
         })
 
     }

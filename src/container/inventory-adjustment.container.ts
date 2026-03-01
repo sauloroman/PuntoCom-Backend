@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql";
 import { InventoryAdjustmentService } from "../application/services/inventory-adjustment.service";
 import { ListInventoryAdjustmentUseCase, SaveInventoryAdjustmentUseCase } from "../application/usecases/inventory-adjustment";
 import { UpdateProductUseCase } from "../application/usecases/product";
@@ -7,15 +8,16 @@ import { ProductRepositoryImp } from "../infrastructure/repositories/product.rep
 import { UserRepositoryImpl } from "../infrastructure/repositories/user.repository.impl";
 import { InventoryAdjustmentController } from "../presentation/controllers/inventory-adjustment";
 import { InventoryAdjustmentRoutes } from "../presentation/routes";
+import { Auth } from "../presentation/middlewares";
 
 export class InventoryAdjustmentContainer {
 
     public readonly inventoryAdjustmentRoutes: InventoryAdjustmentRoutes
 
-    constructor() {
+    constructor(private readonly pool: ConnectionPool) {
         const inventoryAdjustmentRepositoryMSSQL = new InventoryAdjustmentImp( new MSSQLInventoryAdjustment() )
         const productRepositoryMSSQL = new ProductRepositoryImp( new MSSQLProduct() )
-        const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers() )
+        const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers( this.pool ) )
         
         const saveAdjustmentUC = new SaveInventoryAdjustmentUseCase( 
             inventoryAdjustmentRepositoryMSSQL,
@@ -32,7 +34,12 @@ export class InventoryAdjustmentContainer {
 
         const inventoryAdjustmentController = new InventoryAdjustmentController(inventoryAdjustmentService)
 
-        this.inventoryAdjustmentRoutes = new InventoryAdjustmentRoutes({controller: inventoryAdjustmentController})
+        const auth = new Auth( this.pool )
+
+        this.inventoryAdjustmentRoutes = new InventoryAdjustmentRoutes({
+            controller: inventoryAdjustmentController,
+            auth: auth
+        })
 
     }
 

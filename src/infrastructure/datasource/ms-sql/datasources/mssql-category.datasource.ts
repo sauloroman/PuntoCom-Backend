@@ -1,32 +1,18 @@
-import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { ConnectionPool } from "mssql";
+import { FilterCategories, PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
 import { CategoryDatasource } from "../../../../domain/datasources";
 import { Category } from "../../../../domain/entities";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
-import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
+import { CategoryMapper } from "../mappers";
+import { buildCategoriesFilter, buildMssqlPaginationOptions } from "../utils";
 
 export class MSSQLCategory implements CategoryDatasource {
-    getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
-        throw new Error("Method not implemented.");
-    }
 
-    private toDomain(categoryData: any): Category {
-        return new Category({
-            id: categoryData.category_id,
-            name: categoryData.category_name,
-            description: categoryData.category_description,
-            icon: categoryData.category_icon,
-            isActive: categoryData.category_is_active,
-            createdAt: categoryData.category_createdAt,
-            updatedAt: categoryData.category_updatedAt
-        });
-    }
+    constructor(private readonly pool: ConnectionPool){}
 
     async findById(categoryId: string): Promise<Category | null> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('category_id', categoryId )
                 .query(`
                     SELECT *
@@ -35,7 +21,7 @@ export class MSSQLCategory implements CategoryDatasource {
                 `)
 
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return CategoryMapper.fromSQL( result.recordset[0] )
 
         } catch( error ) {
             throw new InfrastructureError(
@@ -48,8 +34,7 @@ export class MSSQLCategory implements CategoryDatasource {
 
     async exists(categoryName: string): Promise<boolean> {
         try {
-            const pool = await MssqlClient.getConnection()
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('category_name', categoryName )
                 .query(`
                     SELECT *
@@ -70,8 +55,7 @@ export class MSSQLCategory implements CategoryDatasource {
     
     async findByName(categoryName: string): Promise<Category | null> {
         try {
-            const pool = await MssqlClient.getConnection()
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('category_name', `%${categoryName}%`)
                 .query(`
                     SELECT *
@@ -80,7 +64,7 @@ export class MSSQLCategory implements CategoryDatasource {
                 `)
             
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return CategoryMapper.fromSQL( result.recordset[0] )
 
         } catch ( error ) {
             throw new InfrastructureError(
@@ -94,9 +78,8 @@ export class MSSQLCategory implements CategoryDatasource {
     async create(category: Category): Promise<Category> {
         try {
 
-            const pool = await MssqlClient.getConnection()
             
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('category_id', category.id )
                 .input('category_name', category.name )
                 .input('category_description', category.description )
@@ -126,7 +109,7 @@ export class MSSQLCategory implements CategoryDatasource {
                     )    
                 `)
             
-            return this.toDomain( result.recordset[0] )
+            return CategoryMapper.fromSQL( result.recordset[0] )
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al crear nueva categoría',
@@ -138,9 +121,8 @@ export class MSSQLCategory implements CategoryDatasource {
     
     async update(category: Category): Promise<Category> {
         try {
-            const pool = await MssqlClient.getConnection()
 
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('category_id', category.id )
                 .input('category_name', category.name )
                 .input('category_description', category.description )
@@ -157,7 +139,7 @@ export class MSSQLCategory implements CategoryDatasource {
                     WHERE category_id = @category_id
                 `)
 
-            return this.toDomain( result.recordset[0] )
+            return CategoryMapper.fromSQL( result.recordset[0] )
         } catch(error) {
             throw new InfrastructureError(
                 'Error al actualizar la categoría',
@@ -169,9 +151,8 @@ export class MSSQLCategory implements CategoryDatasource {
     
     async changeStatus(categoryId: string, status: boolean): Promise<Category> {
         try {
-            const pool = await MssqlClient.getConnection()
 
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('category_id', categoryId )
                 .input('status', status )
                 .query(`
@@ -181,7 +162,7 @@ export class MSSQLCategory implements CategoryDatasource {
                     WHERE category_id = @category_id
                 `)
 
-            return this.toDomain( result.recordset[0] )
+            return CategoryMapper.fromSQL( result.recordset[0] )
         } catch (error) {
             throw new InfrastructureError(
                 'Error al cambiar el estado de la categoría',
@@ -190,55 +171,60 @@ export class MSSQLCategory implements CategoryDatasource {
             )
         }
     }
+
     
-    // async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
-    //     try {
+    async filterCategories(pagination: PaginationDTO, filter: FilterCategories ): Promise<PaginationResponseDto<Category>> {
+        try {
 
-    //         const pool = await MssqlClient.getConnection()
+            const { page, limit, offset } = buildMssqlPaginationOptions(pagination)
+            
+            const countRequest = this.pool.request()
+            const dataRequest = this.pool.request()
 
-    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions( pagination, 'category_createdAt' )
+            const countWhere = buildCategoriesFilter(countRequest, filter)
+            const dataWhere = buildCategoriesFilter(dataRequest, filter)
 
-    //         const [ categoryResults, countResults ] = await Promise.all([
-    //             pool.request()
-    //                 .input('limit', limit)
-    //                 .input('offset', offset )
-    //                 .query(`
-    //                     SELECT *
-    //                     FROM Category
-    //                     WHERE ${where}
-    //                     ORDER BY ${orderBy}
-    //                     OFFSET @offset ROWS
-    //                     FETCH NEXT @limit ROWS ONLY    
-    //                 `),
+            const countResult = await countRequest.query(`
+                SELECT COUNT(*) AS total
+                FROM Category
+                WHERE ${countWhere}
+            `)
 
-    //             pool.request()
-    //                 .query(`SELECT COUNT(*) AS total FROM Category WHERE ${where}`)
-    //         ])
+            console.log(dataWhere)
+            
+            dataRequest.input('offset', offset).input('limit', limit)
+            const dataResult = await dataRequest.query(`
+                SELECT *
+                FROM Category
+                WHERE ${dataWhere}
+                ORDER BY category_createdAt DESC
+                OFFSET @offset ROWS
+                FETCH NEXT @limit ROWS ONLY  
+            `)
 
-    //         const total = countResults.recordset[0].total
-    //         const totalPages = Math.ceil( total / limit )
+            const total = countResult.recordset[0].total
+            const totalPages = Math.ceil( total / limit )
+            
+            return {
+                items: dataResult.recordset.map( CategoryMapper.fromSQL ),
+                page: page,
+                total: total,
+                totalPages: totalPages
+            }
 
-    //         return {
-    //             items: categoryResults.recordset.map( this.toDomain ),
-    //             page: page,
-    //             total: total,
-    //             totalPages: totalPages
-    //         }
-
-    //     } catch( error ) {
-    //         throw new InfrastructureError(
-    //             'Error al obtener las categorías',
-    //             'MSSQL_GET_CATEGORIES_ERROR',
-    //             error
-    //         )
-    //     }
-    // }
+        } catch ( error ) {
+             throw new InfrastructureError(
+                'Error al obtener las categorias filtradas',
+                'MSSQL_FILTER_CATEGORY_ERROR',
+                error
+            )
+        }
+    }
     
     async getAllCategories(): Promise<Category[]> {
         try {
-            const pool = await MssqlClient.getConnection()
-            const result = await pool.request().query(`SELECT * FROM Category ORDER BY category_createdAt DESC`)
-            return result.recordset.map( this.toDomain )
+            const result = await this.pool.request().query(`SELECT * FROM Category ORDER BY category_createdAt DESC`)
+            return result.recordset.map( CategoryMapper.fromSQL )
         } catch (error ) {
             throw new InfrastructureError(
                 'Error al obtener todas las categorías',

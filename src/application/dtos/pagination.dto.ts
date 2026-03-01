@@ -11,3 +11,8 @@ export interface PaginationResponseDto<T> {
     totalPages: number; 
     items: T[]; 
 }
+
+export interface FilterCategories {
+    status?: boolean | number,
+    categoryName?: string
+}

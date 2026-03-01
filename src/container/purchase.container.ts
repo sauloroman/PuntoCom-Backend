@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql"
 import { PurchaseService } from "../application/services"
 import { IncreaseStockUseCase } from "../application/usecases/product"
 import { 
@@ -9,6 +10,7 @@ import { PrismaDatasource, PrismaProductDatasource, PrismaPurchaseDatasource } f
 import { ProductRepositoryImp, PurchaseRepositoryImp } from "../infrastructure/repositories"
 import { PurchasesController } from "../presentation/controllers"
 import { PurchaseRoutes } from "../presentation/routes"
+import { Auth } from "../presentation/middlewares"
 
 const prismaClient = PrismaDatasource.getInstance()
 
@@ -16,7 +18,8 @@ export class PurchaseContainer {
 
     public readonly purchaseRoutes: PurchaseRoutes
 
-    constructor() {
+    constructor(private readonly pool: ConnectionPool ) {
+
         // ---- Repositories
         const purchaseRepository = new PurchaseRepositoryImp(new PrismaPurchaseDatasource( prismaClient ))
         const productRepository = new ProductRepositoryImp(new PrismaProductDatasource( prismaClient ))
@@ -40,7 +43,12 @@ export class PurchaseContainer {
         // ---- Controller
         const purchaseController = new PurchasesController(purchaseService)
 
-        this.purchaseRoutes = new PurchaseRoutes({ controller: purchaseController })
+        const auth = new Auth( this.pool )
+
+        this.purchaseRoutes = new PurchaseRoutes({ 
+            controller: purchaseController,
+            auth: auth 
+        })
     }
 
 }

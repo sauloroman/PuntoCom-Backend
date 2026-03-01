@@ -1,28 +1,27 @@
+import { ConnectionPool } from "mssql";
 import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
 import { UserDatasource } from "../../../../domain/datasources";
 import { User } from "../../../../domain/entities";
 import { Email } from "../../../../domain/value-objects";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
-import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
 import { FilterUsers } from "../../../../application/dtos/user.dto";
-import { buildUserFilter } from "../utils/mssql-build-filter-users";
 import { UserMapper } from "../mappers";
+import { buildMssqlPaginationOptions, buildUserFilter } from "../utils";
 
 export class MSSQLUsers implements UserDatasource {
 
+    constructor(private readonly pool: ConnectionPool) { }
+
     async findById(userId: string): Promise<User | null> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('user_id', userId)
                 .query(`SELECT * FROM [User] WHERE user_id = @user_id`)
 
-            if ( !result.recordset[0] ) return null
-            return UserMapper.fromSQL( result.recordset[0] )
+            if (!result.recordset[0]) return null
+            return UserMapper.fromSQL(result.recordset[0])
 
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error al obtener el usuario por id',
                 'MSSQL_FIND_USER_BY_ID_ERROR',
@@ -30,22 +29,20 @@ export class MSSQLUsers implements UserDatasource {
             )
         }
     }
-    
+
     async findByEmail(userEmail: Email): Promise<User | null> {
         try {
 
             const email = userEmail.value
 
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('user_email', email)
                 .query(`SELECT * FROM [User] WHERE user_email = @user_email`)
 
-            if ( !result.recordset[0] ) return null
-            return UserMapper.fromSQL( result.recordset[0] )
+            if (!result.recordset[0]) return null
+            return UserMapper.fromSQL(result.recordset[0])
 
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error al obtener el usuario por email',
                 'MSSQL_FIND_USER_BY_EMAIL_ERROR',
@@ -53,13 +50,10 @@ export class MSSQLUsers implements UserDatasource {
             )
         }
     }
-    
+
     async create(user: User): Promise<User> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('user_id', user.id)
                 .input('user_name', user.name)
                 .input('user_lastname', user.lastname)
@@ -97,10 +91,10 @@ export class MSSQLUsers implements UserDatasource {
                         @role
                     )
                 `)
-            
+
             return UserMapper.fromSQL(result.recordset[0])
 
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error al crear nuevo usuario',
                 'MSSQL_CREATE_USER_ERROR',
@@ -108,21 +102,18 @@ export class MSSQLUsers implements UserDatasource {
             )
         }
     }
-    
+
     async update(user: User): Promise<User> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('user_id', user.id)
                 .input('user_name', user.name)
                 .input('user_lastname', user.lastname)
                 .input('user_image', user.image)
                 .input('user_email', user.email.value)
                 .input('user_phone', user.phone.value)
-                .input('user_is_validated', user.isValidated )
-                .input('user_updatedAt', user.updatedAt )
+                .input('user_is_validated', user.isValidated)
+                .input('user_updatedAt', user.updatedAt)
                 .input('role', user.role.value)
                 .query(`
                     UPDATE [User]
@@ -141,7 +132,7 @@ export class MSSQLUsers implements UserDatasource {
 
             return UserMapper.fromSQL(result.recordset[0])
 
-        } catch ( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error al actualizar al usuario',
                 'MSSQL_UPDATE_USER_ERROR',
@@ -149,12 +140,10 @@ export class MSSQLUsers implements UserDatasource {
             )
         }
     }
-    
+
     async changeStatus(userId: string, status: boolean): Promise<User> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('user_id', userId)
                 .input('user_is_active', status)
                 .query(`
@@ -164,8 +153,8 @@ export class MSSQLUsers implements UserDatasource {
                     WHERE user_id = @user_id
                 `)
 
-            return UserMapper.fromSQL( result.recordset[0] )
-        } catch( error ) {
+            return UserMapper.fromSQL(result.recordset[0])
+        } catch (error) {
             throw new InfrastructureError(
                 'Error al cambiar el estado del usuario',
                 'MSSQL_UPDATE_USER_STATUS_ERROR',
@@ -173,14 +162,13 @@ export class MSSQLUsers implements UserDatasource {
             )
         }
     }
-    
-    async filterUsers(pagination: PaginationDTO, filter: FilterUsers ): Promise<PaginationResponseDto<User>> {
-        try {
-            const pool = await MssqlClient.getConnection()
-            const { page, limit, offset } = buildMssqlPaginationOptions( pagination )
 
-            const countRequest = pool.request()
-            const dataRequest = pool.request()
+    async filterUsers(pagination: PaginationDTO, filter: FilterUsers): Promise<PaginationResponseDto<User>> {
+        try {
+            const { page, limit, offset } = buildMssqlPaginationOptions(pagination)
+
+            const countRequest = this.pool.request()
+            const dataRequest = this.pool.request()
 
             const countWhere = buildUserFilter(countRequest, filter)
             const dataWhere = buildUserFilter(dataRequest, filter)
@@ -203,30 +191,29 @@ export class MSSQLUsers implements UserDatasource {
 
             const total = countResult.recordset[0].total
             const totalPages = Math.ceil(total / limit)
-            
+
             return {
-                items: dataResult.recordset.map( UserMapper.fromSQL ),
+                items: dataResult.recordset.map(UserMapper.fromSQL),
                 page: page,
                 total: total,
                 totalPages: totalPages
             }
 
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
-                'Error al obtener los usuarios',
-                'MSSQL_UPDATE_USER_ERROR',
+                'Error al obtener los usuarios filtrados',
+                'MSSQL_FILTER_USER_ERROR',
                 error
             )
         }
     }
-    
+
     async getAllUsers(): Promise<User[]> {
         try {
-            const pool = await MssqlClient.getConnection() 
-            const result = await pool.request().query(`SELECT * FROM [User] ORDER BY user_createdAt DESC`)
-            return result.recordset.map( UserMapper.fromSQL )
-        } catch( error ) {
-             throw new InfrastructureError(
+            const result = await this.pool.request().query(`SELECT * FROM [User] ORDER BY user_createdAt DESC`)
+            return result.recordset.map(UserMapper.fromSQL)
+        } catch (error) {
+            throw new InfrastructureError(
                 'Error al obtener todos los usuarios',
                 'MSSQL_UPDATE_USER_ERROR',
                 error

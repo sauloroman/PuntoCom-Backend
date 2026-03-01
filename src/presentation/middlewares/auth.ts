@@ -1,13 +1,16 @@
+import { RequestHandler } from 'express';
 import { MSSQLUsers } from '../../infrastructure/datasource/ms-sql/datasources/mssql-user.datasource';
-// import { PrismaDatasource, PrismaUserDatasource } from '../../infrastructure/datasource/prisma';
 import { UserRepositoryImpl } from '../../infrastructure/repositories';
 import { AuthMiddleware } from './authentication.middleware';
+import { ConnectionPool } from 'mssql';
 
-// const prisma = PrismaDatasource.getInstance();
+export class Auth {
 
-export const Auth = {
-  Logged: AuthMiddleware.validateLoggedUser(
-    // new UserRepositoryImpl( new PrismaUserDatasource(prisma) )
-    new UserRepositoryImpl( new MSSQLUsers() )
-  )
+  public readonly Logged: RequestHandler;
+
+  constructor(pool: ConnectionPool) {
+    this.Logged = AuthMiddleware.validateLoggedUser(
+      new UserRepositoryImpl(new MSSQLUsers(pool))
+    )
+  }
 }

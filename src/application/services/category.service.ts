@@ -1,6 +1,6 @@
 import { UploadedFile } from "express-fileupload";
 import { CreateCategoryRequestDto, UpdateCategoryRequest } from "../dtos/category.dto";
-import { PaginationDTO } from "../dtos/pagination.dto";
+import { FilterCategories, PaginationDTO } from "../dtos/pagination.dto";
 import { 
     ChangeCategoryStatusUseCase, 
     CreateCategoryUseCase, 
@@ -79,8 +79,8 @@ export class CategoryService {
         return updatedCategory
     }
 
-    async listCategories(dto: PaginationDTO) {
-        return await this.listCategoriesUC.execute(dto)
+    async listCategories(dto: PaginationDTO, filter: FilterCategories) {
+        return await this.listCategoriesUC.execute(dto, filter)
     }
 
     async getCategoryById( categoryId: string ) {

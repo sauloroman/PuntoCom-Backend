@@ -12,22 +12,25 @@ import {
 
 interface ProductRoutesI {
     controller: ProductController
+    auth: Auth
 }
 
 export class ProductRoutes {
 
     public readonly routes: Router
     private readonly controller: ProductController
+    private readonly auth: Auth
 
-    constructor({ controller }: ProductRoutesI) {
+    constructor({ controller, auth }: ProductRoutesI) {
         this.controller = controller
+        this.auth = auth
         this.routes = this.initRoutes()
     }
 
     private initRoutes(): Router {
         const router = Router()
 
-        router.use([Auth.Logged])
+        router.use([this.auth.Logged])
         
         router.get('/', this.controller.getAllProducts )
 

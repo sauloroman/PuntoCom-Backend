@@ -18,5 +18,11 @@ export const buildUserFilter = (
         conditions.push('user_is_active = @status')
     }
 
+    if ( filter.userName ) {
+        request.input('user_name', filter.userName)
+        conditions.push('user_name = @user_name OR user_lastname = @user_name')
+    }
+
+
     return conditions.join(' AND ')
 }

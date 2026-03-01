@@ -11,12 +11,14 @@ import { DashboardStatsController } from "../presentation/controllers"
 import { DashboardStatsRoutes } from "../presentation/routes"
 import { PrismaDashboardStatsDatasource, PrismaDatasource } from "../infrastructure/datasource/prisma"
 import { DashboardStatsRepositoryImp } from "../infrastructure/repositories"
+import { Auth } from "../presentation/middlewares"
+import { ConnectionPool } from "mssql"
 
 export class DashboardStatsContainer {
 
     public readonly dashboardStatsRoutes: DashboardStatsRoutes
 
-    constructor() {
+    constructor(private readonly pool: ConnectionPool ) {
 
         const dashboardStatsRepository = new DashboardStatsRepositoryImp(
             new PrismaDashboardStatsDatasource( PrismaDatasource.getInstance() )
@@ -40,8 +42,11 @@ export class DashboardStatsContainer {
 
         const dashboardStatsController = new DashboardStatsController(dashboardStatsService)
 
+        const auth = new Auth( this.pool )
+
         this.dashboardStatsRoutes = new DashboardStatsRoutes({
-            controller: dashboardStatsController
+            controller: dashboardStatsController,
+            auth: auth
         })
 
     }

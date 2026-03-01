@@ -5,22 +5,24 @@ import {
   Auth, 
   AuthMiddleware, 
   FileUploadMiddleware, 
-  MapperFilterMiddleware, 
   ParamsHandlerMiddleware, 
   ValidateRolesMiddleware 
 } from '../middlewares';
 
 interface UserRoutesOptions {
   controller: UserController,
+  auth: Auth
 }
 
 export class UserRoutes {
 
   public readonly routes: Router;
   private readonly controller: UserController;
+  private readonly auth: Auth;
 
-  constructor({ controller }: UserRoutesOptions){
+  constructor({ controller, auth }: UserRoutesOptions){
     this.controller = controller
+    this.auth = auth
     this.routes = this.initRoutes()
   }
 
@@ -45,7 +47,7 @@ export class UserRoutes {
     
     // ################# Private routes ################# 
 
-    router.use([ Auth.Logged ])
+    router.use([ this.auth.Logged ])
     
     router.post('/', [ 
       ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )

@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql"
 import { SaleService } from "../application/services"
 import { ReduceStockUseCase } from "../application/usecases/product"
 import { FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../application/usecases/sale"
@@ -7,12 +8,13 @@ import { ProductRepositoryImp, SalesRepositoryImpl } from "../infrastructure/rep
 
 import { SalesController } from "../presentation/controllers"
 import { SaleRoutes } from "../presentation/routes"
+import { Auth } from "../presentation/middlewares"
 
 export class SaleContainer {
 
     public readonly saleRoutes: SaleRoutes
 
-    constructor() {
+    constructor(private readonly pool: ConnectionPool) {
 
         const saleRepository = new SalesRepositoryImpl( new MSSQLSales() )
         const productRepository = new ProductRepositoryImp( new MSSQLProduct())
@@ -35,8 +37,11 @@ export class SaleContainer {
 
         const saleController = new SalesController( saleService )
 
+        const auth = new Auth( this.pool )
+
         this.saleRoutes = new SaleRoutes({
-            controller: saleController
+            controller: saleController,
+            auth: auth
         })
 
     }

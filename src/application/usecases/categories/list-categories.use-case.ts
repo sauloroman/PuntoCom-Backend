@@ -2,15 +2,15 @@ import { DatesAdapter } from "../../../config/plugins";
 import { Category } from "../../../domain/entities";
 import { CategoryRepository } from "../../../domain/repositories";
 import { CategoryResponseDto } from "../../dtos/category.dto";
-import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
+import { FilterCategories, PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
 
 export class ListCategoriesUseCase {
 
     constructor(private readonly categoryRepository: CategoryRepository){}
 
-    public async execute( pagination: PaginationDTO ): Promise<PaginationResponseDto<CategoryResponseDto>> {
+    public async execute( pagination: PaginationDTO, filter: FilterCategories ): Promise<PaginationResponseDto<CategoryResponseDto>> {
 
-        const { items, page, total, totalPages } = await this.categoryRepository.getCategories( pagination )
+        const { items, page, total, totalPages } = await this.categoryRepository.filterCategories( pagination, filter )
 
         const categories = items.map((category: Category): CategoryResponseDto => {
             return {

@@ -5,22 +5,25 @@ import { Auth, MapperFilterMiddleware, ParamsHandlerMiddleware, ValidateRolesMid
 
 interface SupplierRoutesI {
     controller: SupplierController
+    auth: Auth
 }
 
 export class SupplierRoutes {
 
     public readonly routes: Router
     private readonly controller: SupplierController
+    private readonly auth: Auth
 
-    constructor({ controller }: SupplierRoutesI) {
+    constructor({ controller, auth }: SupplierRoutesI) {
         this.controller = controller
+        this.auth = auth
         this.routes = this.initRoutes()
     }
 
     private initRoutes(): Router {
         const router = Router()
 
-        router.use([Auth.Logged])
+        router.use([this.auth.Logged])
 
         router.get('/', this.controller.getAllSuppliers )
 

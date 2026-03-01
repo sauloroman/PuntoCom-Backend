@@ -1,4 +1,4 @@
-import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
+import { FilterCategories, PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
 import { CategoryDatasource } from "../../domain/datasources/category.datasource";
 import { Category } from "../../domain/entities";
 import { CategoryRepository } from "../../domain/repositories/category.repository";
@@ -30,9 +30,9 @@ export class CategoryRepositoryImp implements CategoryRepository {
     async changeStatus(categoryId: string, status: boolean): Promise<Category> {
         return await this.categoryDatasource.changeStatus( categoryId, status )
     }
-    
-    async getCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
-        return await this.categoryDatasource.getCategories(pagination)
+
+    async filterCategories(pagination: PaginationDTO, filter: FilterCategories): Promise<PaginationResponseDto<Category>> {
+        return await this.categoryDatasource.filterCategories( pagination, filter )
     }
 
     async getAllCategories(): Promise<Category[]> {

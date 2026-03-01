@@ -12,6 +12,10 @@ export class PrismaCategoryDatasource implements CategoryDatasource {
     constructor(prisma: PrismaClient){
         this.prisma = prisma
     }
+    
+    async filterCategories(pagination: PaginationDTO): Promise<PaginationResponseDto<Category>> {
+        throw new Error("Method not implemented.");
+    }
 
     async getAllCategories(): Promise<Category[]> {
         try {

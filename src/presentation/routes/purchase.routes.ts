@@ -5,22 +5,25 @@ import { Auth, MapperFilterMiddleware, ValidateRolesMiddleware } from "../middle
 
 interface PurchaseRoutesI {
     controller: PurchasesController
+    auth: Auth
 }
 
 export class PurchaseRoutes {
 
     public readonly routes: Router
     private readonly controller: PurchasesController
+    private readonly auth: Auth
 
-    constructor({ controller }: PurchaseRoutesI) {
+    constructor({ controller, auth }: PurchaseRoutesI) {
         this.controller = controller
+        this.auth = auth
         this.routes = this.initRoutes()
     }   
 
     private initRoutes(): Router {
         const router = Router()
 
-        router.use([Auth.Logged])
+        router.use([this.auth.Logged])
 
         router.post('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )   

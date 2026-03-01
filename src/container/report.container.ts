@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql"
 import { ReportService } from "../application/services"
 import { GetAllInventoryAdjustmentsUseCase } from "../application/usecases/inventory-adjustment"
 import { GetAllProductsUseCase } from "../application/usecases/product"
@@ -19,14 +20,15 @@ import {
 
 import { ReportController } from "../presentation/controllers"
 import { ReportRoutes } from "../presentation/routes"
+import { Auth } from "../presentation/middlewares"
 
 export class ReportContainer {
 
     public readonly reportRoutes: ReportRoutes
 
-    constructor() {
+    constructor(private readonly pool: ConnectionPool) {
 
-        const userRepository = new UserRepositoryImpl( new MSSQLUsers() )
+        const userRepository = new UserRepositoryImpl( new MSSQLUsers(this.pool) )
         const supplierRepository = new SupplierRepositoryImpl( new MSSQLSuppliers() )
         const productRepository = new ProductRepositoryImp( new MSSQLProduct() )
         const inventoryAdjustmentRepository = new InventoryAdjustmentImp( new MSSQLInventoryAdjustment() ) 
@@ -57,8 +59,11 @@ export class ReportContainer {
 
         const reportController = new ReportController(reportService)    
 
+        const auth = new Auth( this.pool )
+
         this.reportRoutes = new ReportRoutes({
-            controller: reportController
+            controller: reportController,
+            auth: auth
         })
 
     }

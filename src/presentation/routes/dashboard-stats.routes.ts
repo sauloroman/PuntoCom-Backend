@@ -5,23 +5,26 @@ import { ValidateRolesMiddleware } from "../middlewares";
 import { Auth } from "../middlewares";
 
 interface DashboardStatsRoutesI {
-    controller: DashboardStatsController
+    controller: DashboardStatsController,
+    auth: Auth
 }
 
 export class DashboardStatsRoutes {
 
     public readonly routes: Router
+    private readonly auth: Auth
     private readonly controller: DashboardStatsController
 
-    constructor({ controller }: DashboardStatsRoutesI){
+    constructor({ controller, auth }: DashboardStatsRoutesI){
         this.controller = controller
+        this.auth = auth
         this.routes = this.initRoutes()
     }
 
     private initRoutes(): Router {
         const router = Router()
 
-        router.use([Auth.Logged])
+        router.use([this.auth.Logged])
 
         router.get('/stats', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)

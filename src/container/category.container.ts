@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql"
 import { CategoryService } from "../application/services"
 import { 
     ChangeCategoryStatusUseCase, 
@@ -14,17 +15,17 @@ import { CategoryRepositoryImp } from "../infrastructure/repositories"
 import { CloudinaryFileUploadService } from "../infrastructure/services"
 import { CategoryController } from "../presentation/controllers"
 import { CategoryRoutes } from "../presentation/routes"
+import { Auth } from "../presentation/middlewares"
 
 export class CategoryContainer {
 
     public readonly categoryRoutes: CategoryRoutes
 
-    constructor() {
+    constructor(private readonly pool: ConnectionPool) {
 
         // #################### Repositories #################### 
         
-        // const categoryRepositoryPrisma = new CategoryRepositoryImp( new PrismaCategoryDatasource( PrismaDatasource.getInstance() ) )
-        const categoryRepositoryMSSQL = new CategoryRepositoryImp( new MSSQLCategory() )
+        const categoryRepositoryMSSQL = new CategoryRepositoryImp( new MSSQLCategory(this.pool) )
         const uploadFileService = new CloudinaryFileUploadService()
         
         // #################### Use Cases ####################
@@ -55,7 +56,12 @@ export class CategoryContainer {
 
         const categoryController = new CategoryController(categoryService)
 
-        this.categoryRoutes = new CategoryRoutes({ controller: categoryController })
+        const auth = new Auth( this.pool )
+        
+        this.categoryRoutes = new CategoryRoutes({ 
+            controller: categoryController,
+            auth: auth
+        })
     }
 
 }

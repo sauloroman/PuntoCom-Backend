@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { ApplicationError } from "../../application/errors"
 import { CategoryService } from "../../application/services"
 import { CreateCategoryValidator, UpdateCategoryValidator } from "../validators/category"
+import { FilterCategories } from "../../application/dtos/pagination.dto"
 
 export class CategoryController {
 
@@ -61,16 +62,19 @@ export class CategoryController {
         })
     }
 
-    public getCategories = async (req: Request, res: Response ) => {
-        const { page, limit } = req.query
+    public filterCategories = async (req: Request, res: Response ) => {
+        const { page, limit, status, categoryName } = req.query
         const sort = (req as any).sort
-        const filter = (req as any).filter
+
+        const filter: FilterCategories = {
+            categoryName: (categoryName ?? '') as string,
+            status: Number(status)
+        }
 
         const pagination = {
             page: Number(page),
             limit: Number(limit),
             sort: sort as string,
-            filter: filter as string
         }
 
         const { 
@@ -78,7 +82,7 @@ export class CategoryController {
             page: currentPage,
             total,
             totalPages
-        } = await this.categoryService.listCategories(pagination)
+        } = await this.categoryService.listCategories(pagination, filter)
 
         return res.status(200).json({
             ok: true,

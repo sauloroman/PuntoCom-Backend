@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql";
 import { UserService } from "../application/services";
 import { 
   SendChangePasswordEmailUseCase, 
@@ -34,19 +35,15 @@ import { CloudinaryFileUploadService, NodeMailerService } from "../infrastructur
 
 import { UserController } from "../presentation/controllers";
 import { UserRoutes } from "../presentation/routes";
+import { Auth } from "../presentation/middlewares";
 
 export class UserContainer {
 
   public readonly userRoutes: UserRoutes;
 
-  constructor() {
+  constructor( private readonly pool: ConnectionPool ) {
 
-    // Repositorios
-    // const userRepositoryPrisma = new UserRepositoryImpl( new PrismaUserDatasource(PrismaDatasource.getInstance()))
-    // const verificationCodeRepositoryPrisma = new VerificationCodeRepositoryImpl( new PrismaVerificationCodeDatasource( PrismaDatasource.getInstance()))
-    // const resetPassCodeRepositoryPrisma = new ResetPassCodeImpl( new PrismaResetPasswordCode( PrismaDatasource.getInstance()))
-    
-    const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers() )
+    const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers(this.pool) )
     const verificationCodeRepositoryMSSQL = new VerificationCodeRepositoryImpl( new MSSQLVerificationCode() )
     const resetPassCodeRepository = new ResetPassCodeImpl( new MSSQLResetPasswordCode() )
 
@@ -121,7 +118,11 @@ export class UserContainer {
     // Controlador
     const userController = new UserController(userService)
 
-    this.userRoutes = new UserRoutes({  controller: userController })
-  }
+    const auth = new Auth( this.pool )
 
+    this.userRoutes = new UserRoutes({ 
+      controller: userController,
+      auth: auth 
+    })
+  }
 }

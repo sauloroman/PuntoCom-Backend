@@ -1,3 +1,4 @@
+import { ConnectionPool } from "mssql"
 import { ProductService } from "../application/services"
 import { 
     ChangeStatusProductUseCase, 
@@ -16,14 +17,14 @@ import { ProductRepositoryImp } from "../infrastructure/repositories"
 import { CloudinaryFileUploadService } from "../infrastructure/services"
 import { ProductController } from "../presentation/controllers"
 import { ProductRoutes } from "../presentation/routes"
+import { Auth } from "../presentation/middlewares"
 
 export class ProductContainer {
 
     public readonly productRoutes: ProductRoutes
 
-    constructor() {
+    constructor( private readonly pool: ConnectionPool ) {
 
-        // const productRepositoryPrisma = new ProductRepositoryImp( new PrismaProductDatasource( PrismaDatasource.getInstance()))
         const productRepositoryMSSQL = new ProductRepositoryImp( new MSSQLProduct() )
 
         const uploadFilesServices = new CloudinaryFileUploadService()
@@ -60,8 +61,11 @@ export class ProductContainer {
 
         const productController = new ProductController(productService)
 
+        const auth = new Auth( this.pool )
+        
         this.productRoutes = new ProductRoutes({
-            controller: productController
+            controller: productController,
+            auth: auth
         })
 
     }

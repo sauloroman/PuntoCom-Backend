@@ -1,3 +1,4 @@
+import { ConnectionPool } from 'mssql';
 import { AppRoutes } from '../presentation/routes/app.routes';
 import { 
   CategoryContainer, 
@@ -10,22 +11,23 @@ import {
   SupplierContainer, 
   UserContainer 
 } from './';
+import { MssqlClient } from '../infrastructure/datasource/ms-sql/datasources';
 
 export class Container {
 
   public readonly appRoutes: AppRoutes;
 
-  constructor() {
+  private constructor(pool: ConnectionPool) {
 
-    const userContainer = new UserContainer()
-    const categoryContainer = new CategoryContainer()
-    const supplierContainer = new SupplierContainer()
-    const productContainer = new ProductContainer()
-    const reportContainer = new ReportContainer()
-    const saleContainer = new SaleContainer()
-    const purchaseContainer = new PurchaseContainer()
-    const inventoryAdjustmentContainer = new InventoryAdjustmentContainer()
-    const dashboardStatsContainer = new DashboardStatsContainer()
+    const userContainer = new UserContainer(pool)
+    const categoryContainer = new CategoryContainer(pool)
+    const supplierContainer = new SupplierContainer(pool)
+    const productContainer = new ProductContainer(pool)
+    const reportContainer = new ReportContainer(pool)
+    const saleContainer = new SaleContainer(pool)
+    const purchaseContainer = new PurchaseContainer(pool)
+    const inventoryAdjustmentContainer = new InventoryAdjustmentContainer(pool)
+    const dashboardStatsContainer = new DashboardStatsContainer(pool)
 
     this.appRoutes = new AppRoutes({
       userRoutes: userContainer.userRoutes,
@@ -39,6 +41,12 @@ export class Container {
       dashboardStatsRoutes: dashboardStatsContainer.dashboardStatsRoutes
     })
 
+  }
+
+  public static async create(): Promise<Container> {
+    const pool = await MssqlClient.getConnection()
+    const container = new Container(pool)
+    return container
   }
 
 }

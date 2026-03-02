@@ -1,4 +1,5 @@
-import { FilterCategories, PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
+import { FilterCategories } from "../../application/dtos/category.dto";
+import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
 import { CategoryDatasource } from "../../domain/datasources/category.datasource";
 import { Category } from "../../domain/entities";
 import { CategoryRepository } from "../../domain/repositories/category.repository";

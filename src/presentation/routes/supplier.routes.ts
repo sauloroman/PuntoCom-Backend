@@ -33,10 +33,9 @@ export class SupplierRoutes {
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.postSupplier )
 
-        router.get('/search', [
+        router.get('/filter', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToMssqlContains()
-        ], this.controller.getSuppliers )
+        ], this.controller.filterSuppliers )
 
         router.get('/:id', [
             ParamsHandlerMiddleware.hasIDItem(),

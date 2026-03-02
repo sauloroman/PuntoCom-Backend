@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { ApplicationError } from "../../application/errors"
 import { CategoryService } from "../../application/services"
 import { CreateCategoryValidator, UpdateCategoryValidator } from "../validators/category"
-import { FilterCategories } from "../../application/dtos/pagination.dto"
+import { FilterCategories } from "../../application/dtos/category.dto"
 
 export class CategoryController {
 

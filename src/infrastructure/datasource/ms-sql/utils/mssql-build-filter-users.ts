@@ -19,10 +19,9 @@ export const buildUserFilter = (
     }
 
     if ( filter.userName ) {
-        request.input('user_name', filter.userName)
-        conditions.push('user_name = @user_name OR user_lastname = @user_name')
+        const str = filter.userName.toLowerCase()
+        conditions.push(`user_name LIKE '%${str}%' OR user_lastname LIKE '%${str}%'`)
     }
-
 
     return conditions.join(' AND ')
 }

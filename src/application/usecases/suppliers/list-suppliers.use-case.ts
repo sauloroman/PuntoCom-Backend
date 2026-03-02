@@ -2,15 +2,15 @@ import { DatesAdapter } from "../../../config/plugins";
 import { Supplier } from "../../../domain/entities";
 import { SupplierRepository } from "../../../domain/repositories";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
-import { SupplierResponseDto } from "../../dtos/supplier.dto";
+import { FilterSuppliers, SupplierResponseDto } from "../../dtos/supplier.dto";
 
 export class ListSuppliersUseCase {
 
     constructor(private readonly supplierRepository: SupplierRepository){}
 
-    public async execute( pagination: PaginationDTO ): Promise<PaginationResponseDto<SupplierResponseDto>> {
+    public async execute( pagination: PaginationDTO, filter: FilterSuppliers ): Promise<PaginationResponseDto<SupplierResponseDto>> {
 
-        const { items, page, total, totalPages } = await this.supplierRepository.getSuppliers(pagination)
+        const { items, page, total, totalPages } = await this.supplierRepository.filterSuppliers(pagination, filter)
 
         const suppliers  = items.map((supplier: Supplier): SupplierResponseDto => {
             return {

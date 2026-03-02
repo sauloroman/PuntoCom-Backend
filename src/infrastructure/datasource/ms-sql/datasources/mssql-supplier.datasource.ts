@@ -1,36 +1,19 @@
+import { ConnectionPool } from "mssql";
 import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
 import { SupplierDatasource } from "../../../../domain/datasources";
 import { Supplier } from "../../../../domain/entities";
-import { Email, Phone } from "../../../../domain/value-objects";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
-import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
+import { SupplierMapper } from "../mappers/supplier.mapper";
+import { FilterSuppliers } from "../../../../application/dtos/supplier.dto";
+import { buildMssqlPaginationOptions, buildSupplierFilter } from "../utils";
 
 export class MSSQLSuppliers implements SupplierDatasource {
-    getSuppliers(pagination: PaginationDTO): Promise<PaginationResponseDto<Supplier>> {
-        throw new Error("Method not implemented.");
-    }
-    
-    private toDomain(supplierData: any): Supplier {
-        return new Supplier({
-            id: supplierData.supplier_id,
-            name: supplierData.supplier_name,
-            lastname: supplierData.supplier_lastname,
-            company: supplierData.supplier_company,
-            email: new Email(supplierData.supplier_email),
-            phone: new Phone( supplierData.supplier_phone ),
-            address: supplierData.supplier_address,
-            isActive: supplierData.supplier_is_active,
-            createdAt: supplierData.supplier_createdAt,
-            updatedAt: supplierData.supplier_updatedAt
-        })
-    }
+
+    constructor(private readonly pool: ConnectionPool){}
 
     async findById(supplierId: string): Promise<Supplier | null> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('supplier_id', supplierId)
                 .query(`
                     SELECT *
@@ -39,7 +22,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
                 `)
                 
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return SupplierMapper.fromSQL( result.recordset[0] )
 
         } catch(error) {
             throw new InfrastructureError(
@@ -52,9 +35,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
 
     async findByEmail(supplierEmail: string): Promise<Supplier | null> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('supplier_email', supplierEmail)
                 .query(`
                     SELECT * 
@@ -63,7 +44,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
                 `)
 
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return SupplierMapper.fromSQL( result.recordset[0] )
         } catch(error) {
             throw new InfrastructureError(
                 'Error al obtener el proveedor por correo',
@@ -75,10 +56,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
 
     async create(supplier: Supplier): Promise<Supplier> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('supplier_id', supplier.id )
                 .input('supplier_name', supplier.name )
                 .input('supplier_lastname', supplier.lastname )
@@ -117,7 +95,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
                     )
                 `)
 
-            return this.toDomain( result.recordset[0] )
+            return SupplierMapper.fromSQL( result.recordset[0] )
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al crear proveedor',
@@ -129,10 +107,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
     
     async update(supplier: Supplier): Promise<Supplier> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('supplier_id', supplier.id )
                 .input('supplier_name', supplier.name )
                 .input('supplier_lastname', supplier.lastname )
@@ -155,7 +130,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
                     WHERE supplier_id = @supplier_id
                 `)                
 
-            return this.toDomain( result.recordset[0] )
+            return SupplierMapper.fromSQL( result.recordset[0] )
         } catch(error) {
             throw new InfrastructureError(
                 'Error al actualizar proveedor',
@@ -167,9 +142,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
     
     async changeStatus(supplierId: string, status: boolean): Promise<Supplier> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('supplier_id', supplierId )
                 .input('status', status)
                 .query(`
@@ -179,7 +152,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
                     WHERE supplier_id = @supplier_id    
                 `)
 
-            return this.toDomain(result.recordset[0])
+            return SupplierMapper.fromSQL(result.recordset[0])
         } catch(error) {
             throw new InfrastructureError(
                 'Error al cambiar el estado del proveedor',
@@ -189,56 +162,58 @@ export class MSSQLSuppliers implements SupplierDatasource {
         }
     }
 
-    // async getSuppliers(pagination: PaginationDTO): Promise<PaginationResponseDto<Supplier>> {
-    //     try {
+    async filterSuppliers(pagination: PaginationDTO, filter: FilterSuppliers ): Promise<PaginationResponseDto<Supplier>> {
+        try {
 
-    //         const pool = await MssqlClient.getConnection()
+            const { page, limit, offset } = buildMssqlPaginationOptions(pagination)           
 
-    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'supplier_createdAt') 
+            const countRequest = this.pool.request()
+            const dataRequest = this.pool.request()
 
-    //         const [ supplierResults, countResult ] = await Promise.all([
-    //             pool.request()
-    //                 .input('limit', limit )
-    //                 .input('offset', offset )
-    //                 .query(`
-    //                     SELECT *
-    //                     FROM Supplier
-    //                     WHERE ${where}
-    //                     ORDER BY ${orderBy}
-    //                     OFFSET @offset ROWS
-    //                     FETCH NEXT @limit ROWS ONLY
-    //                 `),
+            const countWhere = buildSupplierFilter( countRequest, filter )
+            const dataWhere = buildSupplierFilter( dataRequest, filter )
 
-    //             pool.request().query(`SELECT COUNT(*) AS total FROM Supplier WHERE ${where}`)
-    //         ]) 
+            const countResult = await countRequest.query(`
+                SELECT COUNT(*) AS total
+                FROM Supplier
+                WHERE ${countWhere}   
+            `)
 
-    //         const total = countResult.recordset[0].total
-    //         const totalPages = Math.ceil( total / limit )
+            dataRequest.input('offset', offset).input('limit', limit )
+            const dataResult = await dataRequest.query(`
+                SELECT *
+                FROM Supplier
+                WHERE ${dataWhere}
+                ORDER BY supplier_createdAt DESC
+                OFFSET @offset ROWS
+                FETCH NEXT @limit ROWS ONLY   
+            `)
 
-    //         return {
-    //             items: supplierResults.recordset.map( this.toDomain ),
-    //             page: page,
-    //             total: total,
-    //             totalPages: totalPages
-    //         }
+            const total = countResult.recordset[0].total
+            const totalPages = Math.ceil( total / limit )
 
-    //     } catch(error) {
-    //         throw new InfrastructureError(
-    //             'Error al obtener los proveedores',
-    //             'MSSQL_GET_SUPPLIERS_ERROR',
-    //             error
-    //         )
-    //     }
-    // }
+            return {
+                items: dataResult.recordset.map( SupplierMapper.fromSQL ),
+                page: page,
+                total: total,
+                totalPages: totalPages
+            }
+
+        } catch( error ) {
+            throw new InfrastructureError(
+                'Error al obtener todos los proveedores filtrados',
+                'MSSQL_GET_FILTERED_SUPPLIERS_ERROR',
+                error
+            )
+        }
+    }
     
     async getAllSuppliers(): Promise<Supplier[]> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .query(`SELECT * FROM Supplier ORDER BY supplier_createdAt DESC`)
 
-            return result.recordset.map( this.toDomain )
+            return result.recordset.map( SupplierMapper.fromSQL )
         } catch(error) {
             throw new InfrastructureError(
                 'Error al obtener todos los proveedores',
@@ -250,8 +225,7 @@ export class MSSQLSuppliers implements SupplierDatasource {
 
     async getUniqueCompanies(): Promise<string[]> {
         try {
-            const pool = await MssqlClient.getConnection()
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .query(`
                     SELECT DISTINCT supplier_company AS companies
                     FROM Supplier

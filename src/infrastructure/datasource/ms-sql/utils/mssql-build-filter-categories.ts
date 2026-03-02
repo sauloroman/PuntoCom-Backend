@@ -1,4 +1,4 @@
-import { FilterCategories } from "../../../../application/dtos/pagination.dto";
+import { FilterCategories } from "../../../../application/dtos/category.dto";
 import { MssqlClient } from "../datasources";
 
 export const buildCategoriesFilter = (

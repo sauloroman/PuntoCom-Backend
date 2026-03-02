@@ -1,5 +1,5 @@
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { CreateSupplierRequestDto, UpdateSupplierRequestDto } from "../dtos/supplier.dto";
+import { CreateSupplierRequestDto, FilterSuppliers, UpdateSupplierRequestDto } from "../dtos/supplier.dto";
 import { 
     ChangeStatusSupplierUseCase, 
     CreateSupplierUseCase, 
@@ -78,7 +78,7 @@ export class SupplierService {
         return await this.getAllSuppliersUC.execute()
     }
 
-    public async listSuppliers(pagination: PaginationDTO) {
-        return await this.listSuppliersUC.execute(pagination)
+    public async listSuppliers(pagination: PaginationDTO, filter: FilterSuppliers) {
+        return await this.listSuppliersUC.execute(pagination, filter)
     }
 }

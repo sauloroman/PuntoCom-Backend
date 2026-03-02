@@ -14,6 +14,7 @@ export class CreateSupplierUseCase {
     public async execute( data: CreateSupplierRequestDto ): Promise<SupplierResponseDto> {
 
         const existingSupplier = await this.supplierRepository.findByEmail( data.email )
+        
         if ( existingSupplier ) {
             throw new ApplicationError(
                 `El proveedor con correo ${data.email} ya existe. Intente con otro correo`, 

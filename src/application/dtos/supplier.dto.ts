@@ -37,3 +37,9 @@ export interface SupplierResponseDto {
     createdAt: string,
     updatedAt: string
 }
+
+export interface FilterSuppliers {
+    status?: boolean | number,
+    supplierName?: string
+    company?: string
+}

@@ -1,10 +1,11 @@
 import { ConnectionPool } from "mssql";
-import { FilterCategories, PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
+import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
 import { CategoryDatasource } from "../../../../domain/datasources";
 import { Category } from "../../../../domain/entities";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { CategoryMapper } from "../mappers";
 import { buildCategoriesFilter, buildMssqlPaginationOptions } from "../utils";
+import { FilterCategories } from "../../../../application/dtos/category.dto";
 
 export class MSSQLCategory implements CategoryDatasource {
 
@@ -189,8 +190,6 @@ export class MSSQLCategory implements CategoryDatasource {
                 FROM Category
                 WHERE ${countWhere}
             `)
-
-            console.log(dataWhere)
             
             dataRequest.input('offset', offset).input('limit', limit)
             const dataResult = await dataRequest.query(`

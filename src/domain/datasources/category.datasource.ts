@@ -1,4 +1,5 @@
-import { FilterCategories, PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
+import { FilterCategories } from "../../application/dtos/category.dto";
+import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
 import { Category } from "../entities";
 
 export abstract class CategoryDatasource {

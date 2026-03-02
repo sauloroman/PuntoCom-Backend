@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { SupplierService } from "../../application/services";
 import { CreateSupplierValidator, UpdateSupplierValidator } from "../validators/supplier";
 import { ApplicationError } from "../../application/errors/application.error";
+import { FilterSuppliers } from "../../application/dtos/supplier.dto";
 
 export class SupplierController {
 
@@ -15,19 +16,23 @@ export class SupplierController {
         })
     }
 
-    public getSuppliers = async (req: Request, res: Response) => {
-        const { page, limit } = req.query
+    public filterSuppliers = async (req: Request, res: Response) => {
+        const { page, limit, company, status, supplierName } = req.query
         const sort = (req as any).sort
-        const filter = (req as any).filter
+
+        const filter: FilterSuppliers = {
+            company: (company ?? '') as string,
+            status: Number(status),
+            supplierName: (supplierName ?? '') as string,
+        }
 
         const pagination = {
             page: Number(page),
             limit: Number(limit),
             sort: sort as string,
-            filter: filter as string,
         }
         
-        const { items, page: currentPage, total, totalPages }  = await this.supplierService.listSuppliers( pagination )
+        const { items, page: currentPage, total, totalPages }  = await this.supplierService.listSuppliers( pagination, filter )
         
         return res.status(200).json({
             ok: true,

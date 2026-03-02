@@ -32,3 +32,8 @@ export interface CategoryResponseDto {
     createdAt: string,
     updatedAt: string
 }
+
+export interface FilterCategories {
+    status?: boolean | number,
+    categoryName?: string
+}

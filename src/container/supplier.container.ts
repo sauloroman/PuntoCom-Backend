@@ -21,7 +21,7 @@ export class SupplierContainer {
 
     constructor(private readonly pool: ConnectionPool) {
 
-        const supplierRepositoryMSSQL = new SupplierRepositoryImpl( new MSSQLSuppliers() )   
+        const supplierRepositoryMSSQL = new SupplierRepositoryImpl( new MSSQLSuppliers(this.pool) )   
 
         const createSupplierUseCase = new CreateSupplierUseCase( supplierRepositoryMSSQL ) 
         const updateSupplierUseCase = new UpdateSupplierUseCase( supplierRepositoryMSSQL )

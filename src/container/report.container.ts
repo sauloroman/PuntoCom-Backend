@@ -29,7 +29,7 @@ export class ReportContainer {
     constructor(private readonly pool: ConnectionPool) {
 
         const userRepository = new UserRepositoryImpl( new MSSQLUsers(this.pool) )
-        const supplierRepository = new SupplierRepositoryImpl( new MSSQLSuppliers() )
+        const supplierRepository = new SupplierRepositoryImpl( new MSSQLSuppliers(this.pool) )
         const productRepository = new ProductRepositoryImp( new MSSQLProduct() )
         const inventoryAdjustmentRepository = new InventoryAdjustmentImp( new MSSQLInventoryAdjustment() ) 
 

@@ -25,7 +25,7 @@ export class ProductContainer {
 
     constructor( private readonly pool: ConnectionPool ) {
 
-        const productRepositoryMSSQL = new ProductRepositoryImp( new MSSQLProduct() )
+        const productRepositoryMSSQL = new ProductRepositoryImp( new MSSQLProduct(this.pool) )
 
         const uploadFilesServices = new CloudinaryFileUploadService()
 

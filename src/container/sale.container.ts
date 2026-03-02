@@ -17,7 +17,7 @@ export class SaleContainer {
     constructor(private readonly pool: ConnectionPool) {
 
         const saleRepository = new SalesRepositoryImpl( new MSSQLSales() )
-        const productRepository = new ProductRepositoryImp( new MSSQLProduct())
+        const productRepository = new ProductRepositoryImp( new MSSQLProduct(this.pool))
 
         const saveSaleUC = new SaveSaleUseCase( saleRepository )
         const saveSaleDetailUC = new SaveDetailSaleUseCase( saleRepository )

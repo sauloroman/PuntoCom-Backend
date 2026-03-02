@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { ProductService } from "../../application/services";
 import { CreateProductValidator, UpdateProductValidator } from "../validators/product";
 import { ApplicationError } from "../../application/errors/application.error";
-import { StockCriteria } from "../../application/dtos/product.dto";
+import { FilterProducts, StockCriteria } from "../../application/dtos/product.dto";
 
 export class ProductController {
 
@@ -100,16 +100,25 @@ export class ProductController {
         })
     }
 
-    public getProducts = async (req: Request, res: Response) => {
-        const { page, limit } = req.query
+    public filterProducts = async (req: Request, res: Response) => {
+        const { page, limit, status, product, category, supplier, minPrice, maxPrice } = req.query
         const sort = (req as any).sort
-        const filter = (req as any).filter
+
+        const filter: FilterProducts = {
+            product: (product ?? '') as string,
+            categoryId: (category ?? '') as string,
+            supplierId: (supplier ?? '') as string,
+            status: Number(status),
+            prices: {
+                minPrice: minPrice ? Number(minPrice) : 0,
+                maxPrice: maxPrice ? Number(maxPrice) : 0
+            }
+        }
 
         const pagination = {
             page: Number(page),
             limit: Number(limit),
             sort: sort as string,
-            filter: filter as string
         }
 
         const {
@@ -117,7 +126,7 @@ export class ProductController {
             page: currentPage,
             total,
             totalPages
-        } = await this.productService.listSuppliers( pagination )
+        } = await this.productService.listProducts( pagination, filter )
     
         res.status(200).json({
             ok: true,

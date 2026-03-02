@@ -16,7 +16,7 @@ export class InventoryAdjustmentContainer {
 
     constructor(private readonly pool: ConnectionPool) {
         const inventoryAdjustmentRepositoryMSSQL = new InventoryAdjustmentImp( new MSSQLInventoryAdjustment() )
-        const productRepositoryMSSQL = new ProductRepositoryImp( new MSSQLProduct() )
+        const productRepositoryMSSQL = new ProductRepositoryImp( new MSSQLProduct(this.pool) )
         const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers( this.pool ) )
         
         const saveAdjustmentUC = new SaveInventoryAdjustmentUseCase( 

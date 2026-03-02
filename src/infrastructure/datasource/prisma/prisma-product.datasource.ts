@@ -6,7 +6,7 @@ import { Product } from "../../../domain/entities";
 import { Money, ProductCode, Stock } from "../../../domain/value-objects";
 import { InfrastructureError } from "../../errors/infrastructure-error";
 import { buildPaginationOptions } from "./utils/pagination-options";
-import { ProductInfo, ProductResponseIncludeDto, StockCriteria } from "../../../application/dtos/product.dto";
+import { FilterProducts, ProductInfo, ProductResponseIncludeDto, StockCriteria } from "../../../application/dtos/product.dto";
 
 export class PrismaProductDatasource implements ProductDatasource {
 
@@ -14,6 +14,10 @@ export class PrismaProductDatasource implements ProductDatasource {
 
     constructor( prisma: PrismaClient ){
         this.prisma = prisma
+    }
+    
+    async filterProducts(pagination: PaginationDTO, filter: FilterProducts): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
+        throw new Error("Method not implemented.");
     }
 
     async getAllProducts(): Promise<ProductResponseIncludeDto[]> {

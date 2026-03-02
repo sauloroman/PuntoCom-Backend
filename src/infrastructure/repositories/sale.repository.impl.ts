@@ -1,5 +1,5 @@
 import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
-import { SaleDetailsResponse, SaleFilters, SaleProductDetailResponse, SaleResponse } from "../../application/dtos/sale.dto";
+import { SaleDetailsResponse, FilterSale, SaleProductDetailResponse, SaleResponse } from "../../application/dtos/sale.dto";
 import { Sale, SaleProductDetail } from "../../domain/entities";
 import { SalesRepository } from "../../domain/repositories/sale.repository";
 
@@ -7,7 +7,7 @@ export class SalesRepositoryImpl implements SalesRepository {
     
     constructor(private readonly salesRepository: SalesRepository){}
     
-    async filterSales(filter: SaleFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    async filterSales(filter: FilterSale, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
         return await this.salesRepository.filterSales( filter, pagination )
     }
     

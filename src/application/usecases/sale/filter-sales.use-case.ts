@@ -1,12 +1,12 @@
 import { SalesRepository } from "../../../domain/repositories";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
-import { SaleDetailsResponse, SaleFilters } from "../../dtos/sale.dto";
+import { SaleDetailsResponse, FilterSale } from "../../dtos/sale.dto";
 
 export class FilterSalesUseCase {
 
     constructor(private readonly salesRepository: SalesRepository){}
 
-    public async execute( filter: SaleFilters, pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    public async execute( filter: FilterSale, pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
         if ( !filter.prices && !filter.dates && !filter.user ) {
             return await this.salesRepository.getSales(pagination)
         }

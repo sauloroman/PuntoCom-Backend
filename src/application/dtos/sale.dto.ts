@@ -32,7 +32,7 @@ export interface SaleDateRange {
     dateTo: Date
 }
 
-export interface SaleFilters {
+export interface FilterSale {
     prices?: SalePriceRange,
     dates?: SaleDateRange,
     user?: string

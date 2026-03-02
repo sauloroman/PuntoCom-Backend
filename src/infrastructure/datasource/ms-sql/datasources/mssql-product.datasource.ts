@@ -1,10 +1,12 @@
+import { ConnectionPool } from "mssql";
 import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
-import { ProductResponseIncludeDto, ProductInfo, StockCriteria, ProductRaw } from "../../../../application/dtos/product.dto";
+import { ProductResponseIncludeDto, ProductInfo, StockCriteria, ProductRaw, FilterProducts } from "../../../../application/dtos/product.dto";
 import { ProductDatasource } from "../../../../domain/datasources";
 import { Product } from "../../../../domain/entities";
-import { Money, ProductCode, Stock } from "../../../../domain/value-objects";
+import { Stock } from "../../../../domain/value-objects";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
-import { MssqlClient } from "./mssql-client";
+import { ProductMapper } from "../mappers/product.mapper";
+import { buildMssqlPaginationOptions, buildProductsFilter } from "../utils";
 
 const BASE_QUERY = `
     SELECT
@@ -39,50 +41,12 @@ const BASE_QUERY = `
 `
 
 export class MSSQLProduct implements ProductDatasource {
-    getProducts(pagination: PaginationDTO): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
-        throw new Error("Method not implemented.");
-    }
-    
-    private toDomain(row: ProductRaw): ProductResponseIncludeDto {
-        return {
-            id: row.product_id,
-            name: row.product_name,
-            description: row.product_description,
-            code: new ProductCode(row.product_code).value,
-            sellingPrice: new Money(parseFloat(`${row.product_selling_price}`)).value,
-            stock: new Stock(row.product_stock).value,
-            stockMin: new Stock(row.product_stock_min).value,
-            image: row.product_image,
-            imageCode: row.product_image_code,
-            createdAt: row.product_createdAt,
-            updatedAt: row.product_updatedAt,
-            isActive: row.product_is_active,
-            categoryId: row.category_id,
-            supplierId: row.supplier_id,
-            Category: row.category_id ? {
-                id: row.category_id ,
-                name: row.category_name ?? '',
-                description: row.category_description ?? '',
-                icon: row.category_icon ?? '',
-                isActive: row.category_is_active ?? false
-            }: undefined,
-            Supplier: row.supplier_id ? {
-                id: row.supplier_id,
-                name: row.supplier_name ?? '',
-                lastname: row.supplier_lastname ?? '',
-                company: row.supplier_company ?? '',
-                phone: row.supplier_phone ?? '',
-                email: row.supplier_email ?? '',
-                address: row.supplier_address ?? '',
-                isActive: row.supplier_is_active ?? false
-            }: undefined
-        }
-    }
+
+    constructor(private readonly pool: ConnectionPool){}
 
     async findById(productId: string): Promise<ProductResponseIncludeDto | null> {
         try {
-            const pool = await MssqlClient.getConnection()
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('product_id', productId)
                 .query<ProductRaw>(`
                     ${BASE_QUERY}
@@ -90,7 +54,7 @@ export class MSSQLProduct implements ProductDatasource {
                 `)
                 
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return ProductMapper.fromSQL( result.recordset[0] )
         } catch(error) {
             throw new InfrastructureError(
                 'Error al obtener el producto por id',
@@ -102,8 +66,7 @@ export class MSSQLProduct implements ProductDatasource {
 
     async exists(productName: string): Promise<boolean> {
         try {
-            const pool = await MssqlClient.getConnection()
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('product_name', productName)
                 .query<ProductRaw>(`
                     ${BASE_QUERY}
@@ -123,9 +86,7 @@ export class MSSQLProduct implements ProductDatasource {
 
     async findByName(productName: string): Promise<ProductResponseIncludeDto | null> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('product_name', `%${productName}%`)
                 .query<ProductRaw>(`
                     ${BASE_QUERY}
@@ -133,7 +94,7 @@ export class MSSQLProduct implements ProductDatasource {
                 `)
 
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return ProductMapper.fromSQL( result.recordset[0] )
         } catch(error) {
             throw new InfrastructureError(
                 'Error al buscar el producto por su nombre',
@@ -145,9 +106,7 @@ export class MSSQLProduct implements ProductDatasource {
 
     async create(product: Product): Promise<ProductResponseIncludeDto> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            await pool.request()
+            await this.pool.request()
                 .input('product_id', product.id)
                 .input('product_name',          product.name)
                 .input('product_description',   product.description)
@@ -209,9 +168,7 @@ export class MSSQLProduct implements ProductDatasource {
 
     async update(product: Product): Promise<ProductResponseIncludeDto> {
         try {   
-            const pool = await MssqlClient.getConnection()
-
-            await pool.request()
+            await this.pool.request()
                 .input('product_id',            product.id)
                 .input('product_name',          product.name)
                 .input('product_description',   product.description)
@@ -253,8 +210,7 @@ export class MSSQLProduct implements ProductDatasource {
 
     async changeStatus(productId: string, status: boolean): Promise<ProductResponseIncludeDto> {
         try {
-            const pool = await MssqlClient.getConnection()
-            await pool.request()
+            await this.pool.request()
                 .input('product_id', productId)
                 .input('status', status)
                 .query(`
@@ -275,14 +231,13 @@ export class MSSQLProduct implements ProductDatasource {
 
     async getAllProducts(): Promise<ProductResponseIncludeDto[]> {
         try {
-            const pool = await MssqlClient.getConnection()
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .query<ProductRaw>(`
                     ${BASE_QUERY}
                     ORDER BY p.product_name DESC    
                 `)
 
-            return result.recordset.map( this.toDomain )
+            return result.recordset.map( ProductMapper.fromSQL )
         } catch(error) {
             throw new InfrastructureError(
                 'Error al obtener todos los productos',
@@ -292,50 +247,64 @@ export class MSSQLProduct implements ProductDatasource {
         }
     }
 
-    // async getProducts(pagination: PaginationDTO): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
-    //     try {
-    //         const pool = await MssqlClient.getConnection();
+    async filterProducts(pagination: PaginationDTO, filter: FilterProducts): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
+        try {
 
-    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'product_createdAt');
+            const { page, limit, offset } = buildMssqlPaginationOptions(pagination)
+            
+            const countRequest = this.pool.request()
+            const dataRequest = this.pool.request()
 
-    //         const [ productsResult, countResult ] = await Promise.all([
-    //             pool.request()
-    //                 .input('limit',  limit)
-    //                 .input('offset', offset)
-    //                 .query<ProductRaw>(`
-    //                     ${BASE_QUERY}
-    //                     WHERE ${where}
-    //                     ORDER BY ${orderBy}
-    //                     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
-    //                 `),
+            const countWhere = buildProductsFilter(countRequest, filter)
+            const dataWhere = buildProductsFilter(dataRequest, filter)
 
-    //             pool.request()
-    //                 .query(`SELECT COUNT(*) AS total FROM Product p WHERE ${where}`)
-    //         ]);
+            const countResult = await countRequest.query(`
+                SELECT COUNT(*) AS total 
+                FROM Product p
+                    INNER JOIN Category c ON p.category_id = c.category_id
+                    INNER JOIN Supplier s ON p.supplier_id = s.supplier_id
+                WHERE ${countWhere}
+            `)
+            
+            dataRequest.input('offset', offset).input('limit', limit)
+            const dataResult = await dataRequest.query<ProductRaw>(`
+                ${BASE_QUERY}
+                WHERE ${dataWhere}
+                ORDER BY p.product_createdAt DESC
+                OFFSET @offset ROWS
+                FETCH NEXT @limit ROWS ONLY
+            `)
 
-    //         const total      = countResult.recordset[0].total;
-    //         const totalPages = Math.ceil(total / limit);
+            console.log(`
+              ${BASE_QUERY}
+                WHERE ${dataWhere}
+                ORDER BY p.product_createdAt DESC
+                OFFSET @offset ROWS
+                FETCH NEXT @limit ROWS ONLY  
+            `)
 
-    //         return {
-    //             items: productsResult.recordset.map(row => this.toDomain(row)),
-    //             total,
-    //             page,
-    //             totalPages
-    //         };
-    //     } catch (error) {
-    //         throw new InfrastructureError(
-    //             'Error al obtener los productos paginados',
-    //             'MSSQL_GET_PRODUCTS_PAGINATED_ERROR',
-    //             error
-    //         );
-    //     }
-    // }
+            const total = countResult.recordset[0].total
+            const totalPages = Math.ceil(total / limit)
+
+            return {
+                items: dataResult.recordset.map( ProductMapper.fromSQL ),
+                page: page,
+                total: total,
+                totalPages: totalPages
+            }   
+
+        } catch(error) {
+            throw new InfrastructureError(
+                'Error al obtener los productos filtrados',
+                'MSSQL_GET_FILTERED_PRODUCTS_ERROR',
+                error
+            )
+        }
+    }
 
     async getMinimalInformationProducts(): Promise<ProductInfo[]> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .query<Pick<ProductRaw, 'product_id' | 'product_name' | 'product_stock'>>(`
                     SELECT product_id, product_name, product_stock
                     FROM Product
@@ -359,9 +328,7 @@ export class MSSQLProduct implements ProductDatasource {
 
     async getProductsByStock(stockCriteria: StockCriteria): Promise<ProductResponseIncludeDto[]> {
         try {
-            const pool = await MssqlClient.getConnection();
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .query<ProductRaw>(`
                     ${BASE_QUERY}
                     ORDER BY p.product_name DESC
@@ -378,7 +345,7 @@ export class MSSQLProduct implements ProductDatasource {
                         default:                    return false;
                     }
                 })
-                .map(row => this.toDomain(row));
+                .map(ProductMapper.fromSQL);
         } catch (error) {
             throw new InfrastructureError(
                 'Error al obtener los productos por criterio de stock',

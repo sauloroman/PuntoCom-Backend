@@ -1,5 +1,6 @@
 import { PrismaClient, Supplier as PrismaSupplier } from "../../../../generated/prisma";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
+import { FilterSuppliers } from "../../../application/dtos/supplier.dto";
 import { SupplierDatasource } from "../../../domain/datasources/supplier.datasource";
 import { Supplier } from "../../../domain/entities";
 import { Email, Phone } from "../../../domain/value-objects";
@@ -12,6 +13,10 @@ export class PrismaSupplierDatasource implements SupplierDatasource {
 
     constructor(prismaClient: PrismaClient) {
       this.prisma = prismaClient;
+    }
+
+    async filterSuppliers(pagination: PaginationDTO, filter: FilterSuppliers): Promise<PaginationResponseDto<Supplier>> {
+        throw new Error("Method not implemented.");
     }
 
     async getUniqueCompanies(): Promise<string[]> {

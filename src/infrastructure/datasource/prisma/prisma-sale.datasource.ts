@@ -12,7 +12,7 @@ import {
 } from "../../../application/dtos/pagination.dto";
 import { 
     SaleDetailsResponse, 
-    SaleFilters, 
+    FilterSale, 
     SaleProductDetailResponse, 
     SaleResponse } from "../../../application/dtos/sale.dto";
 import { DatesAdapter } from "../../../config/plugins";
@@ -81,7 +81,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
         };
     }
 
-    private buildWhereClause( baseWhere: any, filters: SaleFilters ) {
+    private buildWhereClause( baseWhere: any, filters: FilterSale ) {
         const where = { ...baseWhere }
 
         if ( filters.prices ) {
@@ -108,7 +108,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
         return where
     }
 
-    async filterSales(filter: SaleFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    async filterSales(filter: FilterSale, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
         try {
              
             const { page, limit, orderBy, where, skip, take } = buildPaginationOptions(pagination)

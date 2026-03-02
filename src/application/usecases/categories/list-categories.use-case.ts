@@ -1,8 +1,8 @@
 import { DatesAdapter } from "../../../config/plugins";
 import { Category } from "../../../domain/entities";
 import { CategoryRepository } from "../../../domain/repositories";
-import { CategoryResponseDto } from "../../dtos/category.dto";
-import { FilterCategories, PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
+import { CategoryResponseDto, FilterCategories } from "../../dtos/category.dto";
+import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
 
 export class ListCategoriesUseCase {
 

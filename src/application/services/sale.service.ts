@@ -1,5 +1,5 @@
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { SaleDetail, SaleDetailsResponse, SaleFilters, SaveSale } from "../dtos/sale.dto";
+import { SaleDetail, SaleDetailsResponse, FilterSale, SaveSale } from "../dtos/sale.dto";
 import { ReduceStockUseCase } from "../usecases/product";
 import {  FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../usecases/sale";
 
@@ -37,7 +37,7 @@ export class SaleService {
         this.getSaleByIdUC = getSaleByIdUC
     }
 
-    async filterSales( filter: SaleFilters, pagination: PaginationDTO ) {
+    async filterSales( filter: FilterSale, pagination: PaginationDTO ) {
         return await this.filterSalesUC.execute(filter, pagination)
     }
 

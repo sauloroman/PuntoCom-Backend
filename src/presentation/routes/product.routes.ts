@@ -36,10 +36,9 @@ export class ProductRoutes {
 
         router.get('/minimal', this.controller.getAllProductsMinimalInformation)
         
-        router.get('/search', [
+        router.get('/filter', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            MapperFilterMiddleware.ToMssqlContains()
-        ], this.controller.getProducts )
+        ], this.controller.filterProducts )
 
         router.get('/:id', this.controller.getProductById )
             

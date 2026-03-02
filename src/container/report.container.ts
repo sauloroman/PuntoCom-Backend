@@ -30,7 +30,7 @@ export class ReportContainer {
 
         const userRepository = new UserRepositoryImpl( new MSSQLUsers(this.pool) )
         const supplierRepository = new SupplierRepositoryImpl( new MSSQLSuppliers(this.pool) )
-        const productRepository = new ProductRepositoryImp( new MSSQLProduct() )
+        const productRepository = new ProductRepositoryImp( new MSSQLProduct(this.pool) )
         const inventoryAdjustmentRepository = new InventoryAdjustmentImp( new MSSQLInventoryAdjustment() ) 
 
         const uploadFileService = new LocalFileUploadService()

@@ -129,3 +129,16 @@ export enum StockCriteria {
     warning = 'warning',
     normal = 'normal'
 }
+
+export interface ProductPriceRange {
+    minPrice: number,
+    maxPrice: number
+}
+
+export interface FilterProducts {
+    product?: string
+    status?: boolean | number,
+    categoryId?: string,
+    supplierId?: string,
+    prices?: ProductPriceRange
+}

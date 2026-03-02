@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 import { SaleService } from "../../application/services";
 import { SaveSaleValidator } from "../validators/sale";
 import { ApplicationError } from "../../application/errors/application.error";
-import { SaleFilters } from "../../application/dtos/sale.dto";
+import { FilterSale } from "../../application/dtos/sale.dto";
 
 export class SalesController {
 
     constructor(private readonly saleService: SaleService){}
 
-    private formatFilters( req: Request ): SaleFilters {
+    private formatFilters( req: Request ): FilterSale {
         const { minPrice, maxPrice, dateFrom, dateTo, user } = req.query
-        const filters: SaleFilters = {}
+        const filters: FilterSale = {}
 
         if ( minPrice && maxPrice ) {
             filters.prices = {

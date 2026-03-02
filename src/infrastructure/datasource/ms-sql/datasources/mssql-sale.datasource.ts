@@ -1,6 +1,6 @@
 import sql from 'mssql'
 import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
-import { SaleResponse, SaleProductDetailResponse, SaleDetailsResponse, SaleFilters, SaleRaw, SaleDetailRaw } from "../../../../application/dtos/sale.dto";
+import { SaleResponse, SaleProductDetailResponse, SaleDetailsResponse, FilterSale, SaleRaw, SaleDetailRaw } from "../../../../application/dtos/sale.dto";
 import { DatesAdapter } from "../../../../config/plugins";
 import { SalesDatasource } from "../../../../domain/datasources";
 import { Sale, SaleProductDetail } from "../../../../domain/entities";
@@ -43,7 +43,7 @@ export class MSSQLSales implements SalesDatasource {
         throw new Error('Method not implemented.');
     }
     
-    filterSales(filter: SaleFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    filterSales(filter: FilterSale, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
         throw new Error('Method not implemented.');
     }
 
@@ -109,7 +109,7 @@ export class MSSQLSales implements SalesDatasource {
     private buildFilterWhere(
         request: Awaited<ReturnType<typeof MssqlClient.getConnection>> extends { request: () => infer R } ? R : any,
         baseWhere: string,
-        filter: SaleFilters
+        filter: FilterSale
     ): string {
         const conditions: string[] = [baseWhere]
 

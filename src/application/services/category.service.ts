@@ -1,6 +1,6 @@
 import { UploadedFile } from "express-fileupload";
-import { CreateCategoryRequestDto, UpdateCategoryRequest } from "../dtos/category.dto";
-import { FilterCategories, PaginationDTO } from "../dtos/pagination.dto";
+import { CreateCategoryRequestDto, FilterCategories, UpdateCategoryRequest } from "../dtos/category.dto";
+import { PaginationDTO } from "../dtos/pagination.dto";
 import { 
     ChangeCategoryStatusUseCase, 
     CreateCategoryUseCase, 

@@ -1,6 +1,6 @@
 import { UploadedFile } from "express-fileupload";
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { ChangeStatusDto, CreateProduct, StockCriteria, UpdateProductRequest } from "../dtos/product.dto";
+import { ChangeStatusDto, CreateProduct, FilterProducts, StockCriteria, UpdateProductRequest } from "../dtos/product.dto";
 import { 
     ChangeStatusProductUseCase, 
     CreateProductUseCase, 
@@ -111,8 +111,8 @@ export class ProductService {
         return await this.getProductByStockUC.execute( stockCriteria )
     }
 
-    public async listSuppliers( pagination: PaginationDTO ) {
-        return await this.listProductsUC.execute( pagination )
+    public async listProducts( pagination: PaginationDTO, filter: FilterProducts ) {
+        return await this.listProductsUC.execute( pagination, filter )
     }
 
     public async uploadProductImage( image: UploadedFile, productId: string ) {

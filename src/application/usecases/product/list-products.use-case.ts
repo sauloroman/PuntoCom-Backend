@@ -1,13 +1,13 @@
 import { ProductRepository } from "../../../domain/repositories";
 import { PaginationDTO, PaginationResponseDto } from "../../dtos/pagination.dto";
-import { ProductResponseIncludeDto } from "../../dtos/product.dto";
+import { FilterProducts, ProductResponseIncludeDto } from "../../dtos/product.dto";
 
 export class ListProductsUseCase {
 
     constructor(private readonly productRepository: ProductRepository){}
 
-    public async execute( pagination: PaginationDTO ): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
-        const { items, page, total, totalPages } = await this.productRepository.getProducts( pagination )
+    public async execute( pagination: PaginationDTO, filter: FilterProducts ): Promise<PaginationResponseDto<ProductResponseIncludeDto>> {
+        const { items, page, total, totalPages } = await this.productRepository.filterProducts( pagination, filter )
 
         return {
             items,

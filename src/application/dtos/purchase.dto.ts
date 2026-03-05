@@ -10,20 +10,45 @@ export interface SavePurchaseDetail {
     unitPrice: number
 }
 
+export interface PurchaseRaw {
+    purchase_id: string,
+    purchase_total: number,
+    purchase_date: Date | string,
+    user_id: string | null,
+    user_name: string | null,
+    user_lastname: string | null,
+    role: string | null,
+    user_image: string | null,
+    supplier_id: string,
+    supplier_name: string | null,
+    supplier_lastname: string | null,
+    supplier_phone: string | null
+}
+
+export interface PurchaseDetailRaw {
+    purchase_detail_id: string,
+    purchase_quantity: number,
+    purchase_unit_price: number,
+    purchase_id: string,
+    product_id: string,
+    product_name: string,
+    product_image: string
+}
+
 export interface PurchaseResponse {
     purchaseId: string,
     purchaseDate: string,
     puchaseTotal: number,
     Supplier?: {
-        supplierId: string,
-        supplierName: string,
-        supplierPhone: string
+        id: string,
+        name: string,
+        phone: string
     },
     User?: {
-        userId: string,
-        userName: string,
-        userRole: string,
-        userImage: string
+        id: string,
+        name: string,
+        role: string,
+        image: string
     }
 }
 
@@ -55,7 +80,7 @@ export interface PurchaseDateFilter {
     dateTo: Date
 }
 
-export interface PurchaseFilters {
+export interface FilterPurchase {
     prices?: PurchasePriceFilter,
     dates?: PurchaseDateFilter,
     supplier?: string,

@@ -1,4 +1,4 @@
-import { DatesAdapter } from "../../../config/plugins";
+import { DatesAdapter, IDAdapter } from "../../../config/plugins";
 import { Purchase } from "../../../domain/entities";
 import { PurchaseRepository } from "../../../domain/repositories";
 import { Money } from "../../../domain/value-objects";
@@ -13,6 +13,7 @@ export class SavePurchaseUseCase {
 
     public async execute( purchaseData: SavePurchase ): Promise<PurchaseResponse> {
         const newPurchase = new Purchase({
+            id: IDAdapter.generate(),
             total: new Money(purchaseData.total),
             date: DatesAdapter.now(),
             supplierId: purchaseData.supplierId,

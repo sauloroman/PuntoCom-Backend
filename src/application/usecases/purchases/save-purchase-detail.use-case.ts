@@ -1,4 +1,4 @@
-import { DatesAdapter } from "../../../config/plugins";
+import { DatesAdapter, IDAdapter } from "../../../config/plugins";
 import { PurchaseDetail } from "../../../domain/entities";
 import { PurchaseRepository } from "../../../domain/repositories";
 import { Money, Quantity } from "../../../domain/value-objects";
@@ -11,6 +11,7 @@ export class SavePurchaseDetailUseCase {
     public async execute( purchaseId: string, data: SavePurchaseDetail ): Promise<PurchaseDetailResponse> {
 
         const detail = new PurchaseDetail({
+            id: IDAdapter.generate(),
             productId: data.productId,
             purchaseId: purchaseId,
             purchaseQuantity: new Quantity( data.quantity ),

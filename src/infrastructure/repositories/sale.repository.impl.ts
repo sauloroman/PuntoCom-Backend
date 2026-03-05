@@ -7,12 +7,8 @@ export class SalesRepositoryImpl implements SalesRepository {
     
     constructor(private readonly salesRepository: SalesRepository){}
     
-    async filterSales(filter: FilterSale, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
-        return await this.salesRepository.filterSales( filter, pagination )
-    }
-    
-    async getSales(pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
-        return await this.salesRepository.getSales( pagination )
+    async filterSales(pagination: PaginationDTO, filter: FilterSale): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        return await this.salesRepository.filterSales(pagination, filter)
     }
     
     async saveSaleDetails(data: SaleProductDetail): Promise<SaleProductDetailResponse> {

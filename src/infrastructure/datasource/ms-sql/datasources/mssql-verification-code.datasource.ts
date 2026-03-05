@@ -1,27 +1,16 @@
+import { ConnectionPool } from "mssql";
 import { VerificationCodeDatasource } from "../../../../domain/datasources";
 import { VerificationCode } from "../../../../domain/entities";
-import { CodeValue } from "../../../../domain/value-objects";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
-import { MssqlClient } from "./mssql-client";
+import { VerificationCodeMapper } from "../mappers/verification-code.mapper";
 
 export class MSSQLVerificationCode implements VerificationCodeDatasource {
     
-    private toDomain( verificationCode: any ): VerificationCode {
-        return new VerificationCode({
-          id: verificationCode.verification_id,
-          code: new CodeValue(verificationCode.code),
-          createdAt: verificationCode.createdAt,
-          expiresAt: verificationCode.expiresAt,
-          userId: verificationCode.user_id
-        })
-    }
+    constructor(private readonly pool: ConnectionPool){}
 
     async deleteAllCodesByUserId(userId: string): Promise<void> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            await pool.request()
+            await this.pool.request()
                 .input('user_id', userId)
                 .query(`
                     DELETE FROM VerificationCode
@@ -39,10 +28,7 @@ export class MSSQLVerificationCode implements VerificationCodeDatasource {
     
     async findByCode(verificationCode: string): Promise<VerificationCode | null> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('code', verificationCode)
                 .query(`
                     SELECT *
@@ -51,7 +37,7 @@ export class MSSQLVerificationCode implements VerificationCodeDatasource {
                 `)
             
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return VerificationCodeMapper.fromSQL( result.recordset[0] )
 
         } catch( error ) {
             throw new InfrastructureError(
@@ -64,10 +50,7 @@ export class MSSQLVerificationCode implements VerificationCodeDatasource {
     
     async save(verificationCode: VerificationCode): Promise<void> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            await pool.request()
+            await this.pool.request()
                 .input('verification_id', verificationCode.id)
                 .input('code', verificationCode.code.value )
                 .input('expiresAt', verificationCode.expiresAt)

@@ -1,10 +1,10 @@
 import { PaginationDTO, PaginationResponseDto } from "../../application/dtos/pagination.dto";
-import { PurchaseDetailResponse, PurchaseDetailsResponse, PurchaseFilters, PurchaseResponse } from "../../application/dtos/purchase.dto";
+import { PurchaseDetailResponse, PurchaseDetailsResponse, FilterPurchase, PurchaseResponse } from "../../application/dtos/purchase.dto";
 import { Purchase, PurchaseDetail } from "../entities";
 
 export abstract class PurchaseDatasource {
     abstract savePurchase(purchase: Purchase): Promise<PurchaseResponse>
     abstract savePurchaseDetails( purchaseDetail: PurchaseDetail ): Promise<PurchaseDetailResponse>
-    abstract getPurchases( pagination: PaginationDTO ): Promise<PaginationResponseDto<PurchaseDetailsResponse>>
-    abstract filterPurchases( filter: PurchaseFilters, pagination: PaginationDTO ): Promise<PaginationResponseDto<PurchaseDetailsResponse>>
+    abstract findByID( id: string ): Promise<PurchaseDetailsResponse | null>
+    abstract filterPurchases( pagination: PaginationDTO, filter: FilterPurchase ): Promise<PaginationResponseDto<PurchaseDetailsResponse>>
 }

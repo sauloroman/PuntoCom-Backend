@@ -1,7 +1,7 @@
 import {PrismaClient, Purchase as PrismaPurchase, Purchase_Detail as PrismaPurchaseDetail, Product as PrismaProduct, Supplier as PrismaSupplier, User as PrismaUser } from "../../../../generated/prisma";
 import { Decimal } from "../../../../generated/prisma/runtime/library";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
-import { PurchaseDetailResponse, PurchaseDetailsResponse, PurchaseFilters, PurchaseResponse } from "../../../application/dtos/purchase.dto";
+import { PurchaseDetailResponse, PurchaseDetailsResponse, FilterPurchase, PurchaseResponse } from "../../../application/dtos/purchase.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { PurchaseDatasource } from "../../../domain/datasources/purchase.datasource";
 import { Purchase, PurchaseDetail } from "../../../domain/entities";
@@ -18,21 +18,25 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
         this.prisma = prisma
     }
 
+    async findByID(id: string): Promise<PurchaseDetailsResponse | null> {
+        throw new Error("Method not implemented.");
+    }
+
     private toDomain( purchaseData: PrismaPurchase & {User?: PrismaUser, Supplier?: PrismaSupplier } ): PurchaseResponse {
         return {
             purchaseId: purchaseData.purchase_id,
             puchaseTotal: new Money(parseFloat(`${purchaseData.purchase_total}`)).value,
             purchaseDate: DatesAdapter.formatLocal(new Date(purchaseData.purchase_date)),
             Supplier: purchaseData.Supplier && {
-                supplierId: purchaseData.Supplier.supplier_id,
-                supplierName: `${purchaseData.Supplier.supplier_name} ${purchaseData.Supplier.supplier_lastname}`,
-                supplierPhone: new Phone(purchaseData.Supplier.supplier_phone).value
+                id: purchaseData.Supplier.supplier_id,
+                name: `${purchaseData.Supplier.supplier_name} ${purchaseData.Supplier.supplier_lastname}`,
+                phone: new Phone(purchaseData.Supplier.supplier_phone).value
             },
             User: purchaseData.User && {
-                userId: purchaseData.User.user_id,
-                userName: `${purchaseData.User.user_name} ${purchaseData.User.user_lastname}`,
-                userRole: new Role( purchaseData.User.role as RoleEnum ).value,
-                userImage: purchaseData.User.user_image
+                id: purchaseData.User.user_id,
+                name: `${purchaseData.User.user_name} ${purchaseData.User.user_lastname}`,
+                role: new Role( purchaseData.User.role as RoleEnum ).value,
+                image: purchaseData.User.user_image
             }
         }
     }
@@ -70,7 +74,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
         }
     }
 
-    private buildWhereClause( baseWhere: any, filters: PurchaseFilters ) {
+    private buildWhereClause( baseWhere: any, filters: FilterPurchase ) {
         const where = { ...baseWhere }
 
         if ( filters.prices ) {
@@ -101,7 +105,7 @@ export class PrismaPurchaseDatasource implements PurchaseDatasource {
         return where
     }
 
-    async filterPurchases(filter: PurchaseFilters, pagination: PaginationDTO): Promise<PaginationResponseDto<PurchaseDetailsResponse>> {
+    async filterPurchases(pagination: PaginationDTO, filter: FilterPurchase,): Promise<PaginationResponseDto<PurchaseDetailsResponse>> {
         try {
             const { page, limit, orderBy, where, skip, take } = buildPaginationOptions(pagination)
             const filterWhere = this.buildWhereClause(where, filter)

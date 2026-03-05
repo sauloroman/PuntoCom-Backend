@@ -1,27 +1,17 @@
+import { ConnectionPool } from "mssql";
 import { ResetPasswordCodeDatasource } from "../../../../domain/datasources";
 import { PasswordResetCode } from "../../../../domain/entities";
-import { CodeValue } from "../../../../domain/value-objects";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
+import { PasswordResetCodeMapper } from "../mappers";
 
 export class MSSQLResetPasswordCode implements ResetPasswordCodeDatasource {
 
-    private toDomain(resetPassCode: any): PasswordResetCode {
-        return new PasswordResetCode({
-            resetId: resetPassCode.reset_id,
-            code: new CodeValue(resetPassCode.code),
-            createdAt: resetPassCode.createdAt,
-            expiresAt: resetPassCode.expiresAt,
-            userId: resetPassCode.user_id
-        })
-    }
+    constructor(private readonly pool: ConnectionPool){}
 
     async save(resetPassCode: PasswordResetCode): Promise<PasswordResetCode> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('reset_id', resetPassCode.id )
                 .input('code', resetPassCode.code.value )
                 .input('expiresAt', resetPassCode.expiresAt )
@@ -48,7 +38,7 @@ export class MSSQLResetPasswordCode implements ResetPasswordCodeDatasource {
                     )
                 `)
 
-            return this.toDomain( result.recordset[0] )
+            return PasswordResetCodeMapper.fromSQL( result.recordset[0] )
 
         } catch (error) {
             throw new InfrastructureError(
@@ -61,10 +51,7 @@ export class MSSQLResetPasswordCode implements ResetPasswordCodeDatasource {
 
     async findByCode(code: string): Promise<PasswordResetCode | null> {
         try {
-
-            const pool = await MssqlClient.getConnection()
-
-            const result = await pool.request()
+            const result = await this.pool.request()
                 .input('code', code)
                 .query(`
                     SELECT *
@@ -73,7 +60,7 @@ export class MSSQLResetPasswordCode implements ResetPasswordCodeDatasource {
                 `)
             
             if ( !result.recordset[0] ) return null
-            return this.toDomain( result.recordset[0] )
+            return PasswordResetCodeMapper.fromSQL( result.recordset[0] )
 
         } catch( error ) {
             throw new InfrastructureError(
@@ -86,10 +73,7 @@ export class MSSQLResetPasswordCode implements ResetPasswordCodeDatasource {
     
     async deleteAllCodesByUserId(userId: string): Promise<void> {
         try {
-            
-            const pool = await MssqlClient.getConnection()
-
-            await pool.request()
+            await this.pool.request()
                 .input('user_id', userId )
                 .query(`
                     DELETE FROM PasswordResetCode

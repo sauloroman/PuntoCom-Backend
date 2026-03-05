@@ -108,7 +108,7 @@ export class PrismaSalesDatasource implements SalesDatasource {
         return where
     }
 
-    async filterSales(filter: FilterSale, pagination: PaginationDTO): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+    async filterSales( pagination: PaginationDTO, filter: FilterSale): Promise<PaginationResponseDto<SaleDetailsResponse>> {
         try {
              
             const { page, limit, orderBy, where, skip, take } = buildPaginationOptions(pagination)

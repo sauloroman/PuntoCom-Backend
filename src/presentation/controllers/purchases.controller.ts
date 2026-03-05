@@ -2,11 +2,20 @@ import { Request, Response } from "express";
 import { PurchaseService } from "../../application/services";
 import { SavePurchaseValidator } from "../validators/purchase";
 import { ApplicationError } from "../../application/errors/application.error";
-import { PurchaseFilters } from "../../application/dtos/purchase.dto";
+import { FilterPurchase } from "../../application/dtos/purchase.dto";
 
 export class PurchasesController {
 
     constructor(private readonly purchaseService: PurchaseService ){}
+
+    public getPurchaseById = async (req: Request, res: Response) => {
+        const { id: purchaseId } = req.params
+        const purchase = await this.purchaseService.getPurchaseById( purchaseId )
+        res.status(200).json({
+            ok: true,
+            purchase
+        })
+    }
 
     public filterPurchases = async (req: Request, res: Response) => {
         const { page, limit, minPrice, maxPrice, dateFrom, dateTo, user, supplier } = req.query
@@ -18,19 +27,20 @@ export class PurchasesController {
             sort: sort as string
         }
 
-        const filters: PurchaseFilters = {}
-        if( minPrice && maxPrice ) {
+        const filters: FilterPurchase = {}
+
+        if (minPrice || maxPrice) {
             filters.prices = {
-                minPrice: Number( minPrice ),
-                maxPrice: Number( maxPrice )
+                minPrice: minPrice ? Number(minPrice) : 0,
+                maxPrice: maxPrice ? Number(maxPrice) : 0
             }
         }
-        if( dateFrom && dateTo ) {
+        if (dateFrom && dateTo) {
             filters.dates = {
                 dateFrom: new Date(dateFrom as string),
                 dateTo: new Date(dateTo as string)
             }
-        }
+        } 
         if ( user ) {
             filters.user = user as string
         }
@@ -57,35 +67,6 @@ export class PurchasesController {
                     user: filters.user || null,
                     supplier: filters.supplier || null
                 }
-            },
-            purchases: items
-        })
-
-    }
-
-    public listPurchases = async (req: Request, res: Response) => {
-        const { page, limit } = req.query
-        const sort = (req as any).sort
-        
-        const pagination = {
-            page: Number(page),
-            limit: Number(limit),
-            sort: sort as string 
-        }
-        
-        const {
-            items,
-            page: currentPage,
-            total,
-            totalPages
-        } = await this.purchaseService.listPurchases(pagination)
-
-        res.status(200).json({
-            ok: true,
-            meta: {
-                page: currentPage,
-                totalPages,
-                total
             },
             purchases: items
         })

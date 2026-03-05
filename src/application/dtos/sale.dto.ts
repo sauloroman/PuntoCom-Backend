@@ -29,7 +29,7 @@ export interface SalePriceRange {
 
 export interface SaleDateRange {
     dateFrom: Date,
-    dateTo: Date
+    dateTo: Date 
 }
 
 export interface FilterSale {

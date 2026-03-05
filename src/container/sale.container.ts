@@ -1,7 +1,13 @@
 import { ConnectionPool } from "mssql"
 import { SaleService } from "../application/services"
 import { ReduceStockUseCase } from "../application/usecases/product"
-import { FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../application/usecases/sale"
+import { 
+    FilterSalesUseCase, 
+    GetSaleByIdUseCase, 
+    SaveDetailSaleUseCase, 
+    SaveSaleUseCase 
+} from "../application/usecases/sale"
+
 import { MSSQLProduct } from "../infrastructure/datasource/ms-sql/datasources"
 import { MSSQLSales } from "../infrastructure/datasource/ms-sql/datasources/mssql-sale.datasource"
 import { ProductRepositoryImp, SalesRepositoryImpl } from "../infrastructure/repositories"
@@ -16,12 +22,11 @@ export class SaleContainer {
 
     constructor(private readonly pool: ConnectionPool) {
 
-        const saleRepository = new SalesRepositoryImpl( new MSSQLSales() )
+        const saleRepository = new SalesRepositoryImpl( new MSSQLSales(this.pool) )
         const productRepository = new ProductRepositoryImp( new MSSQLProduct(this.pool))
 
         const saveSaleUC = new SaveSaleUseCase( saleRepository )
         const saveSaleDetailUC = new SaveDetailSaleUseCase( saleRepository )
-        const listSalesUC = new ListSalesUseCase( saleRepository )
         const reduceStockUC = new ReduceStockUseCase( productRepository )
         const getSaleByIdUC = new GetSaleByIdUseCase(saleRepository)
         const filterSalesUC = new FilterSalesUseCase(saleRepository)
@@ -30,7 +35,6 @@ export class SaleContainer {
             saveSaleUC: saveSaleUC,
             saveSaleDetailUC: saveSaleDetailUC,
             reduceStockUC: reduceStockUC,
-            listSalesUC: listSalesUC,
             filterSalesUC: filterSalesUC,
             getSaleByIdUC: getSaleByIdUC
         })

@@ -44,8 +44,8 @@ export class UserContainer {
   constructor( private readonly pool: ConnectionPool ) {
 
     const userRepositoryMSSQL = new UserRepositoryImpl( new MSSQLUsers(this.pool) )
-    const verificationCodeRepositoryMSSQL = new VerificationCodeRepositoryImpl( new MSSQLVerificationCode() )
-    const resetPassCodeRepository = new ResetPassCodeImpl( new MSSQLResetPasswordCode() )
+    const verificationCodeRepositoryMSSQL = new VerificationCodeRepositoryImpl( new MSSQLVerificationCode(this.pool) )
+    const resetPassCodeRepository = new ResetPassCodeImpl( new MSSQLResetPasswordCode(this.pool) )
 
     const emailService = new NodeMailerService({
       mailerEmail: EnvAdapter.MAILER_EMAIL,

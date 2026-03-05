@@ -26,10 +26,8 @@ export class SaleRoutes {
 
         router.post('/', this.controller.saveSale )
 
-        router.get('/', [
+        router.get('/filter', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-            ValidateFiltersMiddleware.validateSaleFilters(),
-            MapperFilterMiddleware.ToMssql()
         ], this.controller.filterSales )
 
         router.get('/:id', [

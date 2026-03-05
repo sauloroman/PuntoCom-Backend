@@ -1,5 +1,7 @@
 export { buildCategoriesFilter } from './mssql-build-filter-categories'
 export { buildProductsFilter } from './mssql-build-filter-products'
+export { buildFilterPurchases } from './mssql-build-filter-purchases'
+export { buildFilterSales } from './mssql-build-filter-sales'
 export { buildUserFilter } from './mssql-build-filter-users'
 export { buildMssqlPaginationOptions } from './mssql-pagination-options'
 export { buildSupplierFilter } from './mssql-build-filter-suppliers'

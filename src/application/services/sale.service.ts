@@ -1,13 +1,12 @@
 import { PaginationDTO } from "../dtos/pagination.dto";
 import { SaleDetail, SaleDetailsResponse, FilterSale, SaveSale } from "../dtos/sale.dto";
 import { ReduceStockUseCase } from "../usecases/product";
-import {  FilterSalesUseCase, GetSaleByIdUseCase, ListSalesUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../usecases/sale";
+import {  FilterSalesUseCase, GetSaleByIdUseCase, SaveDetailSaleUseCase, SaveSaleUseCase } from "../usecases/sale";
 
 interface SaleServiceOptions {
     saveSaleUC: SaveSaleUseCase   
     saveSaleDetailUC: SaveDetailSaleUseCase,
     reduceStockUC: ReduceStockUseCase
-    listSalesUC: ListSalesUseCase,
     filterSalesUC: FilterSalesUseCase
     getSaleByIdUC: GetSaleByIdUseCase
 }
@@ -17,7 +16,6 @@ export class SaleService {
     private readonly saveSaleUC: SaveSaleUseCase
     private readonly saveSaleDetailUC: SaveDetailSaleUseCase
     private readonly reduceStockUC: ReduceStockUseCase
-    private readonly listSalesUC: ListSalesUseCase
     private readonly filterSalesUC: FilterSalesUseCase
     private readonly getSaleByIdUC: GetSaleByIdUseCase
 
@@ -25,30 +23,24 @@ export class SaleService {
         saveSaleUC,
         saveSaleDetailUC,
         reduceStockUC,
-        listSalesUC,
         filterSalesUC,
         getSaleByIdUC
     }: SaleServiceOptions){
         this.saveSaleUC = saveSaleUC
         this.saveSaleDetailUC = saveSaleDetailUC
         this.reduceStockUC = reduceStockUC
-        this.listSalesUC = listSalesUC
         this.filterSalesUC = filterSalesUC
         this.getSaleByIdUC = getSaleByIdUC
     }
 
-    async filterSales( filter: FilterSale, pagination: PaginationDTO ) {
-        return await this.filterSalesUC.execute(filter, pagination)
+    async filterSales( pagination: PaginationDTO,filter: FilterSale ) {
+        return await this.filterSalesUC.execute(pagination, filter)
     }
 
     async getSaleById( saleId: string ) {
         return await this.getSaleByIdUC.execute(saleId)
     }
-
-    async listSales( pagination: PaginationDTO ) {
-        return await this.listSalesUC.execute( pagination )
-    }
-
+    
     async saveSale( dto: SaveSale, details: SaleDetail[] ): Promise<SaleDetailsResponse> {
 
         for( const detail of details ) {

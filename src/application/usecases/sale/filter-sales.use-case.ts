@@ -6,12 +6,8 @@ export class FilterSalesUseCase {
 
     constructor(private readonly salesRepository: SalesRepository){}
 
-    public async execute( filter: FilterSale, pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
-        if ( !filter.prices && !filter.dates && !filter.user ) {
-            return await this.salesRepository.getSales(pagination)
-        }
-
-        return await this.salesRepository.filterSales(filter, pagination)
+    public async execute( pagination: PaginationDTO, filter: FilterSale ): Promise<PaginationResponseDto<SaleDetailsResponse>> {
+        return await this.salesRepository.filterSales(pagination, filter)
     }
 
 }

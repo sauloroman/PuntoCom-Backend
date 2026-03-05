@@ -1,5 +1,4 @@
 export { FilterSalesUseCase } from './filter-sales.use-case'
 export { GetSaleByIdUseCase } from './get-sale-by-id.use-case'
-export { ListSalesUseCase } from './list-sales.use-case'
 export { SaveDetailSaleUseCase } from './save-detail-save.use-case'
 export { SaveSaleUseCase } from './save-sale.use-case'

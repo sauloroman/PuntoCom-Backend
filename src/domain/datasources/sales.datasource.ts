@@ -6,6 +6,5 @@ export abstract class SalesDatasource {
     abstract saveSale( data: Sale ): Promise<SaleResponse>
     abstract saveSaleDetails( data: SaleProductDetail ): Promise<SaleProductDetailResponse>
     abstract findById( id: string ): Promise<SaleDetailsResponse | null> 
-    abstract getSales( pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>>
-    abstract filterSales( filter: FilterSale, pagination: PaginationDTO ): Promise<PaginationResponseDto<SaleDetailsResponse>>
-}
+    abstract filterSales( pagination: PaginationDTO, filter: FilterSale ): Promise<PaginationResponseDto<SaleDetailsResponse>>
+}   

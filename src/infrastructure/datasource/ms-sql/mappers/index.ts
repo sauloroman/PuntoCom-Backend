@@ -1,3 +1,7 @@
-export { UserMapper } from './user.mapper'
 export { CategoryMapper } from './category.mapper'
+export { PasswordResetCodeMapper } from './password-reset-code.mapper'
+export { ProductMapper } from './product.mapper'
+export { SaleMapper } from './sale.mapper'
 export { SupplierMapper } from './supplier.mapper'
+export { UserMapper } from './user.mapper'
+export { VerificationCodeMapper } from './verification-code.mapper'

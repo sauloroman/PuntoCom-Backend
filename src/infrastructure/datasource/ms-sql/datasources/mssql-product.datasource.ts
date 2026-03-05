@@ -275,14 +275,6 @@ export class MSSQLProduct implements ProductDatasource {
                 FETCH NEXT @limit ROWS ONLY
             `)
 
-            console.log(`
-              ${BASE_QUERY}
-                WHERE ${dataWhere}
-                ORDER BY p.product_createdAt DESC
-                OFFSET @offset ROWS
-                FETCH NEXT @limit ROWS ONLY  
-            `)
-
             const total = countResult.recordset[0].total
             const totalPages = Math.ceil(total / limit)
 

@@ -1,12 +1,12 @@
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { PurchaseDetailsResponse, PurchaseFilters, SavePurchase, SavePurchaseDetail } from "../dtos/purchase.dto";
+import { PurchaseDetailsResponse, FilterPurchase, SavePurchase, SavePurchaseDetail } from "../dtos/purchase.dto";
 import { IncreaseStockUseCase } from "../usecases/product";
-import { ListPurchasesUseCase, SavePurchaseDetailUseCase, SavePurchaseUseCase } from "../usecases/purchases";
+import { GetPurchaseByIdUseCase, SavePurchaseDetailUseCase, SavePurchaseUseCase } from "../usecases/purchases";
 import { FilterPurchasesUseCase } from "../usecases/purchases/filter-purchases.use-case";
 
 interface PurchaseServiceOptions {
     filterPurchasesUC: FilterPurchasesUseCase,
-    getPurchasesUC: ListPurchasesUseCase,
+    getPurchaseByIdUC: GetPurchaseByIdUseCase,
     savePurchaseUC: SavePurchaseUseCase,
     savePurchaseDetailUC: SavePurchaseDetailUseCase,
     increaseStockUC: IncreaseStockUseCase
@@ -15,30 +15,30 @@ interface PurchaseServiceOptions {
 export class PurchaseService {
     
     private readonly filterPurchasesUC: FilterPurchasesUseCase
-    private readonly getPurchasesUC: ListPurchasesUseCase
+    private readonly getPurchaseByIdUC: GetPurchaseByIdUseCase
     private readonly savePurchaseUC: SavePurchaseUseCase 
     private readonly savePurchaseDetailUC: SavePurchaseDetailUseCase 
     private readonly increaseStockUC: IncreaseStockUseCase
 
     constructor({
         filterPurchasesUC,
-        getPurchasesUC,
+        getPurchaseByIdUC,
         savePurchaseUC,
         savePurchaseDetailUC,
         increaseStockUC
     }: PurchaseServiceOptions){
         this.filterPurchasesUC = filterPurchasesUC
-        this.getPurchasesUC = getPurchasesUC
+        this.getPurchaseByIdUC = getPurchaseByIdUC
         this.savePurchaseUC = savePurchaseUC
         this.savePurchaseDetailUC = savePurchaseDetailUC
         this.increaseStockUC = increaseStockUC
     }
 
-    async listPurchases( pagination: PaginationDTO ) {
-        return await this.getPurchasesUC.execute(pagination)
+    async getPurchaseById(saleId: string) {
+        return await this.getPurchaseByIdUC.execute(saleId)
     }
 
-    async filterPurchases( filter: PurchaseFilters, pagination: PaginationDTO ) {
+    async filterPurchases( filter: FilterPurchase, pagination: PaginationDTO ) {
         return await this.filterPurchasesUC.execute(filter, pagination)
     }
 

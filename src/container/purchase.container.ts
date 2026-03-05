@@ -3,16 +3,14 @@ import { PurchaseService } from "../application/services"
 import { IncreaseStockUseCase } from "../application/usecases/product"
 import { 
     FilterPurchasesUseCase, 
-    ListPurchasesUseCase, 
+    GetPurchaseByIdUseCase, 
     SavePurchaseDetailUseCase, 
     SavePurchaseUseCase } from "../application/usecases/purchases"
-import { PrismaDatasource, PrismaProductDatasource, PrismaPurchaseDatasource } from "../infrastructure/datasource/prisma"
-import { ProductRepositoryImp, PurchaseRepositoryImp } from "../infrastructure/repositories"
 import { PurchasesController } from "../presentation/controllers"
 import { PurchaseRoutes } from "../presentation/routes"
 import { Auth } from "../presentation/middlewares"
-
-const prismaClient = PrismaDatasource.getInstance()
+import { MSSQLPurchases } from "../infrastructure/datasource/ms-sql/datasources/mssql-purchase.datasource"
+import { MSSQLProduct } from "../infrastructure/datasource/ms-sql/datasources"
 
 export class PurchaseContainer {
 
@@ -21,12 +19,12 @@ export class PurchaseContainer {
     constructor(private readonly pool: ConnectionPool ) {
 
         // ---- Repositories
-        const purchaseRepository = new PurchaseRepositoryImp(new PrismaPurchaseDatasource( prismaClient ))
-        const productRepository = new ProductRepositoryImp(new PrismaProductDatasource( prismaClient ))
+        const purchaseRepository = new MSSQLPurchases(this.pool)
+        const productRepository = new MSSQLProduct(this.pool)
 
         // ---- Use Cases
+        const getPurchaseByIdUC = new GetPurchaseByIdUseCase(purchaseRepository)
         const filterPurchasesUC = new FilterPurchasesUseCase( purchaseRepository )
-        const getPurchasesUC = new ListPurchasesUseCase( purchaseRepository )
         const savePurchaseUC = new SavePurchaseUseCase( purchaseRepository )
         const savePurchaseDetailUC = new SavePurchaseDetailUseCase( purchaseRepository )
         const increaseStockUC = new IncreaseStockUseCase( productRepository )
@@ -34,7 +32,7 @@ export class PurchaseContainer {
         // ---- Service
         const purchaseService = new PurchaseService({
             filterPurchasesUC: filterPurchasesUC,
-            getPurchasesUC: getPurchasesUC,
+            getPurchaseByIdUC: getPurchaseByIdUC,
             savePurchaseUC: savePurchaseUC,
             savePurchaseDetailUC: savePurchaseDetailUC,
             increaseStockUC: increaseStockUC

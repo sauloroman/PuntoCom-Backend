@@ -8,59 +8,6 @@ export class SalesController {
 
     constructor(private readonly saleService: SaleService){}
 
-    private formatFilters( req: Request ): FilterSale {
-        const { minPrice, maxPrice, dateFrom, dateTo, user } = req.query
-        const filters: FilterSale = {}
-
-        if ( minPrice && maxPrice ) {
-            filters.prices = {
-                minPrice: Number(minPrice),
-                maxPrice: Number(maxPrice)
-            }
-        }
-
-        if ( dateFrom && dateTo ) {
-            filters.dates = {
-                dateFrom: new Date(dateFrom as string),
-                dateTo: new Date(dateTo as string)
-            }
-        }
-
-        if ( user ) {
-            filters.user = user as string
-        }
-
-        return filters
-    }
-
-    public listSales = async (req: Request, res: Response) => {
-        const { page, limit } = req.query
-        const sort = (req as any).sort
-
-        const pagination = {
-            page: Number(page),
-            limit: Number(limit),
-            sort: sort as string,
-        }
-
-        const { 
-            items,
-            page: currentPage,
-            total,
-            totalPages
-        } = await this.saleService.listSales( pagination )
-
-        res.status(200).json({
-            ok: true,
-            meta: {
-                page: currentPage,
-                totalPages,
-                total
-            },
-            sales: items
-        })
-    }
-
     public getSaleById = async (req: Request, res: Response) => {
         const { id: saleId } = req.params
         const sale = await this.saleService.getSaleById( saleId )
@@ -71,8 +18,26 @@ export class SalesController {
     }
 
     public filterSales = async (req: Request, res: Response) => {
-        const { page, limit } = req.query
+
+        const { page, limit, minPrice, maxPrice, dateFrom, dateTo, user } = req.query
         const sort = (req as any).sort
+        const filters: FilterSale = {}
+
+        if (minPrice || maxPrice) {
+            filters.prices = {
+                minPrice: minPrice ? Number(minPrice) : 0,
+                maxPrice: maxPrice ? Number(maxPrice) : Number.MAX_SAFE_INTEGER
+            }
+        }
+        if (dateFrom && dateTo) {
+            filters.dates = {
+                dateFrom: new Date(dateFrom as string),
+                dateTo: new Date(dateTo as string)
+            }
+        }   
+        if (user) {
+            filters.user = user as string
+        }
 
         const pagination = {
             page: Number(page),
@@ -80,14 +45,12 @@ export class SalesController {
             sort: sort as string
         }
 
-        const filters = this.formatFilters(req)
-
         const {
             items,
             page: currentPage,
             total,
             totalPages
-        } = await this.saleService.filterSales(filters, pagination)
+        } = await this.saleService.filterSales(pagination, filters)
 
         res.status(200).json({
             ok: true,

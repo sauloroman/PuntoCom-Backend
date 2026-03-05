@@ -23,21 +23,14 @@ export class PurchaseRoutes {
     private initRoutes(): Router {
         const router = Router()
 
-        router.use([this.auth.Logged])
-
-        router.post('/', [
+        router.use([
+            this.auth.Logged,
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )   
-        ], this.controller.savePurchase)
-        
-        router.get('/', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
-            MapperFilterMiddleware.ToPrisma()  
-        ], this.controller.listPurchases)
+        ])
 
-        router.get('/filter', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
-            MapperFilterMiddleware.ToPrisma()
-        ], this.controller.filterPurchases )
+        router.post('/', this.controller.savePurchase)
+        router.get('/filter', this.controller.filterPurchases )
+        router.get('/:id', this.controller.getPurchaseById)
 
         return router
     }

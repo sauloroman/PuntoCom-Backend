@@ -1,18 +1,23 @@
 import { DashboardStatsService } from "../application/services"
 import { 
-    GetDashboardSalesPercentageByUserUseCase,
-    GetDashboardStatsUseCase, 
+    GetDashboardKpisUseCase, 
+    GetPurchasesSummaryUseCase, 
     GetProductsWithoutSalesUseCase, 
     GetPurchasesByDateUseCase, 
-    GetSalesByDateUseCase, 
-    GetTopSellingProductUseCase 
+    GetPurchasesBySupplierUseCase, 
+    GetSalesByCategoryUseCase, 
+    GetSalesByDateUseCase,
+    GetSalesByUserUseCase,
+    GetSalesSummaryUseCase,
+    GetTopSellingProductsUseCase,
+    GetProductsByCriticalStock, 
 } from "../application/usecases/dashboard"
 import { DashboardStatsController } from "../presentation/controllers"
 import { DashboardStatsRoutes } from "../presentation/routes"
-import { PrismaDashboardStatsDatasource, PrismaDatasource } from "../infrastructure/datasource/prisma"
 import { DashboardStatsRepositoryImp } from "../infrastructure/repositories"
 import { Auth } from "../presentation/middlewares"
 import { ConnectionPool } from "mssql"
+import { MSSQLStatsDashboard } from "../infrastructure/datasource/ms-sql/datasources"
 
 export class DashboardStatsContainer {
 
@@ -20,24 +25,35 @@ export class DashboardStatsContainer {
 
     constructor(private readonly pool: ConnectionPool ) {
 
-        const dashboardStatsRepository = new DashboardStatsRepositoryImp(
-            new PrismaDashboardStatsDatasource( PrismaDatasource.getInstance() )
-        )
+        const dashboardStatsRepository = new DashboardStatsRepositoryImp( new MSSQLStatsDashboard(this.pool) )
 
-        const getDashboardStatsUC = new GetDashboardStatsUseCase( dashboardStatsRepository )
-        const getSalesChartUC = new GetSalesByDateUseCase( dashboardStatsRepository )
-        const getPurchasesChartUC = new GetPurchasesByDateUseCase( dashboardStatsRepository )
-        const getTopProductsUC = new GetTopSellingProductUseCase( dashboardStatsRepository )
-        const getProductsWithoutSalesUC = new GetProductsWithoutSalesUseCase( dashboardStatsRepository )
-        const getSalesPercentageByUserUC = new GetDashboardSalesPercentageByUserUseCase( dashboardStatsRepository )
+        const getDashboardKpisUC = new GetDashboardKpisUseCase( dashboardStatsRepository )
+
+        const getProductsByCriticalStockUC = new GetProductsByCriticalStock( dashboardStatsRepository )
+
+        const getSalesSummaryUC = new GetSalesSummaryUseCase( dashboardStatsRepository )
+        const getSalesByDateUC = new GetSalesByDateUseCase( dashboardStatsRepository )
+        const getSalesByCategoryUC = new GetSalesByCategoryUseCase( dashboardStatsRepository )
+        const getSalesByUserUC = new GetSalesByUserUseCase( dashboardStatsRepository )
+        const getTopSellingProductsUC = new GetTopSellingProductsUseCase( dashboardStatsRepository )
+        const getProductsWithoutSalesUC = new GetProductsWithoutSalesUseCase( dashboardStatsRepository ) 
+
+        const getPurchasesSummaryUC = new GetPurchasesSummaryUseCase( dashboardStatsRepository )
+        const getPurchasesByDateUC = new GetPurchasesByDateUseCase( dashboardStatsRepository )
+        const getPurchasesBySupplierUC = new GetPurchasesBySupplierUseCase( dashboardStatsRepository )
 
         const dashboardStatsService = new DashboardStatsService({
-            getDashboardStatsUC,
+            getDashboardKpisUC,
             getProductsWithoutSalesUC,
-            getPurchasesChartUC,
-            getSalesChartUC,
-            getTopProductsUC,
-            getSalesPercentageByUserUC
+            getSalesByCategoryUC,
+            getSalesByDateUC,
+            getSalesByUserUC,
+            getSalesSummaryUC,
+            getTopSellingProductsUC,
+            getPurchasesSummaryUC,
+            getPurchasesByDateUC,
+            getPurchasesBySupplierUC,
+            getProductsByCriticalStockUC
         })
 
         const dashboardStatsController = new DashboardStatsController(dashboardStatsService)

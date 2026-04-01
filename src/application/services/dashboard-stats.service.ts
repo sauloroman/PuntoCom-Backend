@@ -1,68 +1,124 @@
 import { 
-    GetDashboardSalesPercentageByUserUseCase,
-    GetDashboardStatsUseCase, 
+    GetDashboardKpisUseCase,
+
+    GetProductsByCriticalStock,
+
     GetProductsWithoutSalesUseCase, 
-    GetPurchasesByDateUseCase, 
+    GetSalesByCategoryUseCase, 
     GetSalesByDateUseCase, 
-    GetTopSellingProductUseCase 
+    GetSalesByUserUseCase, 
+    GetSalesSummaryUseCase, 
+    GetTopSellingProductsUseCase,
+    
+    GetPurchasesSummaryUseCase,
+    GetPurchasesByDateUseCase,
+    GetPurchasesBySupplierUseCase
 } from "../usecases/dashboard";
 
 interface DashboardStatsServiceOptions {
-    getDashboardStatsUC: GetDashboardStatsUseCase,
-    getSalesChartUC: GetSalesByDateUseCase,
-    getPurchasesChartUC: GetPurchasesByDateUseCase,
-    getTopProductsUC: GetTopSellingProductUseCase,
+    getDashboardKpisUC: GetDashboardKpisUseCase
+
+    getProductsByCriticalStockUC: GetProductsByCriticalStock
+
+    getSalesByCategoryUC: GetSalesByCategoryUseCase,
+    getSalesByDateUC: GetSalesByDateUseCase,
+    getSalesByUserUC: GetSalesByUserUseCase,
     getProductsWithoutSalesUC: GetProductsWithoutSalesUseCase
-    getSalesPercentageByUserUC: GetDashboardSalesPercentageByUserUseCase
+    getSalesSummaryUC: GetSalesSummaryUseCase,
+    getTopSellingProductsUC: GetTopSellingProductsUseCase,
+
+    getPurchasesSummaryUC: GetPurchasesSummaryUseCase
+    getPurchasesByDateUC: GetPurchasesByDateUseCase
+    getPurchasesBySupplierUC: GetPurchasesBySupplierUseCase
+
 }
 
 export class DashboardStatsService {
 
-    private readonly getDashboardStatsUC: GetDashboardStatsUseCase
-    private readonly getSalesChartUC: GetSalesByDateUseCase
-    private readonly getPurchasesChartUC: GetPurchasesByDateUseCase
-    private readonly getTopProductsUC: GetTopSellingProductUseCase
+    private readonly getDashboardKpisUC: GetDashboardKpisUseCase
+
+    private readonly getProductsByCriticalStockUC: GetProductsByCriticalStock
+
+    private readonly getSalesByCategoryUC: GetSalesByCategoryUseCase
+    private readonly getSalesByDateUC: GetSalesByDateUseCase
+    private readonly getSalesByUserUC: GetSalesByUserUseCase
     private readonly getProductsWithoutSalesUC: GetProductsWithoutSalesUseCase
-    private readonly getSalesPercentageByUserUC: GetDashboardSalesPercentageByUserUseCase
+    private readonly getSalesSummaryUC: GetSalesSummaryUseCase
+    private readonly getTopSellingProductsUC: GetTopSellingProductsUseCase
+
+    private readonly getPurchasesSummaryUC: GetPurchasesSummaryUseCase
+    private readonly getPurchasesByDateUC: GetPurchasesByDateUseCase
+    private readonly getPurchasesBySupplierUC: GetPurchasesBySupplierUseCase
 
     constructor({
-        getDashboardStatsUC,
-        getProductsWithoutSalesUC, 
-        getPurchasesChartUC, 
-        getSalesChartUC,
-        getTopProductsUC,
-        getSalesPercentageByUserUC
+        getDashboardKpisUC,
+        getProductsByCriticalStockUC,
+        getSalesByCategoryUC,
+        getSalesByDateUC,
+        getSalesByUserUC,
+        getProductsWithoutSalesUC,
+        getSalesSummaryUC,
+        getTopSellingProductsUC,
+        getPurchasesSummaryUC,
+        getPurchasesByDateUC,
+        getPurchasesBySupplierUC
     }: DashboardStatsServiceOptions){
-        this.getDashboardStatsUC = getDashboardStatsUC
+        this.getDashboardKpisUC = getDashboardKpisUC
+
+        this.getProductsByCriticalStockUC = getProductsByCriticalStockUC
+
+        this.getSalesByCategoryUC = getSalesByCategoryUC
+        this.getSalesByDateUC = getSalesByDateUC
+        this.getSalesByUserUC = getSalesByUserUC
         this.getProductsWithoutSalesUC = getProductsWithoutSalesUC
-        this.getPurchasesChartUC = getPurchasesChartUC
-        this.getSalesChartUC = getSalesChartUC
-        this.getTopProductsUC = getTopProductsUC
-        this.getSalesPercentageByUserUC = getSalesPercentageByUserUC
+        this.getSalesSummaryUC = getSalesSummaryUC
+        this.getTopSellingProductsUC = getTopSellingProductsUC
+    
+        this.getPurchasesSummaryUC = getPurchasesSummaryUC
+        this.getPurchasesByDateUC = getPurchasesByDateUC
+        this.getPurchasesBySupplierUC = getPurchasesBySupplierUC
     }
 
-    public async getGeneralStats() {
-        return await this.getDashboardStatsUC.execute()
+    public async getKpisStats() {
+        return await this.getDashboardKpisUC.execute()
     }
 
-    public async getSalesChart() {
-        return await this.getSalesChartUC.execute()
+    public async getSalesStats() {
+        const salesByCategory = await this.getSalesByCategoryUC.execute()
+        const salesByDate = await this.getSalesByDateUC.execute()
+        const salesByUser = await this.getSalesByUserUC.execute()
+        const productsWithoutSales = await this.getProductsWithoutSalesUC.execute()
+        const salesSummary = await this.getSalesSummaryUC.execute()
+        const getTopSellingProductsUC = await this.getTopSellingProductsUC.execute()
+        
+        return {
+            salesByCategory,
+            salesByDate,
+            salesByUser,
+            productsWithoutSales,
+            salesSummary,
+            getTopSellingProductsUC,
+        }
     }
 
-    public async getPurchasesChart() {
-        return await this.getPurchasesChartUC.execute()
+    public async getPurchasesStats() {
+        const getPurchaseSummary = await this.getPurchasesSummaryUC.execute()
+        const getPurchasesByDate = await this.getPurchasesByDateUC.execute()
+        const getPurchasesBySupplier = await this.getPurchasesBySupplierUC.execute()
+
+        return {
+            getPurchaseSummary,
+            getPurchasesByDate,
+            getPurchasesBySupplier
+        }
     }
 
-    public async getTopProducts() {
-        return await this.getTopProductsUC.execute()
-    }
+    public async getProductsStats() {
+        const getProductsCritialStock = await this.getProductsByCriticalStockUC.execute()
 
-    public async getProductsWithoutSales() {
-        return await this.getProductsWithoutSalesUC.execute()
-    }
-
-    public async getSalesPercentageByUser() {
-        return await this.getSalesPercentageByUserUC.execute()
+        return {
+            getProductsCritialStock
+        }
     }
 
 }

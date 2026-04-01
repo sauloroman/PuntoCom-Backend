@@ -29,10 +29,11 @@ const BASE_QUERY = `
 const DETAIL_SELECT_QUERY = `
     SELECT 
         d.purchase_detail_id,
+        d.purchase_id,
         d.purchase_quantity,
         d.purchase_unit_price,
         p.product_id,
-        p.product_name,
+        p.product_name, 
         p.product_image
     FROM Purchase_Detail d
     INNER JOIN Product p ON p.product_id = d.product_id

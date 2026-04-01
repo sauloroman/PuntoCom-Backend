@@ -1,3 +1,4 @@
+import { AdjustmentType } from "../../../generated/prisma"
 import { AdjustmentEnum } from "../../domain/value-objects"
 
 export interface SaveInventoryAdjustment {
@@ -50,4 +51,9 @@ export interface InventoryAdjustmentRaw  {
     product_image_code:       string,
     product_code:             string,
     product_is_active:        boolean,
+}
+
+export interface FilterInventoryAdjustment {
+    userId?: string,
+    adjustmentType?: AdjustmentType
 }

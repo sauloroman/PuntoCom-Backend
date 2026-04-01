@@ -26,29 +26,21 @@ export class DashboardStatsRoutes {
 
         router.use([this.auth.Logged])
 
-        router.get('/stats', [
+        router.get('/kpis', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
-        ], this.controller.getGeneralStats)
+        ], this.controller.getKPISStats)
 
-        router.get('/sales-chart', [
+        router.get('/sales', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
-        ], this.controller.getSalesChart)
+        ], this.controller.getSalesStats )
 
-        router.get('/purchases-chart', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
-        ], this.controller.getPurchasesChart)
-
-        router.get('/top-products', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
-        ], this.controller.getTopProducts)
-
-        router.get('/products-without-sales', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
-        ], this.controller.getProductsWithoutSales)
-
-        router.get('/sales-percentage-users', [
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
-        ], this.controller.getSalesPercentagesByUser )
+        router.get('/purchases', [
+            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
+        ], this.controller.getPurchasesStats )
+        
+        router.get('/products', [
+            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
+        ], this.controller.getProductsStats )
 
         return router
     }

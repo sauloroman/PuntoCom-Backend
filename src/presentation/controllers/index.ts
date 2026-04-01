@@ -1,6 +1,6 @@
 export { CategoryController } from './category.controller'
 export { DashboardStatsController } from './dashboard-stats.controller'
-export { InventoryAdjustmentController } from './inventory-adjustment'
+export { InventoryAdjustmentController } from './inventory-adjustment.controller'
 export { ProductController } from './product.controller'
 export { PurchasesController } from './purchases.controller'
 export { ReportController } from './report.controller'

@@ -1,34 +1,56 @@
 import { DashboardStatsRepository } from "../../domain/repositories/dashboard-stats.repository";
 import { DashboardStatsDatasource } from "../../domain/datasources/dashboard-stats.datasource";
-import { SalesByUserStats } from "../../application/dtos/dashboard-stats.dto";
+import { ChartPoint, CriticalStockProduct, DashboardKpis, ProductsByCategory, ProductWithoutSales, PurchasesBySupplier, PurchaseSummary, SalesByCategory, SalesByUserStats, SalesSummary, TopProductStats } from "../../application/dtos/dashboard-stats.dto";
 
 export class DashboardStatsRepositoryImp implements DashboardStatsRepository {
 
-  constructor(
-    private readonly datasource: DashboardStatsDatasource
-  ) {}
+  constructor(private readonly datasource: DashboardStatsDatasource) {}
 
-  async getSalesPercentageByUser(): Promise<SalesByUserStats[]> {
-    return this.datasource.getSalesPercentageByUser()
+  async getKpis(): Promise<DashboardKpis> {
+    return await this.datasource.getKpis()
   }
 
-  getKpis() {
-    return this.datasource.getKpis();
+  async getSalesByDate(): Promise<ChartPoint[]> {
+    return await this.datasource.getSalesByDate()
   }
 
-  getSalesByDate() {
-    return this.datasource.getSalesByDate();
+  async getProductsWithoutSales(): Promise<ProductWithoutSales[]> {
+    return await this.datasource.getProductsWithoutSales()
   }
 
-  getPurchasesByDate() {
-    return this.datasource.getPurchasesByDate();
+  async getPurchasesByDate(): Promise<ChartPoint[]> {
+    return await this.datasource.getPurchasesByDate()
   }
 
-  getTopSellingProduct() {
-    return this.datasource.getTopSellingProduct();
+  async getSalesSummary(): Promise<SalesSummary> {
+    return await this.datasource.getSalesSummary()
   }
 
-  getProductsWithoutSales() {
-    return this.datasource.getProductsWithoutSales();
+  async getSalesByCategory(): Promise<SalesByCategory[]> {
+    return await this.datasource.getSalesByCategory()
+  }
+
+  async getSalesByUser(): Promise<SalesByUserStats[]> {
+    return await this.datasource.getSalesByUser()
+  }
+
+  async getTopSellingProducts(): Promise<TopProductStats[]> {
+    return await this.datasource.getTopSellingProducts()
+  }
+
+  async getPurchaseSummary(): Promise<PurchaseSummary> {
+    return await this.datasource.getPurchaseSummary()
+  }
+
+  async getPurchasesBySupplier(): Promise<PurchasesBySupplier[]> {
+    return await this.datasource.getPurchasesBySupplier()
+  }
+
+  async getCriticalStockProducts(): Promise<CriticalStockProduct[]> {
+    return await this.datasource.getCriticalStockProducts()
+  }
+
+  async getProductsByCategory(): Promise<ProductsByCategory[]> {
+    return await this.datasource.getProductsByCategory()
   }
 }

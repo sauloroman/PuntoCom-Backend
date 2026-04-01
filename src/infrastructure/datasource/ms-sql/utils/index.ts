@@ -1,4 +1,5 @@
 export { buildCategoriesFilter } from './mssql-build-filter-categories'
+export { buildInventoryAdjustmentsFilter } from './mssql-build-filter-inventory-adjustments'
 export { buildProductsFilter } from './mssql-build-filter-products'
 export { buildFilterPurchases } from './mssql-build-filter-purchases'
 export { buildFilterSales } from './mssql-build-filter-sales'

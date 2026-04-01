@@ -5,52 +5,35 @@ export class DashboardStatsController {
 
     constructor(private readonly dashboardStatsService: DashboardStatsService ){}
 
-    public getGeneralStats = async ( _req: Request, res: Response ) => {
-        const stats = await this.dashboardStatsService.getGeneralStats()
+    public getKPISStats = async (_req: Request, res: Response ) => {
+        const kpis = await this.dashboardStatsService.getKpisStats()
+        res.status(200).json({
+            ok: true,
+            kpis
+        })
+    }
+
+    public getSalesStats = async (_req: Request, res: Response) => {
+        const stats = await this.dashboardStatsService.getSalesStats()
         res.status(200).json({
             ok: true,
             stats
         })
     }
 
-     public getSalesChart = async (_req: Request, res: Response) => {
-        const chart = await this.dashboardStatsService.getSalesChart()
+    public getPurchasesStats = async (_req: Request, res: Response) => {
+        const stats = await this.dashboardStatsService.getPurchasesStats()
         res.status(200).json({
             ok: true,
-            chart
+            stats
         })
     }
 
-    public getSalesPercentagesByUser = async (_req: Request, res: Response) => {
-        const chart = await this.dashboardStatsService.getSalesPercentageByUser()
+    public getProductsStats = async (_req: Request, res: Response) => {
+        const stats = await this.dashboardStatsService.getProductsStats()
         res.status(200).json({
             ok: true,
-            chart
+            stats
         })
     }
-
-    public getPurchasesChart = async (_req: Request, res: Response) => {
-        const chart = await this.dashboardStatsService.getPurchasesChart()
-        res.status(200).json({
-            ok: true,
-            chart
-        })
-    }
-
-    public getTopProducts = async (_req: Request, res: Response) => {
-        const products = await this.dashboardStatsService.getTopProducts()
-        res.status(200).json({
-            ok: true,
-            products
-        })
-    }
-
-    public getProductsWithoutSales = async (_req: Request, res: Response) => {
-        const products = await this.dashboardStatsService.getProductsWithoutSales()
-        res.status(200).json({
-            ok: true,
-            products
-        })
-    }
-
 }

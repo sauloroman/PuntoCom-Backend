@@ -227,12 +227,14 @@ export class MSSQLSuppliers implements SupplierDatasource {
         try {
             const result = await this.pool.request()
                 .query(`
-                    SELECT DISTINCT supplier_company AS companies
+                    SELECT DISTINCT supplier_company AS company
                     FROM Supplier
-                    ORDER BY companies DESC   
+                    ORDER BY company DESC   
                 `)
 
-            return result.recordset
+            const companyNames = result.recordset.map( c => c.company )
+
+            return companyNames
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al obtener las empresas de los proveedores',

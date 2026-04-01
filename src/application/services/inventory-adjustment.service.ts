@@ -1,37 +1,38 @@
-import { SaveInventoryAdjustment } from "../dtos/inventory-adjustment.dto";
+import { FilterInventoryAdjustment, SaveInventoryAdjustment } from "../dtos/inventory-adjustment.dto";
 import { PaginationDTO } from "../dtos/pagination.dto";
-import { ListInventoryAdjustmentUseCase, SaveInventoryAdjustmentUseCase } from "../usecases/inventory-adjustment";
+import { FilterInventoryAdjustmentUseCase, SaveInventoryAdjustmentUseCase } from "../usecases/inventory-adjustment";
 import { UpdateProductUseCase } from "../usecases/product";
 
 interface InventoryAdjustmentServiceOptions {
     saveAdjustmentUC: SaveInventoryAdjustmentUseCase,
-    listAdjustmentsUC: ListInventoryAdjustmentUseCase,
+    filterAdjustmentsUC: FilterInventoryAdjustmentUseCase,
     updateProductUC: UpdateProductUseCase
 }
 
 export class InventoryAdjustmentService {
 
     private readonly saveAdjustmentUC: SaveInventoryAdjustmentUseCase
-    private readonly listAdjustmentsUC: ListInventoryAdjustmentUseCase
+    private readonly filterAdjustmentsUC: FilterInventoryAdjustmentUseCase
     private readonly updateProductUC: UpdateProductUseCase
 
     constructor({
         saveAdjustmentUC,
-        listAdjustmentsUC,
+        filterAdjustmentsUC,
         updateProductUC
     }: InventoryAdjustmentServiceOptions) {
         this.saveAdjustmentUC = saveAdjustmentUC
-        this.listAdjustmentsUC = listAdjustmentsUC
+        this.filterAdjustmentsUC = filterAdjustmentsUC
         this.updateProductUC = updateProductUC
     }
 
     public async saveInventoryAdjustment( dto: SaveInventoryAdjustment, userId: string ) {
-        await this.saveAdjustmentUC.execute( dto, userId )
+        const inventorySaved = await this.saveAdjustmentUC.execute( dto, userId )
         await this.updateProductUC.execute({ id: dto.productId, stock: dto.adjustmentQuantity })
+        return inventorySaved
     }
 
-    public async listAdjustments( pagination: PaginationDTO ) {
-        return await this.listAdjustmentsUC.execute( pagination )
+    public async filterInventoryAdjustments( pagination: PaginationDTO, filter: FilterInventoryAdjustment ) {
+        return await this.filterAdjustmentsUC.execute( pagination, filter )
     }
 
 }

@@ -1,11 +1,12 @@
-import { InventoryAdjustmentRaw, InventoryAdjustmentResponse } from "../../../../application/dtos/inventory-adjustment.dto";
+import { ConnectionPool } from "mssql";
+import { FilterInventoryAdjustment, InventoryAdjustmentRaw, InventoryAdjustmentResponse } from "../../../../application/dtos/inventory-adjustment.dto";
 import { PaginationDTO, PaginationResponseDto } from "../../../../application/dtos/pagination.dto";
 import { InventoryAdjustmentDatasource } from "../../../../domain/datasources";
 import { InventoryAdjustment } from "../../../../domain/entities";
-import { AdjustmentEnum } from "../../../../domain/value-objects";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
 import { MssqlClient } from "./mssql-client";
-import { buildMssqlPaginationOptions } from "../utils/mssql-pagination-options";
+import { InventoryAdjustmentMapper } from "../mappers";
+import { buildInventoryAdjustmentsFilter, buildMssqlPaginationOptions } from "../utils";
 
 const BASE_QUERY = `
     SELECT 
@@ -32,49 +33,19 @@ const BASE_QUERY = `
 `
 
 export class MSSQLInventoryAdjustment implements InventoryAdjustmentDatasource {
-    listInventoryAdjustments(pagination: PaginationDTO): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
-        throw new Error("Method not implemented.");
-    }
-
-    private toDomain( row: InventoryAdjustmentRaw ): InventoryAdjustmentResponse {
-        return {
-            adjustmentId: row.adjustment_id,
-            adjustmentType: row.adjustment_type as AdjustmentEnum,
-            adjustmentPrevQuantity: row.adjustment_prev_quantity,
-            adjustmentQuantity: row.adjustment_quantity,
-            adjustmentReason: row.adjustment_reason,
-            adjustmentDate: row.adjustment_date.toISOString(),
-            userId: row.user_id,
-            productId: row.product_id,
-            User: row.product_id ? {
-                id: row.user_id,
-                name: (row.user_name && row.user_lastname) ? `${row.user_name} ${row.user_lastname}` : '',
-                role: row.role,
-                image: row.user_image
-            } : undefined,
-            Product: row.product_id ? {
-                id: row.product_id,
-                name: row.product_name,
-                image: row.product_image,
-                imageCode: row.product_image_code,
-                code: row.product_code,
-                isActive: row.product_is_active
-            } : undefined
-        }
-    }
+    
+    constructor(private readonly pool: ConnectionPool ){}
     
     private async findByID(adjustmentId: string): Promise<InventoryAdjustmentResponse | null> {
-        try {
-            const pool = await MssqlClient.getConnection()
-    
-            const result = await pool.request()
+        try {    
+            const result = await this.pool.request()
                 .input('adjustment_id', adjustmentId)
                 .query<InventoryAdjustmentRaw>(`
                     ${BASE_QUERY}
                     WHERE ia.adjustment_id = @adjustment_id
                 `)
             
-            return this.toDomain(result.recordset[0])
+            return InventoryAdjustmentMapper.fromSQL(result.recordset[0])
         } catch( error ) {
             throw new InfrastructureError(
                 'Error al obtener el ajuste de inventario por id',
@@ -86,9 +57,7 @@ export class MSSQLInventoryAdjustment implements InventoryAdjustmentDatasource {
 
     async save(inventoryAdjustment: InventoryAdjustment): Promise<InventoryAdjustmentResponse> {
         try {
-            const pool = await MssqlClient.getConnection()
-
-            await pool.request()
+            await this.pool.request()
                 .input('adjustment_id',            inventoryAdjustment.id)
                 .input('adjustment_type',          inventoryAdjustment.adjustmentType.value)
                 .input('adjustment_prev_quantity', inventoryAdjustment.adjustmentPrevQuantity.value)
@@ -130,47 +99,53 @@ export class MSSQLInventoryAdjustment implements InventoryAdjustmentDatasource {
             )
         }
     }
-    
-    // async listInventoryAdjustments(pagination: PaginationDTO): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
-    //     try {
-    //         const pool = await MssqlClient.getConnection()
 
-    //         const { limit, offset, orderBy, page, where } = buildMssqlPaginationOptions(pagination, 'adjustment_date')
+    async filterInventoryAdjustment(pagination: PaginationDTO, filter: FilterInventoryAdjustment): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
+        try {
 
-    //         const [ adjustmentsResult, countResult ] = await Promise.all([
-    //             pool.request()
-    //                 .input('limit', limit)
-    //                 .input('offset', offset)
-    //                 .query<InventoryAdjustmentRaw>(`
-    //                     ${BASE_QUERY}
-    //                     WHERE ${where}
-    //                     ORDER BY ${orderBy}
-    //                     OFFSET @offset ROWS
-    //                     FETCH NEXT @limit ROWS ONLY
-    //                 `),
+            const { limit, offset, page } = buildMssqlPaginationOptions( pagination )
 
-    //             pool.request()
-    //                 .query(`SELECT COUNT(*) AS total FROM Inventory_Adjustment ia WHERE ${where}`)
-    //         ])
+            const countRequest = this.pool.request()
+            const dataRequest = this.pool.request()
 
-    //         const total = countResult.recordset[0].total
-    //         const totalPages = Math.ceil( total / limit )
+            const countWhere = buildInventoryAdjustmentsFilter(countRequest, filter)
+            const dataWhere = buildInventoryAdjustmentsFilter( dataRequest, filter )
 
-    //         return {
-    //             items: adjustmentsResult.recordset.map( this.toDomain ),
-    //             page: page,
-    //             total: total,
-    //             totalPages: totalPages
-    //         }
+            const countResult = await countRequest.query(`
+                SELECT COUNT(*) AS total
+                FROM Inventory_Adjustment ia
+                    INNER JOIN [User] u ON u.user_id = ia.user_id
+                    INNER JOIN Product p ON p.product_id = ia.product_id
+                WHERE ${countWhere}
+            `)
 
-    //     } catch(error) {
-    //         throw new InfrastructureError(
-    //             'Error al obtener los ajustes de inventario',
-    //             'MSSQl_GET_ALL_INVENTORY_ADJUSTMENTS_ERROR',
-    //             error
-    //         )
-    //     }
-    // }
+            dataRequest.input('offset', offset).input('limit', limit)
+            const dataResult = await dataRequest.query<InventoryAdjustmentRaw>(`
+                ${BASE_QUERY}
+                WHERE ${dataWhere}
+                ORDER BY ia.adjustment_date  
+                OFFSET @offset ROWS
+                FETCH NEXT @limit ROWS ONLY
+            `)
+
+            const total = countResult.recordset[0].total
+            const totalPages = Math.ceil(total / limit)
+            
+            return {
+                items: dataResult.recordset.map( InventoryAdjustmentMapper.fromSQL ),
+                page: page,
+                total: total,
+                totalPages: totalPages
+            }  
+
+        } catch( error ) {
+            throw new InfrastructureError(
+                'Error al obtener los ajustes de inventario filtrados',
+                'MSSQL_GET_FILTERED_INVENTORY_ADJUSTMENTS_ERROR',
+                error
+            )
+        }
+    }
     
     async getAllInventoryAdjustments(): Promise<InventoryAdjustmentResponse[]> {
         try {
@@ -182,7 +157,7 @@ export class MSSQLInventoryAdjustment implements InventoryAdjustmentDatasource {
                     ORDER BY ia.adjustment_date DESC    
                 `)
 
-            return result.recordset.map( this.toDomain )
+            return result.recordset.map( InventoryAdjustmentMapper.fromSQL )
 
         } catch( error ) {
             throw new InfrastructureError(

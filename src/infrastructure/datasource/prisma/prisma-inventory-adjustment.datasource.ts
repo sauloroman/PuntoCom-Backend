@@ -1,5 +1,5 @@
 import { PrismaClient, User as PrismaUser, Product as PrismaProduct, Inventory_Adjustment as PrismaInventoryAdjustment } from "../../../../generated/prisma";
-import { InventoryAdjustmentResponse } from "../../../application/dtos/inventory-adjustment.dto";
+import { FilterInventoryAdjustment, InventoryAdjustmentResponse } from "../../../application/dtos/inventory-adjustment.dto";
 import { PaginationDTO, PaginationResponseDto } from "../../../application/dtos/pagination.dto";
 import { DatesAdapter } from "../../../config/plugins";
 import { InventoryAdjustmentDatasource } from "../../../domain/datasources/inventory-adjustment.datasource";
@@ -14,6 +14,9 @@ export class PrismaInventoryAdjustmentDatasource implements InventoryAdjustmentD
 
     constructor(prisma: PrismaClient){
         this.prisma = prisma
+    }
+    filterInventoryAdjustment(pagination: PaginationDTO, filter: FilterInventoryAdjustment): Promise<PaginationResponseDto<InventoryAdjustmentResponse>> {
+        throw new Error("Method not implemented.");
     }
 
     async getAllInventoryAdjustments(): Promise<InventoryAdjustmentResponse[]> {

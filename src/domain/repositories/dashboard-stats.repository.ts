@@ -1,16 +1,31 @@
-import { 
+import {
     DashboardKpis,
     ChartPoint,
     TopProductStats,
     ProductWithoutSales,
-    SalesByUserStats
+    SalesByUserStats,
+    SalesSummary,
+    SalesByCategory,
+    PurchaseSummary,
+    PurchasesBySupplier,
+    CriticalStockProduct,
+    ProductsByCategory
 } from "../../application/dtos/dashboard-stats.dto";
 
 export abstract class DashboardStatsRepository {
     abstract getKpis(): Promise<DashboardKpis>
+
+    abstract getSalesSummary(): Promise<SalesSummary>
     abstract getSalesByDate(): Promise<ChartPoint[]>
-    abstract getPurchasesByDate(): Promise<ChartPoint[]>
-    abstract getTopSellingProduct(): Promise<TopProductStats | null>
+    abstract getSalesByCategory(): Promise<SalesByCategory[]>
+    abstract getSalesByUser(): Promise<SalesByUserStats[]>
+    abstract getTopSellingProducts(): Promise<TopProductStats[]>
     abstract getProductsWithoutSales(): Promise<ProductWithoutSales[]>
-    abstract getSalesPercentageByUser(): Promise<SalesByUserStats[]>
+
+    abstract getPurchaseSummary(): Promise<PurchaseSummary>
+    abstract getPurchasesByDate(): Promise<ChartPoint[]>
+    abstract getPurchasesBySupplier(): Promise<PurchasesBySupplier[]>
+
+    abstract getCriticalStockProducts(): Promise<CriticalStockProduct[]>
+    abstract getProductsByCategory(): Promise<ProductsByCategory[]>
 }

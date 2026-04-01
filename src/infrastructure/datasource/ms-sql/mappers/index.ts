@@ -1,4 +1,5 @@
 export { CategoryMapper } from './category.mapper'
+export { InventoryAdjustmentMapper } from './inventory-adjustment.mapper'
 export { PasswordResetCodeMapper } from './password-reset-code.mapper'
 export { ProductMapper } from './product.mapper'
 export { SaleMapper } from './sale.mapper'

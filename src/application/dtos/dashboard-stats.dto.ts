@@ -1,7 +1,12 @@
+// KPIS
 export interface DashboardKpis {
     totalSales: number
     totalPurchases: number
-    criticalStockProducts: number
+    netProfit: number,
+    criticalStockProducts: number,
+    totalActiveProducts: number,
+    totalStockValue: number,
+    totalActiveUsers: number
 }
 
 export interface ChartPoint {
@@ -9,6 +14,40 @@ export interface ChartPoint {
     total: number
 }
 
+// Sales
+export interface SalesSummary {
+    totalOrders: number,
+    averageOrderValue: number,
+    maxOrderValue: number,
+    minOrderValue: number
+}
+
+export interface SalesByCategory {
+    categoryId: string,
+    categoryName: string,
+    categoryIcon: string,
+    totalSales: number,
+    quantitySold: number,
+    percetage: number
+}
+
+// Purchases
+export interface PurchaseSummary {
+    totalOrders: number,
+    averageOrderValue: number,
+    maxOrderValue: number,
+    minOrderValue: number
+}
+
+export interface PurchasesBySupplier {
+    supplierId: string,
+    supplierCompany: string,
+    totalPurchases: number,
+    ordersCount: number,
+    percentage: number
+}
+
+// Products
 export interface TopProductStats {
     productId: string
     productName: string
@@ -22,22 +61,76 @@ export interface ProductWithoutSales {
     stock: number
 }
 
+export interface CriticalStockProduct {
+    productId: string,
+    productName: string,
+    stock: number,
+    stockMin: number,
+    stockValue: number
+}
+
+export interface ProductsByCategory {
+    categoryId: string,
+    categoryName: string,
+    categoryIcon: string,
+    productCount: number,
+    activeProductCount: number
+}
+
+// Users
 export interface SalesByUserStats {
     userId: string
-    userName: string
-    totalSales: number
+    userName: string,
+    role: string,
+    totalSales: number,
+    ordersCount: number,
+    averageOrderValue: number,
     percentage: number
 }
 
+// Inventory Adjustment
+export interface InventoryAdjustmentSummary {
+    totalAdjustments: number
+    totalEntradas: number
+    totalSalidas: number
+    totalUnitsAdded: number         
+    totalUnitsRemoved: number
+}
+
+export interface MostAdjustedProduct {
+    productId: string
+    productName: string
+    adjustmentCount: number
+    totalUnitsAdded: number
+    totalUnitsRemoved: number
+}
+
+// Response
 export interface DashboardStats {
     kpis: DashboardKpis,
-    charts: {
-        salesByDate: ChartPoint[],
-        purchasesByDate: ChartPoint[]
-        salesPercentageByUser: SalesByUserStats[]
+
+    sales: {
+        summary: SalesSummary,
+        byDate: ChartPoint[],
+        byCategory: SalesByCategory[],
+        byUser: SalesByUserStats[],
+        topProducts: TopProductStats[],
+        productsWithoutSales: ProductWithoutSales[],
+    }
+
+    purchases: {
+        summary: PurchaseSummary,
+        byDate: ChartPoint[],
+        bySupplier: PurchasesBySupplier[],
+    }
+
+    products: {
+        criticalStock: CriticalStockProduct[],
+        byCategory: ProductsByCategory[]
     },
-    insights: {
-        topProduct: TopProductStats | null,
-        productsWithoutSales: ProductWithoutSales[]
+
+    inventory: {
+        summary: InventoryAdjustmentSummary,
+        mostAdjusted: MostAdjustedProduct[]
     }
 }

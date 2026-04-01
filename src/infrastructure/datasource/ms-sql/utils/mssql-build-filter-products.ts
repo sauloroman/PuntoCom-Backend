@@ -31,7 +31,7 @@ export const buildProductsFilter = (
     if (filter.prices?.minPrice && filter.prices?.maxPrice) {
         request.input('minPrice', filter.prices.minPrice)
         request.input('maxPrice', filter.prices.maxPrice)
-        conditions.push('p.product_selling_price BETWEEN @minPrice AND @maxPrice')
+        conditions.push('(p.product_selling_price BETWEEN @minPrice AND @maxPrice)')
     }
 
     return conditions.join(' AND ')

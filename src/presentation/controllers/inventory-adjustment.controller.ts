@@ -3,6 +3,8 @@ import { InventoryAdjustmentService } from "../../application/services";
 import { SaveInventoryAdjustmentValidator } from "../validators/inventory-adjustment";
 import { ApplicationError } from "../../application/errors/application.error";
 import { PaginationDTO } from "../../application/dtos/pagination.dto";
+import { FilterInventoryAdjustment } from "../../application/dtos/inventory-adjustment.dto";
+import { AdjustmentEnum } from "../../domain/value-objects";
 
 export class InventoryAdjustmentController {
     
@@ -23,16 +25,19 @@ export class InventoryAdjustmentController {
         })
     }
 
-    public getInventoryAdjustments = async (req: Request, res: Response) => {
-        const { page, limit } = req.query
+    public filterInventoryAdjustments = async (req: Request, res: Response) => {
+        const { page, limit, adjustmentType, userId } = req.query
         const sort = (req as any).sort
-        const filter = (req as any).filter
+
+        const filter: FilterInventoryAdjustment = {
+            adjustmentType: (adjustmentType ?? '') as AdjustmentEnum,
+            userId: (userId ?? '') as string,
+        }
         
         const pagination: PaginationDTO = {
             page: Number(page),
             limit: Number(limit),
             sort: sort,
-            filter: filter
         }
 
         const { 
@@ -40,7 +45,7 @@ export class InventoryAdjustmentController {
             page: currentPage, 
             total, 
             totalPages 
-        } = await this.inventoryAdjustmentService.listAdjustments(pagination)
+        } = await this.inventoryAdjustmentService.filterInventoryAdjustments(pagination, filter)
 
         res.status(200).json({
             ok: true, 

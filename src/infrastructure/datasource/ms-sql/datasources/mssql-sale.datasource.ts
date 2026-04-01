@@ -189,7 +189,7 @@ export class MSSQLSales implements SalesDatasource {
             const countWhere = buildFilterSales(countRequest, filter)
 
             const countResult = await countRequest.query<{total: number}>(`
-                SELECT COUNT(*) AS TOTAL
+                SELECT COUNT(*) AS total
                 FROM Sale s
                 LEFT JOIN [User] u ON u.user_id = s.user_id
                 WHERE ${countWhere}     

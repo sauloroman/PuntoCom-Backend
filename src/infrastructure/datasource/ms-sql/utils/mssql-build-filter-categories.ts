@@ -16,7 +16,7 @@ export const buildCategoriesFilter = (
 
     if ( filter.categoryName ) {
         const str = filter.categoryName.toLowerCase()
-        conditions.push(`category_name LIKE '%${str}%' OR category_description LIKE '%${str}%'`)
+        conditions.push(`(category_name LIKE '%${str}%' OR category_description LIKE '%${str}%')`)
     }
 
     return conditions.join(' AND ')

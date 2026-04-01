@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { RoleEnum } from "../../../generated/prisma";
 import { InventoryAdjustmentController } from "../controllers";
-import { Auth, MapperFilterMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { Auth, ValidateRolesMiddleware } from "../middlewares";
 
 interface InventoryAdjustmentRoutesI {
     controller:InventoryAdjustmentController
@@ -29,10 +29,9 @@ export class InventoryAdjustmentRoutes {
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor),
         ], this.controller.postInventoryAdjustment )
         
-        router.get('/', [
+        router.get('/filter', [
             ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor),
-            MapperFilterMiddleware.ToMssql()
-        ], this.controller.getInventoryAdjustments )
+        ], this.controller.filterInventoryAdjustments )
 
         return router
     }

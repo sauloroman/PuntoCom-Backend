@@ -28,19 +28,18 @@ export class SupplierRoutes {
         router.get('/', this.controller.getAllSuppliers )
 
         router.get('/companies', this.controller.getUniqueCompanies )
+        
+        router.get('/filter', this.controller.filterSuppliers )
+        
+        router.get('/:id', [ 
+            ParamsHandlerMiddleware.hasIDItem() 
+        ], this.controller.getSupplierById )
 
+        // Only administrator 
+        
         router.post('/', [
             ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.postSupplier )
-
-        router.get('/filter', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-        ], this.controller.filterSuppliers )
-
-        router.get('/:id', [
-            ParamsHandlerMiddleware.hasIDItem(),
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor )
-        ], this.controller.getSupplierById )
 
         router.put('/:id', [
             ParamsHandlerMiddleware.hasIDItem(),

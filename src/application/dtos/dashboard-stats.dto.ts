@@ -41,10 +41,29 @@ export interface PurchaseSummary {
 
 export interface PurchasesBySupplier {
     supplierId: string,
+    supplierName: string,
+    supplierLastname: string,
     supplierCompany: string,
     totalPurchases: number,
     ordersCount: number,
     percentage: number
+}
+
+export interface TopPurchasedProduct {
+    productId:     string
+    productName:   string
+    totalQuantity: number
+    totalSpent:    number
+    avgUnitPrice:  number
+}
+
+export interface PurchasesByCategory {
+    categoryId:    string
+    categoryName:  string
+    categoryIcon:  string
+    totalQuantity: number
+    totalSpent:    number
+    percentage:    number
 }
 
 // Products
@@ -81,6 +100,7 @@ export interface ProductsByCategory {
 export interface SalesByUserStats {
     userId: string
     userName: string,
+    userImage: string,
     role: string,
     totalSales: number,
     ordersCount: number,

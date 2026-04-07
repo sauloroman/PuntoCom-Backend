@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { RoleEnum } from "../../../generated/prisma";
 import { SalesController } from "../controllers";
-import { Auth, MapperFilterMiddleware, ValidateFiltersMiddleware, ValidateRolesMiddleware } from "../middlewares";
+import { Auth, ValidateRolesMiddleware } from "../middlewares";
 
 interface SaleRoutesI {
     controller: SalesController

@@ -10,7 +10,12 @@ import {
     GetSalesByUserUseCase,
     GetSalesSummaryUseCase,
     GetTopSellingProductsUseCase,
-    GetProductsByCriticalStock, 
+    GetProductsByCriticalStock,
+    GetProductsByCategoryUseCase,
+    GetInventoryAdjustmentSummaryUseCase,
+    GetProductsMostAdjusted,
+    GetPurchasesByCategoryUseCase,
+    GetTopPurchasedProductsUseCase, 
 } from "../application/usecases/dashboard"
 import { DashboardStatsController } from "../presentation/controllers"
 import { DashboardStatsRoutes } from "../presentation/routes"
@@ -30,7 +35,10 @@ export class DashboardStatsContainer {
         const getDashboardKpisUC = new GetDashboardKpisUseCase( dashboardStatsRepository )
 
         const getProductsByCriticalStockUC = new GetProductsByCriticalStock( dashboardStatsRepository )
-
+        const getProductsByCategoryUC = new GetProductsByCategoryUseCase( dashboardStatsRepository )
+        const getInventoryAdjustmentSummaryUC = new GetInventoryAdjustmentSummaryUseCase( dashboardStatsRepository )
+        const getMostAdjustedProductsUC = new GetProductsMostAdjusted( dashboardStatsRepository )
+        
         const getSalesSummaryUC = new GetSalesSummaryUseCase( dashboardStatsRepository )
         const getSalesByDateUC = new GetSalesByDateUseCase( dashboardStatsRepository )
         const getSalesByCategoryUC = new GetSalesByCategoryUseCase( dashboardStatsRepository )
@@ -41,6 +49,8 @@ export class DashboardStatsContainer {
         const getPurchasesSummaryUC = new GetPurchasesSummaryUseCase( dashboardStatsRepository )
         const getPurchasesByDateUC = new GetPurchasesByDateUseCase( dashboardStatsRepository )
         const getPurchasesBySupplierUC = new GetPurchasesBySupplierUseCase( dashboardStatsRepository )
+        const getPurchasesByCategoryUC = new GetPurchasesByCategoryUseCase( dashboardStatsRepository )
+        const getTopPurchasedProductsUC = new GetTopPurchasedProductsUseCase( dashboardStatsRepository )
 
         const dashboardStatsService = new DashboardStatsService({
             getDashboardKpisUC,
@@ -53,7 +63,12 @@ export class DashboardStatsContainer {
             getPurchasesSummaryUC,
             getPurchasesByDateUC,
             getPurchasesBySupplierUC,
-            getProductsByCriticalStockUC
+            getProductsByCriticalStockUC,
+            getProductsByCategoryUC,
+            getInventoryAdjustmentSummaryUC,
+            getMostAdjustedProductsUC,
+            getPurchasesByCategoryUC,
+            getTopPurchasedProductsUC,
         })
 
         const dashboardStatsController = new DashboardStatsController(dashboardStatsService)

@@ -25,7 +25,7 @@ export class ReportRoutes {
 
         router.use([
             this.auth.Logged, 
-            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador)
+            ValidateRolesMiddleware.hasRole(RoleEnum.Administrador, RoleEnum.Supervisor)
         ])
 
         router.get('/list/:entity', [ ValidateEntityReportMiddleware.validate() ], this.controller.createListPdfReport )

@@ -178,6 +178,7 @@ export class MSSQLProduct implements ProductDatasource {
                 .input('product_stock_min',     product.stockMin.value)
                 .input('product_image',         product.image)
                 .input('product_image_code',    product.imageCode)
+                .input('product_is_active',     product.isActive)
                 .input('category_id',           product.categoryId)
                 .input('supplier_id',           product.supplierId)
                 .input('product_updatedAt',     product.updatedAt)
@@ -192,6 +193,7 @@ export class MSSQLProduct implements ProductDatasource {
                         product_stock_min     = @product_stock_min,
                         product_image         = @product_image,
                         product_image_code    = @product_image_code,
+                        product_is_active     = @product_is_active,
                         category_id           = @category_id,
                         supplier_id           = @supplier_id,
                         product_updatedAt     = @product_updatedAt
@@ -328,8 +330,7 @@ export class MSSQLProduct implements ProductDatasource {
 
             return result.recordset
                 .filter(product => {
-                    const stockPercentage = (product.product_stock / product.product_stock_min) * 100;
-
+                    const stockPercentage = (product.product_stock / product.product_stock_min) * 10;
                     switch (stockCriteria) {
                         case StockCriteria.low:     return stockPercentage <= 20;
                         case StockCriteria.warning: return stockPercentage > 20 && stockPercentage <= 60;

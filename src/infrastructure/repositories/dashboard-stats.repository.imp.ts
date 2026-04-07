@@ -1,10 +1,26 @@
 import { DashboardStatsRepository } from "../../domain/repositories/dashboard-stats.repository";
 import { DashboardStatsDatasource } from "../../domain/datasources/dashboard-stats.datasource";
-import { ChartPoint, CriticalStockProduct, DashboardKpis, ProductsByCategory, ProductWithoutSales, PurchasesBySupplier, PurchaseSummary, SalesByCategory, SalesByUserStats, SalesSummary, TopProductStats } from "../../application/dtos/dashboard-stats.dto";
+import { ChartPoint, CriticalStockProduct, DashboardKpis, InventoryAdjustmentSummary, MostAdjustedProduct, ProductsByCategory, ProductWithoutSales, PurchasesByCategory, PurchasesBySupplier, PurchaseSummary, SalesByCategory, SalesByUserStats, SalesSummary, TopProductStats, TopPurchasedProduct } from "../../application/dtos/dashboard-stats.dto";
 
 export class DashboardStatsRepositoryImp implements DashboardStatsRepository {
 
   constructor(private readonly datasource: DashboardStatsDatasource) {}
+  
+  async getTopPurchasedProducts(): Promise<TopPurchasedProduct[]> {
+    return await this.datasource.getTopPurchasedProducts()
+  }
+  
+  async getPurchasesByCategory(): Promise<PurchasesByCategory[]> {
+    return await this.datasource.getPurchasesByCategory()
+  }
+  
+  async getInventoryAdjustmentSummary(): Promise<InventoryAdjustmentSummary> {
+    return await this.datasource.getInventoryAdjustmentSummary()
+  }
+  
+  async getMostAdjustedProducts(): Promise<MostAdjustedProduct[]> {
+    return await this.datasource.getMostAdjustedProducts()
+  }
 
   async getKpis(): Promise<DashboardKpis> {
     return await this.datasource.getKpis()

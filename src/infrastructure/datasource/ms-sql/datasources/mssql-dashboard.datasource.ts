@@ -1,12 +1,12 @@
 import { ConnectionPool } from "mssql";
-import { DashboardKpis, ChartPoint, TopProductStats, ProductWithoutSales, SalesByUserStats, CriticalStockProduct, ProductsByCategory, PurchasesBySupplier, PurchaseSummary, SalesByCategory, SalesSummary } from "../../../../application/dtos/dashboard-stats.dto";
+import { DashboardKpis, ChartPoint, TopProductStats, ProductWithoutSales, SalesByUserStats, CriticalStockProduct, ProductsByCategory, PurchasesBySupplier, PurchaseSummary, SalesByCategory, SalesSummary, InventoryAdjustmentSummary, MostAdjustedProduct, TopPurchasedProduct, PurchasesByCategory } from "../../../../application/dtos/dashboard-stats.dto";
 import { DashboardStatsDatasource } from "../../../../domain/datasources";
 import { InfrastructureError } from "../../../errors/infrastructure-error";
 
 export class MSSQLStatsDashboard implements DashboardStatsDatasource {
-    
-    constructor(private readonly pool: ConnectionPool){}
-    
+
+    constructor(private readonly pool: ConnectionPool) { }
+
     async getKpis(): Promise<DashboardKpis> {
         try {
             const result = await this.pool.request().query(`
@@ -31,7 +31,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                 totalStockValue: Number(row.totalStockValue),
                 totalActiveUsers: Number(row.totalActiveUsers)
             }
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error obteniendo KPIs',
                 'MSSQL_DASHBOARD_KPI_ERROR',
@@ -39,7 +39,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getSalesSummary(): Promise<SalesSummary> {
         try {
             const result = await this.pool.request().query(`
@@ -60,7 +60,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                 minOrderValue: Number(row.minOrderValue),
             }
 
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error obteniendo resumen de ventas',
                 'MSSQL_DASHBOARD_SALES_SUMMARY_ERROR',
@@ -68,7 +68,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getSalesByDate(): Promise<ChartPoint[]> {
         try {
             const result = await this.pool.request().query(`
@@ -85,7 +85,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                 total: Number(r.total)
             }))
 
-        } catch(error) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error obteniendo ventas por fecha',
                 'MSSQL_DASHBOARD_SALES_BY_DATE_ERROR',
@@ -93,7 +93,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getSalesByCategory(): Promise<SalesByCategory[]> {
         try {
             const result = await this.pool.request().query(`
@@ -129,7 +129,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                 percetage: Number(r.percentage)
             }))
 
-        } catch(error) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error obteniendo ventas por categoría',
                 'MSSQL_DASHBOARD_SALES_BY_CATEGORY_ERROR',
@@ -137,7 +137,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getSalesByUser(): Promise<SalesByUserStats[]> {
         try {
             const result = await this.pool.request().query(`
@@ -146,18 +146,20 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                         s.user_id,
                         u.user_name,
                         u.user_lastname,
+                        u.user_image,
                         u.role,
                         SUM(s.sale_total) AS totalSales,
                         COUNT(s.sale_id) AS ordersCount,
                         AVG(s.sale_total) AS averageOrderValue
                     FROM Sale s
                     INNER JOIN [User] u ON u.user_id = s.user_id
-                    GROUP BY s.user_id, u.user_name, u.user_lastname, u.role
+                    GROUP BY s.user_id, u.user_name, u.user_lastname, u.user_image, u.role
                 )
                 SELECT 
                     user_id,
                     user_name,
                     user_lastname,
+                    user_image,
                     role,
                     totalSales,
                     ordersCount,
@@ -170,18 +172,19 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                 ORDER BY totalSales DESC
             `)
 
-            if ( !result.recordset.length ) return []
-            
-            return result.recordset.map( r => ({
+            if (!result.recordset.length) return []
+
+            return result.recordset.map(r => ({
                 userId: r.user_id,
                 userName: `${r.user_name ?? ''} ${r.user_lastname ?? ''}`.trim(),
+                userImage: r.user_image,
                 role: r.role,
                 totalSales: Number(r.totalSales),
                 ordersCount: Number(r.ordersCount),
                 averageOrderValue: Number(r.averageOrderValue),
                 percentage: Number(r.percentage)
             }))
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error obteniendo ventas por usuario',
                 'MSSQL_DASHBOARD_SALES_BY_USER_ERROR',
@@ -189,8 +192,8 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
-       async getTopSellingProducts(): Promise<TopProductStats[]> {
+
+    async getTopSellingProducts(): Promise<TopProductStats[]> {
         try {
             const result = await this.pool.request()
                 .query(`
@@ -209,9 +212,9 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                 `)
 
             return result.recordset.map(r => ({
-                productId:      r.product_id,
-                productName:    r.product_name,
-                quantitySold:   Number(r.quantitySold),
+                productId: r.product_id,
+                productName: r.product_name,
+                quantitySold: Number(r.quantitySold),
                 totalGenerated: Number(r.totalGenerated)
             }))
         } catch (error) {
@@ -222,7 +225,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getProductsWithoutSales(): Promise<ProductWithoutSales[]> {
         try {
             const result = await this.pool.request().query(`
@@ -240,7 +243,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
                 productName: r.product_name,
                 stock: r.product_stock
             }))
-        } catch( error ) {
+        } catch (error) {
             throw new InfrastructureError(
                 'Error obteniendo productos sin ventas',
                 'MSSQL_DASHBOARD_TOP_PRODUCTS_ERROR',
@@ -248,7 +251,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getPurchaseSummary(): Promise<PurchaseSummary> {
         try {
             const result = await this.pool.request().query(`
@@ -262,10 +265,10 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
 
             const row = result.recordset[0]
             return {
-                totalOrders:       Number(row.totalOrders),
+                totalOrders: Number(row.totalOrders),
                 averageOrderValue: Number(row.averageOrderValue),
-                maxOrderValue:     Number(row.maxOrderValue),
-                minOrderValue:     Number(row.minOrderValue)
+                maxOrderValue: Number(row.maxOrderValue),
+                minOrderValue: Number(row.minOrderValue)
             }
         } catch (error) {
             throw new InfrastructureError(
@@ -275,7 +278,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getPurchasesByDate(): Promise<ChartPoint[]> {
         try {
             const result = await this.pool.request().query(`
@@ -288,7 +291,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             `)
 
             return result.recordset.map(r => ({
-                date:  r.date,
+                date: r.date,
                 total: Number(r.total)
             }))
         } catch (error) {
@@ -299,23 +302,27 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getPurchasesBySupplier(): Promise<PurchasesBySupplier[]> {
         try {
             const result = await this.pool.request().query(`
                 WITH SupplierPurchases AS (
                     SELECT
                         p.supplier_id,
+                        s.supplier_name,
+                        s.supplier_lastname,
                         s.supplier_company,
                         SUM(p.purchase_total)   AS totalPurchases,
                         COUNT(p.purchase_id)    AS ordersCount
                     FROM Purchase p
                     INNER JOIN Supplier s ON s.supplier_id = p.supplier_id
-                    GROUP BY p.supplier_id, s.supplier_company
+                    GROUP BY p.supplier_id, s.supplier_company, s.supplier_name, s.supplier_lastname
                 )
                 SELECT
                     supplier_id,
                     supplier_company,
+                    supplier_name,
+                    supplier_lastname,
                     totalPurchases,
                     ordersCount,
                     ROUND(
@@ -327,12 +334,15 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             `)
 
             return result.recordset.map(r => ({
-                supplierId:      r.supplier_id,
+                supplierId: r.supplier_id,
+                supplierName: r.supplier_name,
+                supplierLastname: r.supplier_lastname,
                 supplierCompany: r.supplier_company,
-                totalPurchases:  Number(r.totalPurchases),
-                ordersCount:     Number(r.ordersCount),
-                percentage:      Number(r.percentage)
+                totalPurchases: Number(r.totalPurchases),
+                ordersCount: Number(r.ordersCount),
+                percentage: Number(r.percentage)
             }))
+
         } catch (error) {
             throw new InfrastructureError(
                 'Error obteniendo compras por proveedor',
@@ -341,7 +351,85 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
+    async getTopPurchasedProducts(): Promise<TopPurchasedProduct[]> {
+        try {
+            const result = await this.pool.request()
+                .query(`
+                    SELECT TOP 5
+                        pd.product_id,
+                        pr.product_name,
+                        SUM(pd.purchase_quantity)                       AS totalQuantity,
+                        SUM(pd.purchase_quantity * pd.purchase_unit_price) AS totalSpent,
+                        AVG(pd.purchase_unit_price)                     AS avgUnitPrice
+                    FROM Purchase_Detail pd
+                    INNER JOIN Product pr ON pr.product_id = pd.product_id
+                    GROUP BY pd.product_id, pr.product_name
+                    ORDER BY totalSpent DESC
+                `)
+
+            return result.recordset.map(r => ({
+                productId: r.product_id,
+                productName: r.product_name,
+                totalQuantity: Number(r.totalQuantity),
+                totalSpent: Number(r.totalSpent),
+                avgUnitPrice: Number(r.avgUnitPrice)
+            }))
+        } catch (error) {
+            throw new InfrastructureError(
+                'Error obteniendo productos más comprados',
+                'MSSQL_DASHBOARD_TOP_PURCHASED_PRODUCTS_ERROR',
+                error
+            )
+        }
+    }
+
+    async getPurchasesByCategory(): Promise<PurchasesByCategory[]> {
+        try {
+            const result = await this.pool.request().query(`
+                WITH CategorySpend AS (
+                    SELECT
+                        c.category_id,
+                        c.category_name,
+                        c.category_icon,
+                        SUM(pd.purchase_quantity)                           AS totalQuantity,
+                        SUM(pd.purchase_quantity * pd.purchase_unit_price)  AS totalSpent
+                    FROM Purchase_Detail pd
+                    INNER JOIN Product pr  ON pr.product_id   = pd.product_id
+                    INNER JOIN Category c  ON c.category_id   = pr.category_id
+                    GROUP BY c.category_id, c.category_name, c.category_icon
+                )
+                SELECT
+                    category_id,
+                    category_name,
+                    category_icon,
+                    totalQuantity,
+                    totalSpent,
+                    ROUND(
+                        totalSpent * 100.0 / NULLIF(SUM(totalSpent) OVER (), 0),
+                        2
+                    ) AS percentage
+                FROM CategorySpend
+                ORDER BY totalSpent DESC
+            `)
+
+            return result.recordset.map(r => ({
+                categoryId: r.category_id,
+                categoryName: r.category_name,
+                categoryIcon: r.category_icon,
+                totalQuantity: Number(r.totalQuantity),
+                totalSpent: Number(r.totalSpent),
+                percentage: Number(r.percentage)
+            }))
+        } catch (error) {
+            throw new InfrastructureError(
+                'Error obteniendo compras por categoría',
+                'MSSQL_DASHBOARD_PURCHASES_BY_CATEGORY_ERROR',
+                error
+            )
+        }
+    }
+
     async getCriticalStockProducts(): Promise<CriticalStockProduct[]> {
         try {
             const result = await this.pool.request().query(`
@@ -357,11 +445,11 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             `)
 
             return result.recordset.map(r => ({
-                productId:   r.product_id,
+                productId: r.product_id,
                 productName: r.product_name,
-                stock:       Number(r.stock),
-                stockMin:    Number(r.stockMin),
-                stockValue:  Number(r.stockValue)
+                stock: Number(r.stock),
+                stockMin: Number(r.stockMin),
+                stockValue: Number(r.stockValue)
             }))
         } catch (error) {
             throw new InfrastructureError(
@@ -371,7 +459,7 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             )
         }
     }
-    
+
     async getProductsByCategory(): Promise<ProductsByCategory[]> {
         try {
             const result = await this.pool.request().query(`
@@ -393,10 +481,10 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
             `)
 
             return result.recordset.map(r => ({
-                categoryId:         r.category_id,
-                categoryName:       r.category_name,
-                categoryIcon:       r.category_icon,
-                productCount:       Number(r.productCount),
+                categoryId: r.category_id,
+                categoryName: r.category_name,
+                categoryIcon: r.category_icon,
+                productCount: Number(r.productCount),
                 activeProductCount: Number(r.activeProductCount)
             }))
         } catch (error) {
@@ -408,5 +496,85 @@ export class MSSQLStatsDashboard implements DashboardStatsDatasource {
         }
     }
 
-    
+    async getInventoryAdjustmentSummary(): Promise<InventoryAdjustmentSummary> {
+        try {
+            const result = await this.pool.request().query(`
+                SELECT
+                    COUNT(*)                                                                AS totalAdjustments,
+                    SUM(CASE WHEN adjustment_type = 'entrada' THEN 1 ELSE 0 END)           AS totalEntradas,
+                    SUM(CASE WHEN adjustment_type = 'salida'  THEN 1 ELSE 0 END)           AS totalSalidas,
+                    ISNULL(SUM(CASE WHEN adjustment_type = 'entrada'
+                        THEN adjustment_quantity ELSE 0 END), 0)                           AS totalUnitsAdded,
+                    ISNULL(SUM(CASE WHEN adjustment_type = 'salida'
+                        THEN adjustment_quantity ELSE 0 END), 0)                           AS totalUnitsRemoved
+                FROM Inventory_Adjustment
+            `)
+
+            const row = result.recordset[0]
+            return {
+                totalAdjustments: Number(row.totalAdjustments),
+                totalEntradas: Number(row.totalEntradas),
+                totalSalidas: Number(row.totalSalidas),
+                totalUnitsAdded: Number(row.totalUnitsAdded),
+                totalUnitsRemoved: Number(row.totalUnitsRemoved)
+            }
+        } catch (error) {
+            throw new InfrastructureError(
+                'Error obteniendo resumen de ajustes de inventario',
+                'MSSQL_DASHBOARD_PRODUCTS_BY_CATEGORY_ERROR',
+                error
+            )
+        }
+    }
+
+    async getMostAdjustedProducts(): Promise<MostAdjustedProduct[]> {
+        try {
+            const result = await this.pool.request()
+                .query(`
+                    SELECT TOP 5
+                        ia.product_id,
+                        p.product_name,
+                        COUNT(ia.adjustment_id) AS adjustmentCount,
+                        ISNULL(
+                            SUM(
+                                CASE 
+                                    WHEN ia.adjustment_type = 'entrada'THEN ia.adjustment_quantity 
+                                    ELSE 0 
+                                END
+                            ), 
+                            0
+                        ) AS totalUnitsAdded,
+                        ISNULL(
+                            SUM(
+                                CASE 
+                                    WHEN ia.adjustment_type = 'salida' THEN ia.adjustment_quantity 
+                                    ELSE 0 
+                                END
+                            ), 
+                            0
+                        ) AS totalUnitsRemoved
+                    FROM Inventory_Adjustment ia
+                    INNER JOIN Product p ON p.product_id = ia.product_id
+                    GROUP BY ia.product_id, p.product_name
+                    ORDER BY adjustmentCount DESC
+                `)
+
+            return result.recordset.map(r => ({
+                productId: r.product_id,
+                productName: r.product_name,
+                adjustmentCount: Number(r.adjustmentCount),
+                totalUnitsAdded: Number(r.totalUnitsAdded),
+                totalUnitsRemoved: Number(r.totalUnitsRemoved)
+            }))
+        } catch (error) {
+            throw new InfrastructureError(
+                'Error obteniendo productos más ajustados',
+                'MSSQL_DASHBOARD_MOST_ADJUSTED_PRODUCTS_ERROR',
+                error
+            )
+        }
+
+    }
+
+
 }

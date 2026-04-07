@@ -12,7 +12,6 @@ export class SaveSaleUseCase {
     constructor(private readonly salesRepository: SalesRepository ){}
 
     public async execute( data: SaveSale ): Promise<SaleResponse> {
-
         const newSale = new Sale({
             id: IDAdapter.generate(),
             date: DatesAdapter.now(),

@@ -2,6 +2,9 @@ import {
     GetDashboardKpisUseCase,
 
     GetProductsByCriticalStock,
+    GetProductsByCategoryUseCase,
+    GetInventoryAdjustmentSummaryUseCase,
+    GetProductsMostAdjusted,
 
     GetProductsWithoutSalesUseCase, 
     GetSalesByCategoryUseCase, 
@@ -12,13 +15,18 @@ import {
     
     GetPurchasesSummaryUseCase,
     GetPurchasesByDateUseCase,
-    GetPurchasesBySupplierUseCase
+    GetPurchasesBySupplierUseCase,
+    GetTopPurchasedProductsUseCase,
+    GetPurchasesByCategoryUseCase,
 } from "../usecases/dashboard";
 
 interface DashboardStatsServiceOptions {
     getDashboardKpisUC: GetDashboardKpisUseCase
 
     getProductsByCriticalStockUC: GetProductsByCriticalStock
+    getProductsByCategoryUC: GetProductsByCategoryUseCase,
+    getInventoryAdjustmentSummaryUC: GetInventoryAdjustmentSummaryUseCase
+    getMostAdjustedProductsUC: GetProductsMostAdjusted
 
     getSalesByCategoryUC: GetSalesByCategoryUseCase,
     getSalesByDateUC: GetSalesByDateUseCase,
@@ -30,6 +38,8 @@ interface DashboardStatsServiceOptions {
     getPurchasesSummaryUC: GetPurchasesSummaryUseCase
     getPurchasesByDateUC: GetPurchasesByDateUseCase
     getPurchasesBySupplierUC: GetPurchasesBySupplierUseCase
+    getPurchasesByCategoryUC: GetPurchasesByCategoryUseCase
+    getTopPurchasedProductsUC: GetTopPurchasedProductsUseCase
 
 }
 
@@ -38,6 +48,9 @@ export class DashboardStatsService {
     private readonly getDashboardKpisUC: GetDashboardKpisUseCase
 
     private readonly getProductsByCriticalStockUC: GetProductsByCriticalStock
+    private readonly getProductsByCategoryUC: GetProductsByCategoryUseCase
+    private readonly getInventoryAdjustmentSummaryUC: GetInventoryAdjustmentSummaryUseCase
+    private readonly getMostAdjustedProductsUC: GetProductsMostAdjusted
 
     private readonly getSalesByCategoryUC: GetSalesByCategoryUseCase
     private readonly getSalesByDateUC: GetSalesByDateUseCase
@@ -49,23 +62,36 @@ export class DashboardStatsService {
     private readonly getPurchasesSummaryUC: GetPurchasesSummaryUseCase
     private readonly getPurchasesByDateUC: GetPurchasesByDateUseCase
     private readonly getPurchasesBySupplierUC: GetPurchasesBySupplierUseCase
+    private readonly getPurchasesByCategoryUC: GetPurchasesByCategoryUseCase
+    private readonly getTopPurchasedProductsUC: GetTopPurchasedProductsUseCase
 
     constructor({
         getDashboardKpisUC,
+
         getProductsByCriticalStockUC,
+        getProductsByCategoryUC,
+        getInventoryAdjustmentSummaryUC,
+        getMostAdjustedProductsUC,
+
         getSalesByCategoryUC,
         getSalesByDateUC,
         getSalesByUserUC,
         getProductsWithoutSalesUC,
         getSalesSummaryUC,
         getTopSellingProductsUC,
+        
         getPurchasesSummaryUC,
         getPurchasesByDateUC,
-        getPurchasesBySupplierUC
+        getPurchasesBySupplierUC,
+        getPurchasesByCategoryUC,
+        getTopPurchasedProductsUC
     }: DashboardStatsServiceOptions){
         this.getDashboardKpisUC = getDashboardKpisUC
 
         this.getProductsByCriticalStockUC = getProductsByCriticalStockUC
+        this.getProductsByCategoryUC = getProductsByCategoryUC
+        this.getInventoryAdjustmentSummaryUC = getInventoryAdjustmentSummaryUC
+        this.getMostAdjustedProductsUC = getMostAdjustedProductsUC
 
         this.getSalesByCategoryUC = getSalesByCategoryUC
         this.getSalesByDateUC = getSalesByDateUC
@@ -77,6 +103,8 @@ export class DashboardStatsService {
         this.getPurchasesSummaryUC = getPurchasesSummaryUC
         this.getPurchasesByDateUC = getPurchasesByDateUC
         this.getPurchasesBySupplierUC = getPurchasesBySupplierUC
+        this.getPurchasesByCategoryUC = getPurchasesByCategoryUC
+        this.getTopPurchasedProductsUC = getTopPurchasedProductsUC
     }
 
     public async getKpisStats() {
@@ -89,7 +117,7 @@ export class DashboardStatsService {
         const salesByUser = await this.getSalesByUserUC.execute()
         const productsWithoutSales = await this.getProductsWithoutSalesUC.execute()
         const salesSummary = await this.getSalesSummaryUC.execute()
-        const getTopSellingProductsUC = await this.getTopSellingProductsUC.execute()
+        const getTopSellingProducts = await this.getTopSellingProductsUC.execute()
         
         return {
             salesByCategory,
@@ -97,27 +125,51 @@ export class DashboardStatsService {
             salesByUser,
             productsWithoutSales,
             salesSummary,
-            getTopSellingProductsUC,
+            getTopSellingProducts,
         }
     }
 
     public async getPurchasesStats() {
-        const getPurchaseSummary = await this.getPurchasesSummaryUC.execute()
-        const getPurchasesByDate = await this.getPurchasesByDateUC.execute()
-        const getPurchasesBySupplier = await this.getPurchasesBySupplierUC.execute()
+        const purchaseSummary = await this.getPurchasesSummaryUC.execute()
+        const purchasesByDate = await this.getPurchasesByDateUC.execute()
+        const purchasesBySupplier = await this.getPurchasesBySupplierUC.execute()
+        const purchasesByCategory = await this.getPurchasesByCategoryUC.execute()
+        const topPurchasedProducts = await this.getTopPurchasedProductsUC.execute()
 
         return {
-            getPurchaseSummary,
-            getPurchasesByDate,
-            getPurchasesBySupplier
+            purchaseSummary,
+            purchasesByDate,
+            purchasesBySupplier,
+            purchasesByCategory,
+            topPurchasedProducts
         }
     }
 
     public async getProductsStats() {
-        const getProductsCritialStock = await this.getProductsByCriticalStockUC.execute()
+        const productsCritialStock = await this.getProductsByCriticalStockUC.execute()
+        const productsByCategory = await this.getProductsByCategoryUC.execute()
+        const inventoryAdjustmentSummary = await this.getInventoryAdjustmentSummaryUC.execute()
+        const productsMostAdjusted = await this.getMostAdjustedProductsUC.execute()
 
         return {
-            getProductsCritialStock
+            productsCritialStock,
+            productsByCategory,
+            inventoryAdjustmentSummary,
+            productsMostAdjusted
+        }
+    }
+
+    public async getAllStats() {
+        const kpiStats = await this.getKpisStats()
+        const salesStats = await this.getSalesStats()
+        const purchasesStats = await this.getPurchasesStats()
+        const productsStats = await this.getProductsStats()
+
+        return {
+            kpiStats,
+            salesStats,
+            purchasesStats,
+            productsStats
         }
     }
 

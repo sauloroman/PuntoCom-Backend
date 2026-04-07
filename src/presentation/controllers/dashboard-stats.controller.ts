@@ -6,10 +6,10 @@ export class DashboardStatsController {
     constructor(private readonly dashboardStatsService: DashboardStatsService ){}
 
     public getKPISStats = async (_req: Request, res: Response ) => {
-        const kpis = await this.dashboardStatsService.getKpisStats()
+        const stats = await this.dashboardStatsService.getKpisStats()
         res.status(200).json({
             ok: true,
-            kpis
+            stats
         })
     }
 

@@ -2,171 +2,177 @@ import { SupplierResponseDto } from "../../../application/dtos/supplier.dto";
 import { DatesAdapter } from "../../plugins";
 
 export function buildSuppliersHtml(suppliers: SupplierResponseDto[]) {
-  
-  const year = new Date().getFullYear();
-  const dateReport = DatesAdapter.formatLocal( DatesAdapter.now() )
 
-  const totalSuppliers = suppliers.length
-  const totalActiveSuppliers = suppliers.filter( supplier => supplier.isActive ).length
-  const totalInactiveSuppliers = totalSuppliers - totalActiveSuppliers
+  const year = new Date().getFullYear();
+  const dateReport = DatesAdapter.formatLocal(DatesAdapter.now());
+
+  const totalSuppliers = suppliers.length;
+  const totalActiveSuppliers = suppliers.filter(s => s.isActive).length;
+  const totalInactiveSuppliers = totalSuppliers - totalActiveSuppliers;
 
   return `
   <!DOCTYPE html>
   <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Lista de Proveedores</title>
+    <title>Reporte de Proveedores — PuntoCom</title>
+
     <style>
       body {
         margin: 0;
         padding: 0;
-        font-size: 14px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f5f7fa;
-        color: #333;
+        background: #fff;
+        font-family: Arial, sans-serif;
+        color: #222;
+        font-size: 12px;
       }
+
       .container {
-        max-width: 1000px;
-        margin: 30px auto;
-        background: #ffffff;
-        overflow: hidden;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        max-width: 900px;
+        margin: auto;
+        padding: 25px;
+        border: 1px solid #000;
+        box-sizing: border-box;
       }
+
+      @page {
+        margin: 40px 25px;
+      }
+
+      .spacer-top {
+        height: 18px;
+      }
+
+      /* ENCABEZADO CFDI */
       .header {
-        background: linear-gradient(90deg, #1e3a8a, #2563eb);
-        padding: 24px;
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        color: white;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #000;
       }
-      .header img {
-        max-width: 140px;
-      }
-      .header h1 {
+
+      .header-left h1 {
         margin: 0;
-        font-size: 24px;
-        font-weight: 600;
+        font-size: 20px;
+        font-weight: bold;
+        letter-spacing: 0.4px;
       }
-      .date-report {
+
+      .header-left .biz {
         margin-top: 6px;
-        font-size: 13px;
-        color: #c7d2fe;
-      }
-      .stats {
-        width: 95%;
-        margin: 1rem auto;
-        padding-bottom: 1rem;
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #e5e7eb;
-      }
-      .stats__list {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-      .stats__list li {
-        margin: 6px 0;
-      }
-      .stats__list--right {
-        text-align: right;
-      }
-      table {
-        width: 95%;
-        margin: 1.5rem auto;
-        border-collapse: separate;
-        border-spacing: 0;
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-      }
-      th, td {
-        padding: 12px 10px;
         font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .header img {
+        width: 140px;
+        height: 80px;
+        object-fit: cover;
+      }
+
+      /* BLOQUE SAT CFDI */
+      .sat-block {
+        margin-top: 20px;
+        border: 1px solid #000;
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 12px;
+      }
+      .sat-block th,
+      .sat-block td {
+        border: 1px solid #000;
+        padding: 6px 8px;
+        vertical-align: top;
+      }
+      .sat-block th {
+        background: #f2f2f2;
+        font-weight: bold;
         text-align: left;
+        width: 160px;
       }
-      th {
-        background-color: #2563eb;
-        color: white;
-        font-weight: 600;
+
+      /* TABLA PRINCIPAL CFDI */
+      table.report {
+        width: 100%;
+        margin-top: 24px;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      table.report th {
+        background: #e6e6e6;
+        border: 1px solid #000;
+        padding: 8px;
         text-transform: uppercase;
-        font-size: 12px;
-        letter-spacing: 0.5px;
+        font-size: 11px;
       }
-      tr:nth-child(even) {
-        background-color: #f9fafb;
-      }
-      tr:hover {
-        background-color: #eef2ff;
+      table.report td {
+        border: 1px solid #000;
+        padding: 7px;
       }
 
-      /* Badges para roles */
-      .tag {
-        padding: 4px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 600;
-        display: inline-block;
-      }
-      .tag--admin {
-        background-color: #fef3c7;
-        color: #b45309;
-      }
-      .tag--supervisor {
-        background-color: #e0f2fe;
-        color: #0369a1;
-      }
-      .tag--vendedor {
-        background-color: #dcfce7;
-        color: #166534;
-      }
-
-      /* Badges para estado */
+      /* BADGES ESTADO */
       .status {
-        padding: 4px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 600;
-        display: inline-block;
+        font-weight: bold;
       }
       .status--activo {
-        background-color: #bbf7d0;
-        color: #065f46;
+        color: #0a5c2d;
       }
       .status--inactivo {
-        background-color: #fecaca;
-        color: #991b1b;
+        color: #a60000;
       }
 
+      /* PIE CFDI */
       .footer {
-        background-color: #f1f5f9;
-        padding: 14px;
+        border-top: 2px solid #000;
         text-align: center;
-        font-size: 12px;
-        color: #555;
-        border-top: 1px solid #e5e7eb;
+        margin-top: 26px;
+        padding-top: 10px;
+        font-size: 11px;
       }
     </style>
   </head>
+
   <body>
     <div class="container">
+
       <div class="header">
-        <div>
-          <h1>PuntoCom — Reporte de Proveedores</h1>
-          <div class="date-report">Fecha de creación: ${dateReport}</div>
+        <div class="header-left">
+          <h1>PuntoCom — Reporte — Proveedores</h1>
+
+          <div class="biz">
+            Preparatoria “Jesús Reyes Heroles” <br>
+            Av. Nazario Ortiz Garza, Lic. Benito Juárez, 20170 <br>
+            Aguascalientes, Ags. México
+          </div>
         </div>
-        <img src="https://res.cloudinary.com/dlamufioy/image/upload/v1755733945/puntocom/1_w2msdi.png" alt="Logo" />
+
+        <img src="https://res.cloudinary.com/dlamufioy/image/upload/v1775335887/puntocom/Blue_and_Black_Minimalist_Brand_Logo_3_xxeb1l.png" alt="Logo">
       </div>
 
-      <section class="stats">
-        <ul class="stats__list">
-          <li>Total de proveedores: <strong>${totalSuppliers}</strong></li>
-          <li>Total de proveedores activos: <strong>${totalActiveSuppliers}</strong></li>
-          <li>Total de proveedores inactivos: <strong>${totalInactiveSuppliers}</strong></li>
-        </ul>
-      </section>
+      <!-- BLOQUE CFDI DATOS GENERALES -->
+      <table class="sat-block">
+        <tr>
+          <th>Fecha de emisión</th>
+          <td>${dateReport}</td>
+          <th>Entidad emisora</th>
+          <td>PuntoCom</td>
+        </tr>
 
-      <table>
+        <tr>
+          <th>Total de proveedores</th>
+          <td>${totalSuppliers}</td>
+          <th>Activos / Inactivos</th>
+          <td>${totalActiveSuppliers} / ${totalInactiveSuppliers}</td>
+        </tr>
+
+        <tr>
+          <th>Folio interno</th>
+          <td colspan="3">PRV-${year}-${String(totalSuppliers).padStart(4, "0")}</td>
+        </tr>
+      </table>
+
+      <!-- TABLA PRINCIPAL -->
+      <table class="report">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -176,23 +182,32 @@ export function buildSuppliersHtml(suppliers: SupplierResponseDto[]) {
             <th>Estado</th>
           </tr>
         </thead>
+
         <tbody>
-          ${suppliers.map(s => `
-              <tr>
-                <td>${s.name} ${s.lastname}</td>
-                <td>${s.email}</td>
-                <td>${s.company}</td>
-                <td>${s.phone}</td>
-                <td><span class="status status--${s.isActive ? 'activo' : 'inactivo'}">${s.isActive ? 'Activo' : 'Inactivo'}</span></td>
-              </tr>
-          `).join('')}
+          ${suppliers
+            .map(
+              s => `
+            <tr>
+              <td>${s.name} ${s.lastname}</td>
+              <td>${s.email}</td>
+              <td>${s.company}</td>
+              <td>${s.phone}</td>
+              <td class="status status--${s.isActive ? "activo" : "inactivo"}">
+                ${s.isActive ? "Activo" : "Inactivo"}
+              </td>
+            </tr>`
+            )
+            .join("")}
         </tbody>
       </table>
 
       <div class="footer">
-        © ${year} PuntoCom. Todos los derechos reservados.
+        Documento generado automáticamente — ${year} PuntoCom.<br>
+        Reporte para fines administrativos y de control interno.
       </div>
+
     </div>
+
   </body>
   </html>
   `;

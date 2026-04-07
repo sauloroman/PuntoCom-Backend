@@ -4,7 +4,6 @@ import { ProductController } from "../controllers/product.controller";
 import { 
     Auth, 
     FileUploadMiddleware, 
-    MapperFilterMiddleware, 
     ParamsHandlerMiddleware, 
     ValidateRolesMiddleware, 
     ValidateStockCriteriaMiddleware 
@@ -36,41 +35,36 @@ export class ProductRoutes {
 
         router.get('/minimal', this.controller.getAllProductsMinimalInformation)
         
-        router.get('/filter', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor ),
-        ], this.controller.filterProducts )
+        router.get('/filter', this.controller.filterProducts )
 
         router.get('/:id', this.controller.getProductById )
+        
+        router.get('/stock/:criteria', [
+            ValidateStockCriteriaMiddleware.validate(),
+        ], this.controller.getProductsByStock)
+
+        // Only for administrator
+        router.use([ ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )])
             
         router.post('/', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.createProduct )
 
         router.put('/:id', [
             ParamsHandlerMiddleware.hasIDItem(),
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.updateProduct )
 
         router.patch('/deactivate/:id', [
             ParamsHandlerMiddleware.hasIDItem(),
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.deactivateProduct )
         
         router.patch('/activate/:id', [
             ParamsHandlerMiddleware.hasIDItem(),
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador )
         ], this.controller.activateProduct )
 
         router.patch('/upload-image/:id', [
             ParamsHandlerMiddleware.hasIDItem(),
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador ),
             FileUploadMiddleware.validateContainFiles
         ], this.controller.uploadProductImage )
-
-        router.get('/stock/:criteria', [
-            ValidateRolesMiddleware.hasRole( RoleEnum.Administrador, RoleEnum.Supervisor),
-            ValidateStockCriteriaMiddleware.validate(),
-        ], this.controller.getProductsByStock)
 
         return router
     }

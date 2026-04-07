@@ -39,7 +39,6 @@ export class AuthMiddleware {
           next()
 
         } catch (error) {
-          console.log(`${error}`)
           res.status(500).json({ ok: false, error: 'Internal Server Error'})
         }
       }

@@ -19,9 +19,6 @@ export class SaveDetailSaleUseCase {
             createdAt: DatesAdapter.now(),
             updatedAt: DatesAdapter.now()
         })
-
-        console.log(detail)
-
         return await this.saleRepository.saveSaleDetails( detail )
     }   
 

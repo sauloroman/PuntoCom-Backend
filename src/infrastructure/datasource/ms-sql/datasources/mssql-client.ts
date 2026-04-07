@@ -25,7 +25,6 @@ export class MssqlClient {
     public static async getConnection(): Promise<ConnectionPool> {
         if ( !this.pool ) {
             this.pool = await sql.connect(this.config)
-            console.log(`MSSQL - ${MssqlClient.config.database} conectada`)
         }
         return this.pool
     }
@@ -34,7 +33,6 @@ export class MssqlClient {
         if ( this.pool ) {
             await this.pool.close()
             this.pool = null
-            console.log('MSSQL desconectado')
         }
     }
 

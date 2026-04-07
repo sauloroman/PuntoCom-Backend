@@ -30,9 +30,7 @@ export class UpdateProductImageUseCase {
             createdAt: DatesAdapter.toLocal( typeof existingProduct.createdAt === 'string' ? new Date(existingProduct.createdAt) : existingProduct.createdAt),
             updatedAt: DatesAdapter.toLocal( DatesAdapter.now() ),
         })
-
-        console.log(product)
-
+        
         const updatedProduct = await this.productRepository.update(product)
 
         return {

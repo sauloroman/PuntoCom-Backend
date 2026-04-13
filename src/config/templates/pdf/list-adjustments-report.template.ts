@@ -183,7 +183,7 @@ export function buildInventoryAdjustmentsHtml(adjustments: InventoryAdjustmentRe
         </div>
       </div>
 
-      <img src="https://res.cloudinary.com/dlamufioy/image/upload/v1775335887/puntocom/Blue_and_Black_Minimalist_Brand_Logo_3_xxeb1l.png">
+      <img src="https://res.cloudinary.com/dlamufioy/image/upload/v1775335887/puntocom/Blue_and_Black_Minimalist_Brand_Logo_3_xxeb1l.png" alt="Logo PuntoCom Blanco y Negro">
     </div>
 
     <table class="sat-block">

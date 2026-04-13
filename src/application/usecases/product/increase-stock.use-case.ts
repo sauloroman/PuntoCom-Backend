@@ -16,7 +16,7 @@ export class IncreaseStockUseCase {
     public async validate(productId: string): Promise<void> {
         const productExisting = await this.productRepository.findById(productId)
         if (!productExisting) throw new ApplicationError(`El producto con id ${productId} no existe`, this.MESSAGE_ERROR_NOT_FOUND)
-        // if (!productExisting.isActive) throw new ApplicationError('El producto está desactivado', this.MESSAGE_ERROR_NOT_ACTIVE)
+        if (!productExisting.isActive) throw new ApplicationError('El producto está desactivado', this.MESSAGE_ERROR_NOT_ACTIVE)
     }
 
     public async execute(data: SavePurchaseDetail): Promise<ProductResponseIncludeDto> {
